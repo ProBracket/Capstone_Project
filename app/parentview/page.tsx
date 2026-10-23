@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
-import { supabase } from "@/lib/supabase";
+import { getCurrentUser, onSignInOrOut, signOut } from "@/lib/auth";
+import { getFullName, updateFullName } from "@/lib/profile";
 
 export default function ParentProfile() {
   const [user, setUser] = useState<User | null>(null);
@@ -19,7 +20,7 @@ export default function ParentProfile() {
     let active = true;
 
     async function loadProfile() {
-      const { data, error } = await supabase.auth.getUser();
+      const { data, error } = await getCurrentUser();
 
       if (!active) return;
 
@@ -27,14 +28,9 @@ export default function ParentProfile() {
         setError(error.message);
         setUser(null);
       } else {
-        const currentUser = data.user;
-        setUser(currentUser);
+        setUser(data.user);
 
-        const fullName =
-          currentUser?.user_metadata?.full_name ??
-          currentUser?.user_metadata?.name ??
-          "";
-
+        const fullName = getFullName(data.user);
         setName(fullName);
         setEditName(fullName);
         setError("");
@@ -45,17 +41,11 @@ export default function ParentProfile() {
 
     void loadProfile();
 
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (event) => {
-        if (event === "SIGNED_IN" || event === "SIGNED_OUT") {
-          void loadProfile();
-        }
-      }
-    );
+    const unsubscribe = onSignInOrOut(() => void loadProfile());
 
     return () => {
       active = false;
-      listener.subscription.unsubscribe();
+      unsubscribe();
     };
   }, []);
 
@@ -71,11 +61,7 @@ export default function ParentProfile() {
     setError("");
     setMessage("");
 
-    const { data, error } = await supabase.auth.updateUser({
-      data: {
-        full_name: editName.trim(),
-      },
-    });
+    const { data, error } = await updateFullName(editName);
 
     if (error) {
       setError(error.message);
@@ -93,7 +79,7 @@ export default function ParentProfile() {
     setError("");
     setMessage("");
 
-    const { error } = await supabase.auth.signOut();
+    const { error } = await signOut();
 
     if (error) {
       setError(error.message);
