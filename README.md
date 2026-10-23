@@ -61,6 +61,47 @@ Run `npm run lint` and `npm run build` before opening a PR — CI runs the same 
 
 ---
 
+## Project structure
+
+| Folder | What goes here |
+|---|---|
+| `app/` | **Pages (routes).** Every folder with a `page.tsx` becomes a URL — `app/parentview/page.tsx` is `/parentview`. Only files named `page.tsx` are routed. |
+| `lib/` | **Plain logic, no React.** The Supabase client, database queries, and helper functions. Anything here can be used from any page. |
+| `components/` | **Reusable UI pieces** like `<Button>`, `<Card>`, `<Header>`. Use these instead of copying the same JSX into several pages. |
+| `hooks/` | **Custom React hooks** (`useSomething()`) — state and effects shared by several pages, like `useCurrentUser()`. |
+| `supabase/` | Supabase CLI config. Owned by @ProBracket. |
+
+Only `app/` is special to Next.js — the rest are team conventions. Create `components/` or `hooks/` when the first file that needs it shows up; Git doesn't track empty folders.
+
+### What goes where
+
+Each layer only imports from the layers below it:
+
+```
+app/          pages: put components together, handle the UI
+  ↓
+components/   reusable UI pieces
+  ↓
+hooks/        React state + effects
+  ↓
+lib/          plain logic, talks to Supabase
+```
+
+- **Talking to Supabase?** Put it in `lib/`. Pages call those functions instead of using `supabase` directly. If the table or columns change, only `lib/` needs updating.
+- **Copying the same JSX into a second page?** Move it into `components/`.
+- **Copying the same `useState` + `useEffect` into a second page?** Move it into `hooks/`.
+- **Only one page uses it?** Keep it in that page until a second page needs it.
+
+### Current `lib/` files
+
+| File | What it does |
+|---|---|
+| `lib/supabase.js` | Creates the one shared Supabase client. Import it from here — never call `createClient` in a page. |
+| `lib/auth.ts` | Login session helpers: `getCurrentUser`, `onSignInOrOut`, `signOut`. |
+| `lib/profile.ts` | Profile data: `getFullName`, `updateFullName`. The name is stored in the auth user's metadata for now; when we add a `profiles` table, its queries go here. |
+
+---
+
 ## Team workflow
 
 `main` is protected. **Nobody pushes to `main` directly** — every change goes through a pull request.

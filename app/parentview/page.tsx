@@ -1,3 +1,9 @@
+/** Parent profile page (/parentview).
+ * Shows the logged-in parent's name and email, lets them edit their name,
+ * and sign out. All Supabase calls go through lib/auth and lib/profile.
+ */
+// "use client" makes this run in the browser, which it needs for useState,
+// useEffect, and the logged-in session
 "use client";
 
 import { useEffect, useState } from "react";
@@ -7,16 +13,18 @@ import { getCurrentUser, onSignInOrOut, signOut } from "@/lib/auth";
 import { getFullName, updateFullName } from "@/lib/profile";
 
 export default function ParentProfile() {
-  const [user, setUser] = useState<User | null>(null);
-  const [name, setName] = useState("");
-  const [editName, setEditName] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [editing, setEditing] = useState(false);
-  const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
+  const [user, setUser] = useState<User | null>(null); // null = not signed in
+  const [name, setName] = useState(""); // saved name, shown when not editing
+  const [editName, setEditName] = useState(""); // what's typed in the input while editing
+  const [loading, setLoading] = useState(true); // true until the first user check finishes
+  const [saving, setSaving] = useState(false); // true while a save is in progress
+  const [editing, setEditing] = useState(false); // shows the input instead of the text
+  const [error, setError] = useState(""); // red banner
+  const [message, setMessage] = useState(""); // green banner
 
+  // Runs once when the page opens: load the user, then reload whenever they sign in or out
   useEffect(() => {
+    // Set to false on cleanup so a slow request can't update the page after it's closed
     let active = true;
 
     async function loadProfile() {
@@ -30,6 +38,7 @@ export default function ParentProfile() {
       } else {
         setUser(data.user);
 
+        // Fill both so the input starts with the current name when editing begins
         const fullName = getFullName(data.user);
         setName(fullName);
         setEditName(fullName);
@@ -43,15 +52,18 @@ export default function ParentProfile() {
 
     const unsubscribe = onSignInOrOut(() => void loadProfile());
 
+    // Cleanup: runs when the page closes
     return () => {
       active = false;
       unsubscribe();
     };
   }, []);
 
+  // Save button: validate, save the new name, then switch back to view mode
   async function handleSave() {
     if (!user) return;
 
+    // Don't allow a blank name (or one that's only spaces)
     if (!editName.trim()) {
       setError("Please enter your full name.");
       return;
@@ -75,6 +87,7 @@ export default function ParentProfile() {
     setSaving(false);
   }
 
+  // Sign Out button: end the session and clear the profile from the page
   async function handleSignOut() {
     setError("");
     setMessage("");
@@ -112,6 +125,7 @@ export default function ParentProfile() {
             </p>
           </div>
 
+          {/* Three states: loading → not signed in → profile */}
           {loading ? (
             <p className="text-gray-600">
               Loading your profile...
@@ -158,6 +172,7 @@ export default function ParentProfile() {
                       Full Name
                     </label>
 
+                    {/* Edit mode shows an input; view mode shows plain text */}
                     {editing ? (
                       <input
                         id="parent-name"
@@ -197,6 +212,7 @@ export default function ParentProfile() {
                           {saving ? "Saving..." : "Save Changes"}
                         </button>
 
+                        {/* Cancel throws away what was typed and restores the saved name */}
                         <button
                           type="button"
                           onClick={() => {
