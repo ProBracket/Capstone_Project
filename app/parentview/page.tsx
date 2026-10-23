@@ -1,17 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@supabase/supabase-js";
+import Link from "next/link";
 import type { User } from "@supabase/supabase-js";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey =
-  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-
-const supabase =
-  supabaseUrl && supabaseKey
-    ? createClient(supabaseUrl, supabaseKey)
-    : null;
+import { supabase } from "@/lib/supabase";
 
 export default function ParentProfile() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,17 +16,9 @@ export default function ParentProfile() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!supabase) {
-      setError("Supabase environment variables are missing.");
-      setLoading(false);
-      return;
-    }
-
     let active = true;
 
     async function loadProfile() {
-      if (!supabase) return;
-
       const { data, error } = await supabase.auth.getUser();
 
       if (!active) return;
@@ -76,7 +60,7 @@ export default function ParentProfile() {
   }, []);
 
   async function handleSave() {
-    if (!supabase || !user) return;
+    if (!user) return;
 
     if (!editName.trim()) {
       setError("Please enter your full name.");
@@ -106,8 +90,6 @@ export default function ParentProfile() {
   }
 
   async function handleSignOut() {
-    if (!supabase) return;
-
     setError("");
     setMessage("");
 
@@ -173,12 +155,12 @@ export default function ParentProfile() {
                   <p className="text-gray-700">
                     Please sign in to view your parent profile.
                   </p>
-                  <a
+                  <Link
                     href="/"
                     className="inline-block rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800"
                   >
                     Return to home
-                  </a>
+                  </Link>
                 </div>
               ) : (
                 <div className="space-y-6">
@@ -201,7 +183,6 @@ export default function ParentProfile() {
                       />
                     ) : (
                       <p
-                        id="parent-name"
                         className="rounded-lg bg-gray-50 p-3 text-gray-900"
                       >
                         {name || "No name added yet"}
