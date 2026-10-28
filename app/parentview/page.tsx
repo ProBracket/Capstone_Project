@@ -4,258 +4,280 @@
  */
 // "use client" makes this run in the browser, which it needs for useState,
 // useEffect, and the logged-in session
+
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import type { User } from "@supabase/supabase-js";
-import { getCurrentUser, onSignInOrOut, signOut } from "@/lib/auth";
-import { getFullName, updateFullName } from "@/lib/profile";
+import { createClient } from "@supabase/supabase-js";
+
+type Child = {
+  id: number;
+  name: string;
+  grade: number;
+  color: string;
+};
+
+type Parent = {
+  name: string;
+  email: string;
+};
+
+const sampleChildren: Child[] = [
+  {
+    id: 1,
+    name: "Child 1",
+    grade: 6,
+    color: "bg-blue-200",
+  },
+  {
+    id: 2,
+    name: "Child 2",
+    grade: 7,
+    color: "bg-purple-200",
+  },
+];
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+
+const supabase =
+  supabaseUrl && supabaseKey
+    ? createClient(supabaseUrl, supabaseKey)
+    : null;
 
 export default function ParentProfile() {
-  const [user, setUser] = useState<User | null>(null); // null = not signed in
-  const [name, setName] = useState(""); // saved name, shown when not editing
-  const [editName, setEditName] = useState(""); // what's typed in the input while editing
-  const [loading, setLoading] = useState(true); // true until the first user check finishes
-  const [saving, setSaving] = useState(false); // true while a save is in progress
-  const [editing, setEditing] = useState(false); // shows the input instead of the text
-  const [error, setError] = useState(""); // red banner
-  const [message, setMessage] = useState(""); // green banner
+  const [parent, setParent] = useState<Parent>({
+    name: "Sample Parent",
+    email: "parent@example.com",
+  });
 
-  // Runs once when the page opens: load the user, then reload whenever they sign in or out
+  const [children] = useState<Child[]>(sampleChildren);
+  const [selectedChild, setSelectedChild] =
+    useState<Child | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
+  const [demoMode, setDemoMode] = useState(true);
+
   useEffect(() => {
-    // Set to false on cleanup so a slow request can't update the page after it's closed
     let active = true;
 
-    async function loadProfile() {
-      const { data, error } = await getCurrentUser();
+    async function loadParent() {
+      if (!supabase) {
+        setMessage("Supabase is not configured. Showing demo data.");
+        setLoading(false);
+        return;
+      }
+
+      const { data: authData, error: authError } =
+        await supabase.auth.getUser();
 
       if (!active) return;
 
-      if (error) {
-        setError(error.message);
-        setUser(null);
-      } else {
-        setUser(data.user);
-
-        // Fill both so the input starts with the current name when editing begins
-        const fullName = getFullName(data.user);
-        setName(fullName);
-        setEditName(fullName);
-        setError("");
+      if (authError || !authData.user) {
+        setMessage("Not signed in. Showing demo data.");
+        setLoading(false);
+        return;
       }
 
+      const user = authData.user;
+
+      const { data: profile, error: profileError } =
+        await supabase
+          .from("profiles")
+          .select("*")
+          .eq("id", user.id)
+          .maybeSingle();
+
+      if (!active) return;
+
+      if (profileError) {
+        setMessage(
+          "Profile could not be loaded. Using account information."
+        );
+      }
+
+      const fullName =
+        profile?.full_name ??
+        profile?.name ??
+        user.user_metadata?.full_name ??
+        user.user_metadata?.name ??
+        "Parent";
+
+      setParent({
+        name: fullName,
+        email: profile?.email ?? user.email ?? "",
+      });
+
+      setDemoMode(false);
       setLoading(false);
     }
 
-    void loadProfile();
+    void loadParent();
 
-    const unsubscribe = onSignInOrOut(() => void loadProfile());
-
-    // Cleanup: runs when the page closes
     return () => {
       active = false;
-      unsubscribe();
     };
   }, []);
 
-  // Save button: validate, save the new name, then switch back to view mode
-  async function handleSave() {
-    if (!user) return;
-
-    // Don't allow a blank name (or one that's only spaces)
-    if (!editName.trim()) {
-      setError("Please enter your full name.");
-      return;
-    }
-
-    setSaving(true);
-    setError("");
-    setMessage("");
-
-    const { data, error } = await updateFullName(editName);
-
-    if (error) {
-      setError(error.message);
-    } else {
-      setUser(data.user);
-      setName(editName.trim());
-      setEditing(false);
-      setMessage("Your profile was updated successfully.");
-    }
-
-    setSaving(false);
-  }
-
-  // Sign Out button: end the session and clear the profile from the page
-  async function handleSignOut() {
-    setError("");
-    setMessage("");
-
-    const { error } = await signOut();
-
-    if (error) {
-      setError(error.message);
-    } else {
-      setUser(null);
-      setName("");
-      setEditName("");
-    }
-  }
-
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-12">
-      <div className="mx-auto max-w-2xl">
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ThinkFirst
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Parent Dashboard
-          </p>
-        </header>
+    <main className="min-h-screen bg-gray-100 px-5 py-10">
+      <div className="mx-auto max-w-5xl">
 
-        <section className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
-          <div className="mb-6 border-b border-gray-200 pb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Parent Profile
-            </h2>
-            <p className="mt-2 text-gray-600">
-              View and manage your account information.
+        {/* ThinkFirst Header */}
+        <header className="mb-10 flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-blue-800">
+              ThinkFirst
+            </h1>
+            <p className="text-sm text-gray-500">
+              Parent Dashboard
             </p>
           </div>
 
-          {/* Three states: loading → not signed in → profile */}
-          {loading ? (
-            <p className="text-gray-600">
-              Loading your profile...
+          <div className="rounded-full bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900">
+            Parent Account
+          </div>
+        </header>
+
+        {/* Loading and Demo Status */}
+        {loading && (
+          <p className="mb-6 text-gray-600">
+            Loading parent information...
+          </p>
+        )}
+
+        {!loading && message && (
+          <p
+            role="status"
+            className="mb-6 rounded-lg bg-yellow-50 p-3 text-sm text-yellow-800"
+          >
+            {message}
+          </p>
+        )}
+
+        {/* Child Profile Selection */}
+        {!selectedChild ? (
+          <section className="rounded-2xl bg-white p-8 shadow-md">
+
+            <h2 className="mb-2 text-center text-3xl font-bold text-gray-900">
+              Who's learning today?
+            </h2>
+
+            <p className="mb-10 text-center text-gray-500">
+              Choose a child profile to continue learning.
             </p>
-          ) : (
-            <>
-              {error && (
-                <p
-                  role="alert"
-                  className="mb-5 rounded-lg bg-red-50 p-3 text-red-700"
-                >
-                  {error}
-                </p>
-              )}
 
-              {message && (
-                <p
-                  role="status"
-                  className="mb-5 rounded-lg bg-green-50 p-3 text-green-700"
+            <div className="flex flex-wrap justify-center gap-8">
+              {children.map((child) => (
+                <button
+                  key={child.id}
+                  type="button"
+                  onClick={() => setSelectedChild(child)}
+                  className="group flex w-40 flex-col items-center"
                 >
-                  {message}
-                </p>
-              )}
-
-              {!user ? (
-                <div className="space-y-3">
-                  <p className="text-gray-700">
-                    Please sign in to view your parent profile.
-                  </p>
-                  <Link
-                    href="/"
-                    className="inline-block rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800"
+                  <div
+                    className={`${child.color} flex h-36 w-36 items-center justify-center rounded-2xl shadow-sm transition-transform group-hover:scale-105`}
                   >
-                    Return to home
-                  </Link>
+                    <span className="text-6xl" aria-hidden="true">
+                      👤
+                    </span>
+                  </div>
+
+                  <h3 className="mt-4 text-lg font-semibold text-gray-900">
+                    {child.name}
+                  </h3>
+
+                  <p className="text-sm text-gray-500">
+                    Grade {child.grade}
+                  </p>
+                </button>
+              ))}
+
+              {/* Add Child Placeholder */}
+              <div className="flex w-40 flex-col items-center opacity-70">
+                <div className="flex h-36 w-36 items-center justify-center rounded-2xl border-2 border-dashed border-gray-300 bg-gray-50">
+                  <span className="text-5xl text-gray-400">
+                    +
+                  </span>
                 </div>
-              ) : (
-                <div className="space-y-6">
-                  <div>
-                    <label
-                      htmlFor="parent-name"
-                      className="mb-2 block font-semibold text-gray-800"
-                    >
-                      Full Name
-                    </label>
 
-                    {/* Edit mode shows an input; view mode shows plain text */}
-                    {editing ? (
-                      <input
-                        id="parent-name"
-                        type="text"
-                        value={editName}
-                        onChange={(e) => setEditName(e.target.value)}
-                        maxLength={100}
-                        className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
-                      />
-                    ) : (
-                      <p
-                        className="rounded-lg bg-gray-50 p-3 text-gray-900"
-                      >
-                        {name || "No name added yet"}
-                      </p>
-                    )}
-                  </div>
+                <p className="mt-4 font-semibold text-gray-700">
+                  Add Child
+                </p>
 
-                  <div>
-                    <p className="mb-2 font-semibold text-gray-800">
-                      Email Address
-                    </p>
-                    <p className="rounded-lg bg-gray-50 p-3 text-gray-900">
-                      {user.email || "No email available"}
-                    </p>
-                  </div>
+                <p className="text-xs text-gray-500">
+                  Coming soon
+                </p>
+              </div>
+            </div>
 
-                  <div className="flex flex-wrap gap-3 pt-2">
-                    {editing ? (
-                      <>
-                        <button
-                          type="button"
-                          onClick={handleSave}
-                          disabled={saving}
-                          className="rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
-                        >
-                          {saving ? "Saving..." : "Save Changes"}
-                        </button>
+            <p className="mt-10 text-center text-xs text-gray-400">
+              Child profiles are sample data for Sprint 2.
+            </p>
+          </section>
+        ) : (
+          /* Selected Child */
+          <section className="rounded-2xl bg-white p-8 text-center shadow-md">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Hello, {selectedChild.name}!
+            </h2>
 
-                        {/* Cancel throws away what was typed and restores the saved name */}
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setEditing(false);
-                            setEditName(name);
-                            setError("");
-                          }}
-                          disabled={saving}
-                          className="rounded-lg border border-gray-300 px-5 py-3 font-medium text-gray-800 hover:bg-gray-100"
-                        >
-                          Cancel
-                        </button>
-                      </>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setEditing(true);
-                          setMessage("");
-                        }}
-                        className="rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800"
-                      >
-                        Edit Profile
-                      </button>
-                    )}
+            <p className="mt-3 text-gray-600">
+              Grade {selectedChild.grade}
+            </p>
 
-                    <button
-                      type="button"
-                      onClick={handleSignOut}
-                      className="rounded-lg border border-gray-300 px-5 py-3 font-medium text-gray-800 hover:bg-gray-100"
-                    >
-                      Sign Out
-                    </button>
-                  </div>
-                </div>
-              )}
-            </>
+            <p className="mt-5 text-gray-500">
+              Your learning dashboard will appear here
+              when the child dashboard is connected.
+            </p>
+
+            <button
+              type="button"
+              onClick={() => setSelectedChild(null)}
+              className="mt-8 rounded-lg bg-blue-700 px-6 py-3 text-white hover:bg-blue-800"
+            >
+              Back to Profiles
+            </button>
+          </section>
+        )}
+
+        {/* Parent Information */}
+        <section className="mt-8 rounded-2xl bg-white p-6 shadow-md">
+          <h2 className="mb-5 text-xl font-bold text-gray-900">
+            Parent Information
+          </h2>
+
+          <div className="grid gap-5 sm:grid-cols-2">
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Parent Name
+              </p>
+              <p className="mt-1 text-lg text-gray-900">
+                {parent.name}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-sm font-medium text-gray-500">
+                Email Address
+              </p>
+              <p className="mt-1 break-all text-lg text-gray-900">
+                {parent.email}
+              </p>
+            </div>
+          </div>
+
+          {demoMode && !loading && (
+            <p className="mt-5 text-xs text-gray-500">
+              Displaying sample parent information.
+            </p>
           )}
         </section>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
-          ThinkFirst — Helping students think first.
-        </p>
+        <footer className="mt-8 text-center text-sm text-gray-500">
+          ThinkFirst — Don't answer first. Think first.
+        </footer>
       </div>
     </main>
   );
