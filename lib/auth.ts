@@ -24,6 +24,17 @@ export function onSignInOrOut(callback: () => void) {
   return () => data.subscription.unsubscribe();
 }
 
+/** Logs in with an email and password.
+ * Returns { data: { user, session }, error }; error is set when the
+ * account doesn't exist or the password is wrong.
+ */
+export function signInWithEmail(email: string, password: string) {
+  return supabase.auth.signInWithPassword({
+    email: email.trim(), // remove accidental spaces before/after the email
+    password: password,
+  });
+}
+
 /** Ends the current session. Returns { error }; error is null on success. */
 export function signOut() {
   return supabase.auth.signOut();
