@@ -24,6 +24,34 @@ export function onSignInOrOut(callback: () => void) {
   return () => data.subscription.unsubscribe();
 }
 
+/**
+ * Get all children from the database.
+ */
+export async function getChildren() {
+  return await supabase
+    .from("children")
+    .select("*")
+    .order("id", { ascending: true }); 
+}
+
+/**
+ * Add a child to the database.
+ */
+export async function addChild(
+  nickname: string,
+  age: number
+) {
+  return supabase
+    .from("children")
+    .insert([
+      {
+        nickname,
+        age,
+      },
+    ])
+    .select();
+}
+
 /** Ends the current session. Returns { error }; error is null on success. */
 export function signOut() {
   return supabase.auth.signOut();
