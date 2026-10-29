@@ -19,16 +19,11 @@ export default function ChildrenPage() {
   const [nickname, setNickname] = useState("");
   const [age, setAge] = useState("");
 
-  useEffect(() => {
-    loadChildren();
-  }, []);
-
-  const loadChildren = async () => {
+  async function loadChildren() {
   const { data, error } = await getChildren();
 
   if (error) {
     console.error(error);
-    setChildren(fakeChildren);
     return;
   }
 
@@ -38,7 +33,27 @@ export default function ChildrenPage() {
   ];
 
   setChildren(combinedChildren);
-};
+}
+
+useEffect(() => {
+  async function fetchData() {
+    const { data, error } = await getChildren();
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    const combinedChildren = [
+      ...fakeChildren,
+      ...(data || []),
+    ];
+
+    setChildren(combinedChildren);
+  }
+
+  fetchData();
+}, []);
 
   const handleAddChild = async () => {
   if (!nickname || !age) return;
@@ -59,7 +74,8 @@ export default function ChildrenPage() {
 
   setNickname("");
   setAge("");
-
+  
+  await loadChildren();
   alert("Child added successfully!");
 };
 
