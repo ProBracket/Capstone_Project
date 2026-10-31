@@ -31,7 +31,7 @@ export default function HowItWorks() {
 
       <h2>The chatbot</h2>
       <p>
-        The chatbot at the center of Voice AI is built to teach, not just to
+        The chatbot at the center of ThinkFirst is built to teach, not just to
         answer. It is personalized to each child and specifically trained and
         practiced in pedagogy, meaning it follows sound teaching methods rather
         than simply handing out facts. Instead of giving away answers right
