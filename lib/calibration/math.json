@@ -1,0 +1,1471 @@
+{
+  "grade4": {
+    "primary": [
+        {
+      "number": 1,
+      "skill": "Place Value",
+      "type": "multiple_choice",
+      "question": "Take a look at this number: 33,640. Which number is in the place value of a hundred?",
+      "choices": {
+        "a": "3",
+        "b": "4",
+        "c": "6",
+        "d": "0"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 2,
+      "skill": "Fractions and Decimals",
+      "type": "multiple_choice",
+      "question": "The number 0.004 can also be represented as which fraction?",
+      "choices": {
+        "a": "4/10",
+        "b": "4/100",
+        "c": "100/4",
+        "d": "4/1000"
+      },
+      "answer": "d"
+    },
+    {
+      "number": 3,
+      "skill": "Addition",
+      "type": "short_answer",
+      "question": "Calculate: 6,438 + 2,357",
+      "keywords": ["8795"]
+    },
+    {
+      "number": 4,
+      "skill": "Subtraction",
+      "type": "short_answer",
+      "question": "Calculate: 84.75 - 29.48",
+      "keywords": ["55.27"]
+    },
+    {
+      "number": 5,
+      "skill": "Prime and Composite Numbers",
+      "type": "short_answer",
+      "question": "Is 29 a prime or composite number? Explain using its factors.",
+      "keywords": ["prime", "factors", "1", "29"]
+    },
+    {
+      "number": 6,
+      "skill": "Prime and Composite Numbers",
+      "type": "short_answer",
+      "question": "Is 36 a prime or composite number? Explain using its factors.",
+      "keywords": ["composite", "1", "2", "3", "4", "6", "9", "12", "18", "36"]
+    },
+    {
+      "number": 7,
+      "skill": "Multiplication",
+      "type": "short_answer",
+      "question": "Calculate: 36 × 7",
+      "keywords": ["252"]
+    },
+    {
+      "number": 8,
+      "skill": "Division",
+      "type": "short_answer",
+      "question": "Calculate: 864 ÷ 8",
+      "keywords": ["108"]
+    },
+    {
+      "number": 9,
+      "skill": "Equivalent Fractions",
+      "type": "multiple_choice",
+      "question": "Which fraction is equivalent to 1/2?",
+      "choices": {
+        "a": "2/3",
+        "b": "2/4",
+        "c": "3/4"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 10,
+      "skill": "Equivalent Fractions",
+      "type": "short_answer",
+      "question": "Fill in the missing number: 3/4 = ___/8",
+      "keywords": ["6"]
+    },
+    {
+      "number": 11,
+      "skill": "Percentages",
+      "type": "short_answer",
+      "question": "A jar contains 100 marbles. If 25 are blue, what percentage are blue?",
+      "keywords": ["25"]
+    },
+    {
+      "number": 12,
+      "skill": "Percentages",
+      "type": "multiple_choice",
+      "question": "What does 50% of a whole mean?",
+      "choices": {
+        "a": "One quarter",
+        "b": "One half",
+        "c": "The whole"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 13,
+      "skill": "Algebraic Thinking",
+      "type": "short_answer",
+      "question": "Fill in the missing number: 8 + 7 = 10 + ___",
+      "keywords": ["5"]
+    },
+    {
+      "number": 14,
+      "skill": "Algebraic Thinking",
+      "type": "short_answer",
+      "question": "Is this equation true or false? 6 × 4 = 20 + 4",
+      "keywords": ["true"]
+    },
+    {
+      "number": 15,
+      "skill": "Geometry",
+      "type": "short_answer",
+      "question": "A shape has 4 equal sides and 4 right angles. What shape is it?",
+      "keywords": ["square"]
+    },
+    {
+      "number": 16,
+      "skill": "Geometry",
+      "type": "short_answer",
+      "question": "What is the difference between a rectangle and a triangle? Give two geometric properties.",
+      "keywords": ["rectangle", "4 sides", "4 right angles", "triangle", "3 sides", "3 angles"]
+    },
+    {
+      "number": 17,
+      "skill": "Area",
+      "type": "multiple_choice",
+      "question": "A rectangle is 6 cm long and 4 cm wide. What is its area?",
+      "choices": {
+        "a": "10 cm",
+        "b": "2 cm",
+        "c": "24 cm²",
+        "d": "1.5 cm²"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 18,
+      "skill": "Area",
+      "type": "short_answer",
+      "question": "A square has sides that are 5 m long. What is its area?",
+      "keywords": ["25m squared"]
+    },
+    {
+      "number": 19,
+      "skill": "Angles",
+      "type": "short_answer",
+      "question": "An angle measures 90°. What type of angle is it?",
+      "keywords": ["right", "angle"]
+    },
+    {
+      "number": 20,
+      "skill": "Angles",
+      "type": "short_answer",
+      "question": "Which angle is larger: 45° or 120°?",
+      "keywords": ["120"]
+    },
+    {
+      "number": 21,
+      "skill": "Patterns",
+      "type": "short_answer",
+      "question": "Find the next two numbers: 5, 10, 15, 20, ___, ___",
+      "keywords": ["25", "30"]
+    },
+    {
+      "number": 22,
+      "skill": "Patterns",
+      "type": "short_answer",
+      "question": "Find the next two numbers: 2, 4, 8, 16, ___, ___",
+      "keywords": ["32", "64"]
+    },
+    {
+      "number": 23,
+      "skill": "Time",
+      "type": "short_answer",
+      "question": "A movie starts at 2:15 p.m. and ends at 3:45 p.m. How long is the movie?",
+      "keywords": ["1 hour", "30 minutes"]
+    },
+    {
+      "number": 24,
+      "skill": "Time",
+      "type": "short_answer",
+      "question": "Soccer practice lasts 75 minutes. How many hours and minutes is that?",
+      "keywords": ["1 hour", "15 minutes"]
+    },
+    {
+      "number": 25,
+      "skill": "Data and Graphs",
+      "type": "short_answer",
+      "question": "A graph uses the scale 1 square = 5 students. It has a bar that is 4 squares high. How many students does it represent?",
+      "keywords": ["20"]
+    },
+    {
+      "number": 26,
+      "skill": "Data and Graphs",
+      "type": "multiple_choice",
+      "question": "A graph uses the scale 1 square = $2. A bar on it reaches 30. How many squares tall is it, and what does the bar represent?",
+      "choices": {
+        "a": "15 squares tall, it represents $15",
+        "b": "2 squares tall, it represents $30",
+        "c": "30 squares tall, it represents $2",
+        "d": "15 squares tall, it represents $30"
+      },
+      "answer": "d"
+    }
+  ],
+  "secondChance": [
+    {
+      "number": 27,
+      "skill": "Prime and Composite Numbers",
+      "type": "short_answer",
+      "question": "What are prime numbers? What are composite numbers?",
+      "keywords": [
+        "prime",
+        "two factors",
+        "composite",
+        "more than two factors"
+      ]
+    },
+    {
+      "number": 28,
+      "skill": "Area",
+      "type": "multiple_choice",
+      "question": "What is this formula for? A = L × W",
+      "choices": {
+        "a": "Area of a triangle",
+        "b": "Area of a rectangle",
+        "c": "Volume of a cube",
+        "d": "Area of a square"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 29,
+      "skill": "Division",
+      "type": "multiple_choice",
+      "question": "Solve: 864 ÷ 8",
+      "choices": {
+        "a": "18",
+        "b": "108",
+        "c": "118",
+        "d": "128"
+      },
+      "answer": "b"
+    }
+  ]
+},
+
+  "grade5": {
+    "primary": [
+        {
+      "number": 1,
+      "skill": "Place Value",
+      "type": "short_answer",
+      "question": "What is the value of the 7 in 472,615?",
+      "keywords": ["70000"]
+    },
+    {
+      "number": 2,
+      "skill": "Decimals",
+      "type": "short_answer",
+      "question": "Which digit is in the hundredths place in 38.724?",
+      "keywords": ["2"]
+    },
+    {
+      "number": 3,
+      "skill": "Addition",
+      "type": "short_answer",
+      "question": "Calculate: 348,629 + 216,745",
+      "keywords": ["565374"]
+    },
+    {
+      "number": 4,
+      "skill": "Subtraction",
+      "type": "short_answer",
+      "question": "Calculate: 72.845 − 19.327",
+      "keywords": ["53.518"]
+    },
+    {
+      "number": 5,
+      "skill": "Divisibility",
+      "type": "multiple_choice",
+      "question": "Is 36 divisible by 4?",
+      "choices": {
+        "a": "Yes",
+        "b": "No"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 6,
+      "skill": "Divisibility",
+      "type": "multiple_choice",
+      "question": "Which number is divisible by 5?",
+      "choices": {
+        "a": "42",
+        "b": "53",
+        "c": "65",
+        "d": "78"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 7,
+      "skill": "Multiplication",
+      "type": "short_answer",
+      "question": "Calculate: 248 × 6",
+      "keywords": ["1488"]
+    },
+    {
+      "number": 8,
+      "skill": "Division",
+      "type": "short_answer",
+      "question": "Calculate: 3,600 ÷ 9",
+      "keywords": ["400"]
+    },
+    {
+      "number": 9,
+      "skill": "Fractions",
+      "type": "multiple_choice",
+      "question": "Which is an improper fraction?",
+      "choices": {
+        "a": "2/5",
+        "b": "4/7",
+        "c": "7/3",
+        "d": "3/8"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 10,
+      "skill": "Fractions",
+      "type": "short_answer",
+      "question": "Convert 7/4 to a mixed number.",
+      "keywords": ["1", "3/4"]
+    },
+    {
+      "number": 11,
+      "skill": "Adding Fractions",
+      "type": "short_answer",
+      "question": "Calculate: 3/8 + 2/8",
+      "keywords": ["5/8"]
+    },
+    {
+      "number": 12,
+      "skill": "Subtracting Fractions",
+      "type": "short_answer",
+      "question": "Calculate: 7/10 − 3/10",
+      "keywords": ["4/10"]
+    },
+    {
+      "number": 13,
+      "skill": "Ratios",
+      "type": "short_answer",
+      "question": "A basket has 3 red apples and 5 green apples. What is the ratio of red apples to green apples?",
+      "keywords": ["3:5"]
+    },
+    {
+      "number": 14,
+      "skill": "Ratios",
+      "type": "multiple_choice",
+      "question": "There are 4 cats and 2 dogs. What is the ratio of cats to dogs?",
+      "choices": {
+        "a": "2:4",
+        "b": "4:2",
+        "c": "4:6",
+        "d": "2:6"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 15,
+      "skill": "Algebra",
+      "type": "multiple_choice",
+      "question": "Which expression means 5 more than a number, n?",
+      "choices": {
+        "a": "n − 5",
+        "b": "5n",
+        "c": "n + 5",
+        "d": "n ÷ 5"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 16,
+      "skill": "Algebra",
+      "type": "short_answer",
+      "question": "If n = 4, what is 3 × n + 2?",
+      "keywords": ["14"]
+    },
+    {
+      "number": 17,
+      "skill": "Symmetry",
+      "type": "short_answer",
+      "question": "How many lines of symmetry does a square have?",
+      "keywords": ["4"]
+    },
+    {
+      "number": 18,
+      "skill": "Symmetry",
+      "type": "multiple_choice",
+      "question": "Which shape always has at least one line of symmetry?",
+      "choices": {
+        "a": "Square",
+        "b": "Scalene triangle",
+        "c": "Irregular quadrilateral"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 19,
+      "skill": "Coordinate Geometry",
+      "type": "short_answer",
+      "question": "A point is located at (3, 5). What is its x-coordinate?",
+      "keywords": ["3"]
+    },
+    {
+      "number": 20,
+      "skill": "Coordinate Geometry",
+      "type": "multiple_choice",
+      "question": "Which point is 2 units right and 4 units up from the origin?",
+      "choices": {
+        "a": "(4, 2)",
+        "b": "(2, 4)",
+        "c": "(2, 2)",
+        "d": "(4, 4)"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 21,
+      "skill": "Area",
+      "type": "short_answer",
+      "question": "A rectangle is 9 cm long and 4 cm wide. What is its area?",
+      "keywords": ["36"]
+    },
+    {
+      "number": 22,
+      "skill": "Area",
+      "type": "short_answer",
+      "question": "A square has sides measuring 7 m. What is its area?",
+      "keywords": ["49"]
+    },
+    {
+      "number": 23,
+      "skill": "Patterns",
+      "type": "short_answer",
+      "question": "Find the next two numbers: 6, 11, 16, 21, __, __",
+      "keywords": ["26", "31"]
+    },
+    {
+      "number": 24,
+      "skill": "Patterns",
+      "type": "short_answer",
+      "question": "What is the 6th term of this sequence? 4, 8, 12, 16, ...",
+      "keywords": ["24"]
+    },
+    {
+      "number": 25,
+      "skill": "Data Analysis",
+      "type": "short_answer",
+      "question": "A survey shows: Dogs = 12, Cats = 8, Fish = 5. Which pet has the highest frequency?",
+      "keywords": ["dogs"]
+    },
+    {
+      "number": 26,
+      "skill": "Data Analysis",
+      "type": "short_answer",
+      "question": "Using the same data, how many more students chose dogs than fish?",
+      "keywords": ["7"]
+    }
+    ],
+    "secondChance": [
+      {
+    "number": 27,
+    "skill": "Multiplication",
+    "type": "short_answer",
+    "question": "Calculate: 125 × 8",
+    "keywords": ["1000"]
+  },
+  {
+    "number": 28,
+    "skill": "Adding Fractions",
+    "type": "short_answer",
+    "question": "Calculate: 5/9 + 3/9",
+    "keywords": ["8/9"]
+  },
+  {
+    "number": 29,
+    "skill": "Patterns",
+    "type": "short_answer",
+    "question": "Find the next number: 7, 12, 17, 22, ___",
+    "keywords": ["27"]
+  }  
+    ]
+  },
+  "grade6": {
+    "primary": [
+        {
+      "number": 1,
+      "skill": "Decimal Addition",
+      "type": "multiple_choice",
+      "question": "What is 3.75 + 2.48?",
+      "choices": {
+        "a": "5.13",
+        "b": "6.23",
+        "c": "6.13",
+        "d": "6.33"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 2,
+      "skill": "Multiplication with Decimals",
+      "type": "multiple_choice",
+      "question": "A class buys 6 notebooks for $4.25 each. What is the total cost?",
+      "choices": {
+        "a": "$10.25",
+        "b": "$24.50",
+        "c": "$25.50",
+        "d": "$26.25"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 3,
+      "skill": "Adding Fractions",
+      "type": "multiple_choice",
+      "question": "What is 5/8 + 1/8?",
+      "choices": {
+        "a": "6/16",
+        "b": "3/4",
+        "c": "1/2",
+        "d": "7/8"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 4,
+      "skill": "Fraction Multiplication",
+      "type": "multiple_choice",
+      "question": "What is 3 × 2/5?",
+      "choices": {
+        "a": "5/5",
+        "b": "6/15",
+        "c": "6/5",
+        "d": "2/15"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 5,
+      "skill": "Algebraic Equations",
+      "type": "multiple_choice",
+      "question": "Solve: x + 17 = 42.",
+      "choices": {
+        "a": "25",
+        "b": "59",
+        "c": "35",
+        "d": "24"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 6,
+      "skill": "Area",
+      "type": "multiple_choice",
+      "question": "A rectangular garden is 8 m long and 5 m wide. What is its area?",
+      "choices": {
+        "a": "13 m²",
+        "b": "26 m²",
+        "c": "40 m²",
+        "d": "80 m²"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 7,
+      "skill": "Volume",
+      "type": "multiple_choice",
+      "question": "A rectangular box measures 4 cm × 3 cm × 5 cm. What is its volume?",
+      "choices": {
+        "a": "12 cm³",
+        "b": "20 cm³",
+        "c": "60 cm³",
+        "d": "120 cm³"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 8,
+      "skill": "Division",
+      "type": "multiple_choice",
+      "question": "What is 864 ÷ 12?",
+      "choices": {
+        "a": "62",
+        "b": "72",
+        "c": "82",
+        "d": "92"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 9,
+      "skill": "Interpreting Data",
+      "type": "multiple_choice",
+      "question": "A survey shows 12 students walk, 8 bike, and 5 ride the bus. How many students were surveyed?",
+      "choices": {
+        "a": "20",
+        "b": "25",
+        "c": "30",
+        "d": "35"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 10,
+      "skill": "Integers",
+      "type": "multiple_choice",
+      "question": "Which integer is 4 units below zero on a number line?",
+      "choices": {
+        "a": "4",
+        "b": "0",
+        "c": "-4",
+        "d": "-8"
+      },
+      "answer": "c"
+    },
+    {"number": 11,
+      "skill": "Percentages",
+      "type": "multiple_choice",
+      "question": "What is 20% of 150?",
+      "choices": {
+        "a": "15",
+        "b": "20",
+        "c": "30",
+        "d": "75"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 12,
+      "skill": "Ratios and Proportional Reasoning",
+      "type": "multiple_choice",
+      "question": "The ratio of boys to girls in a club is 4:5. If there are 20 boys, how many girls are there?",
+      "choices": {
+        "a": "16",
+        "b": "20",
+        "c": "24",
+        "d": "25"
+      },
+      "answer": "d"
+    },
+    {
+      "number": 13,
+      "skill": "Perimeter",
+      "type": "multiple_choice",
+      "question": "What is the perimeter of a rectangle that is 7 m long and 4 m wide?",
+      "choices": {
+        "a": "11 m",
+        "b": "22 m",
+        "c": "28 m",
+        "d": "35 m"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 14,
+      "skill": "Coordinate Geometry",
+      "type": "multiple_choice",
+      "question": "Which point is located at (-2, 3)?",
+      "choices": {
+        "a": "2 units right and 3 units up",
+        "b": "2 units left and 3 units up",
+        "c": "2 units left and 3 units down",
+        "d": "2 units right and 3 units down"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 15,
+      "skill": "Patterns",
+      "type": "multiple_choice",
+      "question": "What is the next number in the pattern: 5, 10, 20, 40, ___ ?",
+      "choices": {
+        "a": "45",
+        "b": "60",
+        "c": "70",
+        "d": "80"
+      },
+      "answer": "d"
+
+    }
+    ],
+    "secondChance": [
+ {
+    "number": 16,
+    "skill": "Fractions",
+    "type": "multiple_choice",
+    "question": "What is 1/2 + 1/4?",
+    "choices": {
+      "a": "2/6",
+      "b": "3/4",
+      "c": "2/4",
+      "d": "3/8"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 17,
+    "skill": "Algebraic Equations",
+    "type": "multiple_choice",
+    "question": "Solve: x + 8 = 15",
+    "choices": {
+      "a": "5",
+      "b": "6",
+      "c": "7",
+      "d": "8"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 18,
+    "skill": "Area",
+    "type": "multiple_choice",
+    "question": "What is the area of a rectangle that is 6 cm long and 2 cm wide?",
+    "choices": {
+      "a": "8 cm²",
+      "b": "10 cm²",
+      "c": "12 cm²",
+      "d": "16 cm²"
+    },
+    "answer": "c"
+  }
+    ]
+  },
+  "grade7": {
+    "primary": [
+{
+    "number": 1,
+    "skill": "Integer Operations",
+    "type": "multiple_choice",
+    "question": "What is -8 + 13?",
+    "choices": {
+      "a": "-21",
+      "b": "-5",
+      "c": "5",
+      "d": "21"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 2,
+    "skill": "Integer Multiplication",
+    "type": "multiple_choice",
+    "question": "What is (-4) × 6?",
+    "choices": {
+      "a": "-24",
+      "b": "-10",
+      "c": "10",
+      "d": "24"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "skill": "Fraction Multiplication",
+    "type": "multiple_choice",
+    "question": "What is 3/4 × 2/3?",
+    "choices": {
+      "a": "1/2",
+      "b": "5/7",
+      "c": "6/7",
+      "d": "3/2"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 4,
+    "skill": "Fraction Division",
+    "type": "multiple_choice",
+    "question": "What is 5/6 ÷ 1/3?",
+    "choices": {
+      "a": "5/18",
+      "b": "5/3",
+      "c": "5/2",
+      "d": "2/5"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 5,
+    "skill": "Equations with Variables on Both Sides",
+    "type": "multiple_choice",
+    "question": "Solve: 3x + 4 = x + 18.",
+    "choices": {
+      "a": "5",
+      "b": "7",
+      "c": "9",
+      "d": "11"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "skill": "Circumference",
+    "type": "multiple_choice",
+    "question": "A circle has a diameter of 10 cm. Using π ≈ 3.14, what is its circumference?",
+    "choices": {
+      "a": "15.7 cm",
+      "b": "31.4 cm",
+      "c": "78.5 cm",
+      "d": "314 cm"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 7,
+    "skill": "Area of a Circle",
+    "type": "multiple_choice",
+    "question": "What is the area of a circle with radius 3 cm, using π ≈ 3.14?",
+    "choices": {
+      "a": "9.42 cm²",
+      "b": "18.84 cm²",
+      "c": "28.26 cm²",
+      "d": "56.52 cm²"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 8,
+    "skill": "Volume of Prisms",
+    "type": "multiple_choice",
+    "question": "A rectangular prism is 5 cm long, 4 cm wide, and 3 cm high. What is its volume?",
+    "choices": {
+      "a": "12 cm³",
+      "b": "20 cm³",
+      "c": "47 cm³",
+      "d": "60 cm³"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 9,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A fair six-sided die is rolled once. What is the theoretical probability of rolling an even number?",
+    "choices": {
+      "a": "1/6",
+      "b": "1/3",
+      "c": "1/2",
+      "d": "2/3"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 10,
+    "skill": "Relations and Range",
+    "type": "multiple_choice",
+    "question": "For the relation {(1, 3), (2, 5), (3, 7)}, what is the range?",
+    "choices": {
+      "a": "{1, 2, 3}",
+      "b": "{3, 5, 7}",
+      "c": "{1, 3, 5}",
+      "d": "{2, 3, 7}"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 11,
+    "skill": "Percents",
+    "type": "multiple_choice",
+    "question": "A video game costs $40. It is discounted by 25%. What is the sale price?",
+    "choices": {
+      "a": "$10",
+      "b": "$20",
+      "c": "$30",
+      "d": "$50"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 12,
+    "skill": "Unit Rates",
+    "type": "multiple_choice",
+    "question": "A car travels 180 km in 3 hours. What is its average speed?",
+    "choices": {
+      "a": "30 km/h",
+      "b": "60 km/h",
+      "c": "90 km/h",
+      "d": "540 km/h"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 13,
+    "skill": "Solving Equations",
+    "type": "multiple_choice",
+    "question": "Solve: 2x + 5 = 17",
+    "choices": {
+      "a": "5",
+      "b": "6",
+      "c": "7",
+      "d": "11"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 14,
+    "skill": "Circle Geometry",
+    "type": "multiple_choice",
+    "question": "A circle has a radius of 4 cm. What is its diameter?",
+    "choices": {
+      "a": "2 cm",
+      "b": "4 cm",
+      "c": "8 cm",
+      "d": "16 cm"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 15,
+    "skill": "Statistics",
+    "type": "multiple_choice",
+    "question": "What is the mean of 5, 7, 9, and 11?",
+    "choices": {
+      "a": "7",
+      "b": "8",
+      "c": "9",
+      "d": "10"
+    },
+    "answer": "b"
+  }
+    ],
+    "secondChance": [
+        {
+    "number": 16,
+    "skill": "Solving Equations",
+    "type": "multiple_choice",
+    "question": "Solve: x − 4 = 9",
+    "choices": {
+      "a": "5",
+      "b": "9",
+      "c": "13",
+      "d": "15"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 17,
+    "skill": "Fraction Multiplication",
+    "type": "multiple_choice",
+    "question": "What is 1/2 × 1/4?",
+    "choices": {
+      "a": "1/8",
+      "b": "1/6",
+      "c": "2/8",
+      "d": "3/4"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 18,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A fair six-sided die is rolled. What is the probability of rolling a 3?",
+    "choices": {
+      "a": "1/2",
+      "b": "1/3",
+      "c": "1/6",
+      "d": "3/6"
+    },
+    "answer": "c"
+  }
+    ]
+  },
+  "grade8": {
+    "primary": [
+        {
+    "number": 1,
+    "skill": "Square Roots",
+    "type": "multiple_choice",
+    "question": "What is √144?",
+    "choices": {
+      "a": "10",
+      "b": "11",
+      "c": "12",
+      "d": "14"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 2,
+    "skill": "Pythagorean Theorem",
+    "type": "multiple_choice",
+    "question": "A right triangle has sides 6 cm and 8 cm. What is the length of the hypotenuse?",
+    "choices": {
+      "a": "10 cm",
+      "b": "12 cm",
+      "c": "14 cm",
+      "d": "16 cm"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "skill": "Scientific Notation",
+    "type": "multiple_choice",
+    "question": "Which number is written in scientific notation?",
+    "choices": {
+      "a": "4500",
+      "b": "4.5 × 10³",
+      "c": "0.0045",
+      "d": "45 × 100"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 4,
+    "skill": "Linear Equations",
+    "type": "multiple_choice",
+    "question": "Solve: 2x + 6 = 18",
+    "choices": {
+      "a": "4",
+      "b": "5",
+      "c": "6",
+      "d": "7"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 5,
+    "skill": "Slope",
+    "type": "multiple_choice",
+    "question": "What is the slope of the line passing through (2, 3) and (6, 11)?",
+    "choices": {
+      "a": "1",
+      "b": "2",
+      "c": "3",
+      "d": "4"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "skill": "Transformations",
+    "type": "multiple_choice",
+    "question": "What transformation slides a figure without turning or flipping it?",
+    "choices": {
+      "a": "Translation",
+      "b": "Rotation",
+      "c": "Reflection",
+      "d": "Dilation"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 7,
+    "skill": "Surface Area",
+    "type": "multiple_choice",
+    "question": "What is the surface area of a cube with side length 3 cm?",
+    "choices": {
+      "a": "9 cm²",
+      "b": "18 cm²",
+      "c": "27 cm²",
+      "d": "54 cm²"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 8,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A bag contains 5 red, 3 blue, and 2 green marbles. What is the probability of drawing a blue marble?",
+    "choices": {
+      "a": "3/10",
+      "b": "1/5",
+      "c": "1/2",
+      "d": "3/5"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 9,
+    "skill": "Scatter Plots",
+    "type": "multiple_choice",
+    "question": "A scatter plot shows points rising from left to right. What type of relationship does it suggest?",
+    "choices": {
+      "a": "Negative correlation",
+      "b": "No correlation",
+      "c": "Positive correlation",
+      "d": "Exponential decay"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 10,
+    "skill": "Integers",
+    "type": "multiple_choice",
+    "question": "What is (-7) + 12?",
+    "choices": {
+      "a": "-19",
+      "b": "-5",
+      "c": "5",
+      "d": "19"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 11,
+    "skill": "Percent Increase",
+    "type": "multiple_choice",
+    "question": "A bicycle costs $200. Its price increases by 10%. What is the new price?",
+    "choices": {
+      "a": "$210",
+      "b": "$220",
+      "c": "$230",
+      "d": "$240"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 12,
+    "skill": "Ratios",
+    "type": "multiple_choice",
+    "question": "A recipe uses flour and sugar in a ratio of 4:3. If 12 cups of flour are used, how much sugar is needed?",
+    "choices": {
+      "a": "8 cups",
+      "b": "9 cups",
+      "c": "12 cups",
+      "d": "16 cups"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 13,
+    "skill": "Linear Equations",
+    "type": "multiple_choice",
+    "question": "Solve: 3x - 7 = 14",
+    "choices": {
+      "a": "5",
+      "b": "6",
+      "c": "7",
+      "d": "8"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 14,
+    "skill": "Surface Area",
+    "type": "multiple_choice",
+    "question": "What is the surface area of a cube with side length 4 cm?",
+    "choices": {
+      "a": "16 cm²",
+      "b": "24 cm²",
+      "c": "64 cm²",
+      "d": "96 cm²"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 15,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A bag contains 3 red and 2 blue marbles. What is the probability of drawing a blue marble?",
+    "choices": {
+      "a": "2/5",
+      "b": "3/5",
+      "c": "1/2",
+      "d": "2/3"
+    },
+    "answer": "a"
+  }
+    ],
+    "secondChance": [
+        {
+    "number": 16,
+    "skill": "Square Roots",
+    "type": "multiple_choice",
+    "question": "What is √81?",
+    "choices": {
+      "a": "7",
+      "b": "8",
+      "c": "9",
+      "d": "10"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 17,
+    "skill": "Integers",
+    "type": "multiple_choice",
+    "question": "What is (-3) × 4?",
+    "choices": {
+      "a": "-12",
+      "b": "-7",
+      "c": "7",
+      "d": "12"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 18,
+    "skill": "Pythagorean Theorem",
+    "type": "multiple_choice",
+    "question": "A right triangle has sides 3 cm and 4 cm. What is the hypotenuse?",
+    "choices": {
+      "a": "5 cm",
+      "b": "6 cm",
+      "c": "7 cm",
+      "d": "12 cm"
+    },
+    "answer": "a"
+  }
+    ]
+  },
+  "grade9": {
+    "primary": [
+  {
+    "number": 1,
+    "skill": "Square Roots",
+    "type": "multiple_choice",
+    "question": "What is √144?",
+    "choices": {
+      "a": "10",
+      "b": "11",
+      "c": "12",
+      "d": "14"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 2,
+    "skill": "Pythagorean Theorem",
+    "type": "multiple_choice",
+    "question": "A right triangle has sides 6 cm and 8 cm. What is the length of the hypotenuse?",
+    "choices": {
+      "a": "10 cm",
+      "b": "12 cm",
+      "c": "14 cm",
+      "d": "16 cm"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "skill": "Scientific Notation",
+    "type": "multiple_choice",
+    "question": "Which number is written in scientific notation?",
+    "choices": {
+      "a": "4500",
+      "b": "4.5 × 10³",
+      "c": "0.0045",
+      "d": "45 × 100"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 4,
+    "skill": "Linear Equations",
+    "type": "multiple_choice",
+    "question": "Solve: 2x + 6 = 18",
+    "choices": {
+      "a": "4",
+      "b": "5",
+      "c": "6",
+      "d": "7"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 5,
+    "skill": "Slope",
+    "type": "multiple_choice",
+    "question": "What is the slope of the line passing through (2, 3) and (6, 11)?",
+    "choices": {
+      "a": "1",
+      "b": "2",
+      "c": "3",
+      "d": "4"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "skill": "Transformations",
+    "type": "multiple_choice",
+    "question": "What transformation slides a figure without turning or flipping it?",
+    "choices": {
+      "a": "Translation",
+      "b": "Rotation",
+      "c": "Reflection",
+      "d": "Dilation"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 7,
+    "skill": "Surface Area",
+    "type": "multiple_choice",
+    "question": "What is the surface area of a cube with side length 3 cm?",
+    "choices": {
+      "a": "9 cm²",
+      "b": "18 cm²",
+      "c": "27 cm²",
+      "d": "54 cm²"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 8,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A bag contains 5 red, 3 blue, and 2 green marbles. What is the probability of drawing a blue marble?",
+    "choices": {
+      "a": "3/10",
+      "b": "1/5",
+      "c": "1/2",
+      "d": "3/5"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 9,
+    "skill": "Scatter Plots",
+    "type": "multiple_choice",
+    "question": "A scatter plot shows points rising from left to right. What type of relationship does it suggest?",
+    "choices": {
+      "a": "Negative correlation",
+      "b": "No correlation",
+      "c": "Positive correlation",
+      "d": "Exponential decay"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 10,
+    "skill": "Integers",
+    "type": "multiple_choice",
+    "question": "What is (-7) + 12?",
+    "choices": {
+      "a": "-19",
+      "b": "-5",
+      "c": "5",
+      "d": "19"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 11,
+    "skill": "Percent Increase",
+    "type": "multiple_choice",
+    "question": "A bicycle costs $200. Its price increases by 10%. What is the new price?",
+    "choices": {
+      "a": "$210",
+      "b": "$220",
+      "c": "$230",
+      "d": "$240"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 12,
+    "skill": "Ratios",
+    "type": "multiple_choice",
+    "question": "A recipe uses flour and sugar in a ratio of 4:3. If 12 cups of flour are used, how much sugar is needed?",
+    "choices": {
+      "a": "8 cups",
+      "b": "9 cups",
+      "c": "12 cups",
+      "d": "16 cups"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 13,
+    "skill": "Linear Equations",
+    "type": "multiple_choice",
+    "question": "Solve: 3x - 7 = 14",
+    "choices": {
+      "a": "5",
+      "b": "6",
+      "c": "7",
+      "d": "8"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 14,
+    "skill": "Surface Area",
+    "type": "multiple_choice",
+    "question": "What is the surface area of a cube with side length 4 cm?",
+    "choices": {
+      "a": "16 cm²",
+      "b": "24 cm²",
+      "c": "64 cm²",
+      "d": "96 cm²"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 15,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A bag contains 3 red and 2 blue marbles. What is the probability of drawing a blue marble?",
+    "choices": {
+      "a": "2/5",
+      "b": "3/5",
+      "c": "1/2",
+      "d": "2/3"
+    },
+    "answer": "a"
+  }
+    ],
+    "secondChance": [
+        {
+    "number": 16,
+    "skill": "Linear Equations",
+    "type": "multiple_choice",
+    "question": "Solve: x + 5 = 12",
+    "choices": {
+      "a": "5",
+      "b": "6",
+      "c": "7",
+      "d": "8"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 17,
+    "skill": "Probability",
+    "type": "multiple_choice",
+    "question": "A coin is flipped once. What is the probability of getting heads?",
+    "choices": {
+      "a": "1/4",
+      "b": "1/3",
+      "c": "1/2",
+      "d": "1"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 18,
+    "skill": "Square Roots",
+    "type": "multiple_choice",
+    "question": "What is √64?",
+    "choices": {
+      "a": "6",
+      "b": "7",
+      "c": "8",
+      "d": "9"
+    },
+    "answer": "c"
+  }
+    ]
+  }
+}

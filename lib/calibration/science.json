@@ -1,0 +1,296 @@
+{
+  "grade4": {
+    "primary": [{
+      "number": 1,
+      "skill": "Waste and Recycling",
+      "type": "multiple_choice",
+      "question": "Which item should be handled carefully because it can contain dangerous materials?",
+      "choices": {
+        "a": "Apple core",
+        "b": "Used battery",
+        "c": "Cardboard",
+        "d": "Paper"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 2,
+      "skill": "Waste and Recycling",
+      "type": "short_answer",
+      "question": "What is one way to reduce the amount of waste going into the environment?",
+      "keywords": [
+        "recycling",
+        "reuse",
+        "reduce waste",
+        "donate",
+        "compost"
+      ]
+    },
+    {
+      "number": 3,
+      "skill": "Forces",
+      "type": "multiple_choice",
+      "question": "Which is an example of a force acting without physical contact?",
+      "choices": {
+        "a": "Kicking a ball",
+        "b": "Pushing a chair",
+        "c": "A magnet attracting a paper clip",
+        "d": "Pulling a wagon"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 4,
+      "skill": "Forces",
+      "type": "short_answer",
+      "question": "What force pulls objects towards Earth?",
+      "keywords": ["gravity"]
+    },
+    {
+      "number": 5,
+      "skill": "Earth Systems",
+      "type": "multiple_choice",
+      "question": "Which example shows two Earth systems interacting?",
+      "choices": {
+        "a": "A ball rolling",
+        "b": "A pencil on a desk",
+        "c": "A lamp turning on",
+        "d": "Rain soaking into soil"
+      },
+      "answer": "d"
+    },
+    {
+      "number": 6,
+      "skill": "Earth Systems",
+      "type": "short_answer",
+      "question": "What substance found in Earth's systems is necessary for plants and animals to survive?",
+      "keywords": ["water"]
+    },
+    {
+      "number": 7,
+      "skill": "Animal Adaptations",
+      "type": "multiple_choice",
+      "question": "How do webbed feet help a duck survive?",
+      "choices": {
+        "a": "They help it swim",
+        "b": "They help it hear",
+        "c": "They help it breathe",
+        "d": "They help it see"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 8,
+      "skill": "Animal Adaptations",
+      "type": "short_answer",
+      "question": "Which external structure helps a bird collect and eat food?",
+      "keywords": ["beak"]
+    },
+    {
+      "number": 9,
+      "skill": "Space",
+      "type": "multiple_choice",
+      "question": "Which object provides Earth with light and heat?",
+      "choices": {
+        "a": "Moon",
+        "b": "Sun",
+        "c": "Mars",
+        "d": "Comet"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 10,
+      "skill": "Space",
+      "type": "short_answer",
+      "question": "What object naturally orbits Earth?",
+      "keywords": ["moon"]
+    },
+    {
+      "number": 11,
+      "skill": "Design Process",
+      "type": "multiple_choice",
+      "question": "What should you do first when designing something to solve a problem?",
+      "choices": {
+        "a": "Identify the need",
+        "b": "Build immediately",
+        "c": "Skip planning",
+        "d": "Copy another design"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 12,
+      "skill": "Design Process",
+      "type": "multiple_choice",
+      "question": "Why is testing a design important?",
+      "choices": {
+        "a": "To find improvements",
+        "b": "To avoid planning",
+        "c": "To make it colourful",
+        "d": "To avoid changes"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 13,
+      "skill": "Scientific Evidence",
+      "type": "multiple_choice",
+      "question": "Which is an example of scientific evidence?",
+      "choices": {
+        "a": "A guess",
+        "b": "An opinion",
+        "c": "Measurements from an experiment",
+        "d": "A favourite answer"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 14,
+      "skill": "Scientific Evidence",
+      "type": "multiple_choice",
+      "question": "Why do scientists repeat experiments?",
+      "choices": {
+        "a": "To prove every prediction correct",
+        "b": "To avoid recording results",
+        "c": "To change the question",
+        "d": "To gather more evidence"
+      },
+      "answer": "d"
+    },
+    {
+      "number": 15,
+      "skill": "Environmental Safety",
+      "type": "multiple_choice",
+      "question": "Which action is safest for disposing of old paint?",
+      "choices": {
+        "a": "Pour it outside",
+        "b": "Pour it down the sink",
+        "c": "Take it to an approved disposal location",
+        "d": "Leave it in a park"
+      },
+      "answer": "c"
+    },
+    {
+      "number": 16,
+      "skill": "Magnetism",
+      "type": "multiple_choice",
+      "question": "Which object can a magnet attract without touching it?",
+      "choices": {
+        "a": "Iron nail",
+        "b": "Plastic cup",
+        "c": "Wooden block",
+        "d": "Rubber ball"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 17,
+      "skill": "Earth Systems",
+      "type": "multiple_choice",
+      "question": "Which Earth system contains the air around Earth?",
+      "choices": {
+        "a": "Ocean",
+        "b": "Atmosphere",
+        "c": "Soil",
+        "d": "Rocks"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 18,
+      "skill": "Animal Adaptations",
+      "type": "multiple_choice",
+      "question": "What external structure helps a fish move through water?",
+      "choices": {
+        "a": "Fins",
+        "b": "Fur",
+        "c": "Beak",
+        "d": "Claws"
+      },
+      "answer": "a"
+    },
+    {
+      "number": 19,
+      "skill": "Space",
+      "type": "multiple_choice",
+      "question": "Which object is a planet?",
+      "choices": {
+        "a": "Sun",
+        "b": "Earth",
+        "c": "Moon",
+        "d": "Asteroid"
+      },
+      "answer": "b"
+    },
+    {
+      "number": 20,
+      "skill": "Design Process",
+      "type": "multiple_choice",
+      "question": "After testing a design and finding a problem, what should you do next?",
+      "choices": {
+        "a": "Ignore it",
+        "b": "Start an unrelated project",
+        "c": "Stop testing",
+        "d": "Improve the design"
+      },
+      "answer": "d"
+    },
+    {
+      "number": 21,
+      "skill": "Scientific Evidence",
+      "type": "multiple_choice",
+      "question": "A scientist measures plant growth every day. What is being collected?",
+      "choices": {
+        "a": "Evidence",
+        "b": "Opinions",
+        "c": "Guesses",
+        "d": "Beliefs"
+      },
+      "answer": "a"
+    }
+  ],
+    "secondChance": [
+        {
+      "number": 22,
+      "skill": "Forces",
+      "type": "short_answer",
+      "question": "What force makes an object fall towards the ground?",
+      "keywords": ["gravity"]
+    },
+    {
+      "number": 23,
+      "skill": "Space",
+      "type": "multiple_choice",
+      "question": "Which object is a star?",
+      "choices": {
+        "a": "Earth",
+        "b": "Moon",
+        "c": "Sun",
+        "d": "Mars"
+      },
+      "answer": "c"
+    }
+    ]
+  },
+  "grade5": {
+    "primary": [],
+    "secondChance": []
+  },
+  "grade6": {
+    "primary": [],
+    "secondChance": []
+  },
+  "grade7": {
+    "primary": [],
+    "secondChance": []
+  },
+  "grade8": {
+    "primary": [],
+    "secondChance": []
+  },
+  "grade9": {
+    "primary": [],
+    "secondChance": []
+  }
+}
