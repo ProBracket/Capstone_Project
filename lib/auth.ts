@@ -34,7 +34,27 @@ export function signInWithEmail(email: string, password: string) {
     password: password,
   });
 }
-
+/** Creates a new account with a name, email and password.
+ * Returns { data: { user, session }, error }.
+ * - session is set → the parent is logged in right away
+ * - session is null → Supabase sent a confirmation email first
+ */
+export function signUpWithEmail(
+  fullName: string,
+  email: string,
+  password: string
+) {
+  return supabase.auth.signUp({
+    // remove accidental spaces before/after the email
+    email: email.trim(),
+    password: password,
+    options: {
+      // saved on the account so the Parent Profile page
+      // can show the name (lib/profile.ts reads full_name)
+      data: { full_name: fullName.trim() },
+    },
+  });
+}
 /** Ends the current session. Returns { error }; error is null on success. */
 export function signOut() {
   return supabase.auth.signOut();
