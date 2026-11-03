@@ -55,15 +55,21 @@ export default function SignUpPage() {
       return;
     }
 
-    // Supabase needs at least 6 characters
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    // Supabase needs at least 8 characters
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
 
     // both passwords must match
-    if (password !== confirm) {
+    if (password !== confirm) { 
       setError("Passwords do not match.");
+      return;
+    }
+
+    // password complexity
+    if (/[a-z]/.test(password) === false || /[A-Z]/.test(password) === false || /[0-9]/.test(password) === false) {
+      setError("Password must contain an uppercase letter, a lowercase letter, and a number.");
       return;
     }
 
