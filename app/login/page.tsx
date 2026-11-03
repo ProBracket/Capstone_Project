@@ -11,7 +11,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { signInWithEmail } from "@/lib/auth";
+import { signInWithEmail, signInWithGoogle } from "@/lib/auth";
 
 export default function LoginPage() {
   const router = useRouter(); // lets us move to another page in code
@@ -121,6 +121,10 @@ export default function LoginPage() {
               className="w-full rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
             >
               {loading ? "Logging in..." : "Log in"}
+            </button>
+            <button type="button" onClick={() => signInWithGoogle()}
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-5 py-3 font-medium text-gray-800 hover:bg-gray-50">
+              <img src="/google-logo.svg" alt="" className="h-5 w-5"/>Continue with Google
             </button>
           </form>
         </section>
