@@ -3,13 +3,13 @@
  * - If the account exists in Supabase → go to the Parent Profile page (/parentview).
  * - If not (or the password is wrong) → show "Incorrect email or password"
  *   and stay on this page.
- * No sign-up and no email verification here.
  */
 // "use client" makes this run in the browser, which it needs for useState
 // and for handling the form
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmail } from "@/lib/auth";
 
@@ -123,6 +123,17 @@ export default function LoginPage() {
               {loading ? "Logging in..." : "Log in"}
             </button>
           </form>
+          
+          {/* goes to the Create account page (app/signup/page.tsx) */}
+          <p className="mt-6 text-center text-gray-600">
+            Don&apos;t have an account?
+          </p>
+          <Link
+            href="/signup"
+            className="mt-2 block w-full rounded-lg border border-blue-700 px-5 py-3 text-center font-medium text-blue-700 hover:bg-blue-50"
+          >
+            Create account
+          </Link>
         </section>
       </div>
     </main>
