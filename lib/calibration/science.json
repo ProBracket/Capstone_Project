@@ -274,23 +274,1665 @@
     ]
   },
   "grade5": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      [
+  {
+    "number": 1,
+    "question": "Which state of matter has a definite shape and a definite volume?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Solid",
+      "b": "Liquid",
+      "c": "Gas",
+      "d": "Vapour"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 2,
+    "question": "Which state of matter takes the shape of its container but keeps the same volume?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Solid",
+      "b": "Liquid",
+      "c": "Gas",
+      "d": "None"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 3,
+    "question": "In which state of matter are particles the farthest apart from each other?",
+    "type": "short_answer",
+    "answer": "Gas",
+    "keywords": ["gas"]
+  },
+  {
+    "number": 4,
+    "question": "What force pushes upwards on an object in water?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Gravity",
+      "b": "Buoyancy",
+      "c": "Friction",
+      "d": "Magnetism"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 5,
+    "question": "Which feature helps a parachute fall more slowly through the air?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Large surface area",
+      "b": "Heavy material",
+      "c": "Small surface area",
+      "d": "Sharp edges"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 6,
+    "question": "What force can slow an object moving through air?",
+    "type": "short_answer",
+    "answer": "Air resistance",
+    "keywords": ["air resistance"]
+  },
+  {
+    "number": 7,
+    "question": "Which is a renewable energy resource?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Coal",
+      "b": "Oil",
+      "c": "Solar energy",
+      "d": "Natural gas"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 8,
+    "question": "Which energy resource uses moving water to generate electricity?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Solar",
+      "b": "Hydroelectric",
+      "c": "Coal",
+      "d": "Natural gas"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 9,
+    "question": "Which of these is a non-renewable energy resource?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Wind",
+      "b": "Sunlight",
+      "c": "Coal",
+      "d": "Moving water"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 10,
+    "question": "Which word describes weather patterns observed over a long period of time?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Climate",
+      "b": "Forecast",
+      "c": "Temperature",
+      "d": "Storm"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 11,
+    "question": "Why is rainfall important to farmers?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It provides water for crops",
+      "b": "It stops plants growing",
+      "c": "It removes sunlight",
+      "d": "It makes soil disappear"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 12,
+    "question": "Which weather condition can damage crops if temperatures become very low?",
+    "type": "short_answer",
+    "answer": "Frost, snow, low temperature",
+    "keywords": ["frost", "snow"]
+  },
+  {
+    "number": 13,
+    "question": "Which organ pumps blood around the body?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Lungs",
+      "b": "Stomach",
+      "c": "Heart",
+      "d": "Brain"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 14,
+    "question": "Which organs help the body take in oxygen?",
+    "type": "short_answer",
+    "answer": "Lungs",
+    "keywords": ["lungs"]
+  },
+  {
+    "number": 15,
+    "question": "Which body system breaks down food so nutrients can be used by the body?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Digestive system",
+      "b": "Respiratory system",
+      "c": "Skeletal system",
+      "d": "Nervous system"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 16,
+    "question": "What causes day and night on Earth?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Earth's rotation",
+      "b": "Earth's size",
+      "c": "The Moon's rotation",
+      "d": "Clouds moving"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 17,
+    "question": "Approximately how long does Earth take to orbit the Sun?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "One day",
+      "b": "One week",
+      "c": "One month",
+      "d": "One year"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 18,
+    "question": "What object does Earth orbit?",
+    "type": "short_answer",
+    "answer": "The Sun",
+    "keywords": ["sun"]
+  },
+  {
+    "number": 19,
+    "question": "What should you identify before designing a solution?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The problem or need",
+      "b": "The colour",
+      "c": "The final answer",
+      "d": "The decoration"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 20,
+    "question": "Why should a design be tested?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To identify problems",
+      "b": "To avoid improvements",
+      "c": "To skip planning",
+      "d": "To make testing unnecessary"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 21,
+    "question": "What can you do when testing shows that a design does not work properly?",
+    "type": "short_answer",
+    "answer": "Improve the design",
+    "keywords": ["improve", "design"]
+  },
+  {
+    "number": 22,
+    "question": "Which is an example of scientific evidence?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "An opinion",
+      "b": "A measurement",
+      "c": "A guess",
+      "d": "A belief"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 23,
+    "question": "Why should scientists record their observations?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To keep evidence",
+      "b": "To hide results",
+      "c": "To change results",
+      "d": "To avoid comparisons"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 24,
+    "question": "Which behaviour is ethical when reporting the results of an experiment?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Changing unwanted results",
+      "b": "Hiding evidence",
+      "c": "Reporting results honestly",
+      "d": "Inventing measurements"
+    },
+    "answer": "c"
+  }
+]
+    ],
+    "secondChance": [
+      [
+  {
+    "number": 25,
+    "question": "Which state of matter has a fixed shape?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Solid",
+      "b": "Liquid",
+      "c": "Gas"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 26,
+    "question": "Which is a renewable source of energy?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Coal",
+      "b": "Wind",
+      "c": "Oil"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 27,
+    "question": "Which organ pumps blood through the body?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Heart",
+      "b": "Lungs",
+      "c": "Stomach"
+    },
+    "answer": "a"
+  }
+]
+    ]
   },
   "grade6": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "In 2006, Pluto was reclassified. What is Pluto classified as now?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A planet",
+      "b": "A dwarf planet",
+      "c": "An asteroid",
+      "d": "A moon"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 2,
+    "question": "What usually happens to most materials when they are heated?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "They expand",
+      "b": "They freeze",
+      "c": "They disappear",
+      "d": "They become lighter"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "question": "Which force pulls objects toward Earth?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Friction",
+      "b": "Magnetism",
+      "c": "Gravity",
+      "d": "Electricity"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 4,
+    "question": "Why is biodiversity important in an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It helps ecosystems stay stable",
+      "b": "It makes all organisms identical",
+      "c": "It removes the need for plants",
+      "d": "It prevents all environmental change"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 5,
+    "question": "What could happen if an important food source disappeared from an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Nothing would change",
+      "b": "Animals that depend on it could decrease in number",
+      "c": "All plants would die immediately",
+      "d": "The ecosystem would gain more energy"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "question": "Which action would help a school reduce its electricity use?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Leave lights on all day",
+      "b": "Use more space heaters",
+      "c": "Turn off unused electronics",
+      "d": "Keep computers running overnight"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 7,
+    "question": "What is the main difference between weather and climate?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Weather is long-term and climate is daily",
+      "b": "Weather is short-term and climate is long-term",
+      "c": "They mean exactly the same thing",
+      "d": "Climate only describes temperature"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 8,
+    "question": "Why might scientists send robots into space instead of people?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Robots need more oxygen",
+      "b": "Robots can explore dangerous places without risking human lives",
+      "c": "Robots cannot collect information",
+      "d": "Humans cannot use spacecraft"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 9,
+    "question": "Which is an example of a scientific hypothesis?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Plants are interesting",
+      "b": "Plants near a window may grow faster because they receive more light",
+      "c": "I like green plants",
+      "d": "Every plant grows at exactly the same speed"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 10,
+    "question": "Which technology can help scientists study Earth from space?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Satellites",
+      "b": "Staplers",
+      "c": "Calculators only",
+      "d": "Microwaves"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 11,
+    "question": "In the particle model of matter, what happens to the particles of a solid when it is heated?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "They stop moving",
+      "b": "They move faster, and the solid expands slightly",
+      "c": "They disappear",
+      "d": "They become heavier"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 12,
+    "question": "What is the term for a material getting smaller in size when it is cooled?",
+    "type": "short_answer",
+    "answer": "Contraction",
+    "keywords": [
+      "contract"
+    ]
+  },
+  {
+    "number": 13,
+    "question": "A metal bridge has small gaps in its roadway. Why are the gaps there?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To make it look better",
+      "b": "To allow the metal to expand in hot weather",
+      "c": "To let rain drain through",
+      "d": "To make the bridge lighter"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 14,
+    "question": "Which of these is a renewable energy resource?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Coal",
+      "b": "Natural gas",
+      "c": "Wind",
+      "d": "Oil"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 15,
+    "question": "Which of these energy resources is non-renewable?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Solar",
+      "b": "Wind",
+      "c": "Natural gas",
+      "d": "Moving water"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 16,
+    "question": "A student pushes a book across a desk, and it slows down and stops. Which force acts against the book's motion?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Gravity",
+      "b": "Friction",
+      "c": "Magnetism",
+      "d": "Buoyancy"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 17,
+    "question": "A book rests on a table. Which statement is true?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Only gravity acts on it",
+      "b": "Gravity pulls it down and the table pushes it up",
+      "c": "No forces act on it",
+      "d": "The table pulls it down"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 18,
+    "question": "Which of these is an abiotic (non-living) factor in an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A rabbit",
+      "b": "Sunlight",
+      "c": "A tree",
+      "d": "A mushroom"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 19,
+    "question": "What process do green plants use to make their own food from sunlight, water and carbon dioxide?",
+    "type": "short_answer",
+    "answer": "Photosynthesis",
+    "keywords": [
+      "photosynthesis"
+    ]
+  },
+  {
+    "number": 20,
+    "question": "In one or two sentences, explain what could happen to the number of insects in a forest if all of the insect-eating birds disappeared.",
+    "type": "short_answer",
+    "answer": "The number of insects could increase because nothing would be eating them.",
+    "keywords": [
+      "increase"
+    ]
+  },
+  {
+    "number": 21,
+    "question": "Which of these is a factor that affects the climate of a place?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Its distance from the equator (latitude)",
+      "b": "The day of the week",
+      "c": "The colour of the buildings",
+      "d": "The time on a clock"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 22,
+    "question": "Which action can help reduce your personal contribution to climate change?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Driving short distances instead of walking",
+      "b": "Walking or biking when possible",
+      "c": "Leaving appliances turned on",
+      "d": "Using more single-use plastics"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 23,
+    "question": "What are small rocky bodies that orbit the Sun, mostly between Mars and Jupiter, called?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Comets",
+      "b": "Asteroids",
+      "c": "Moons",
+      "d": "Dwarf planets"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 24,
+    "question": "Which of these objects reflects light rather than giving off its own light?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The Sun",
+      "b": "A star",
+      "c": "The Moon",
+      "d": "Another star"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 25,
+    "question": "Which of these is a natural satellite of Earth?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The International Space Station",
+      "b": "The Moon",
+      "c": "A weather satellite",
+      "d": "A space probe"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 26,
+    "question": "Which technology is designed to drive across the surface of another planet to collect information?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Rover",
+      "b": "Telescope",
+      "c": "Weather balloon",
+      "d": "Satellite dish"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 27,
+    "question": "A student wants to test whether more sunlight helps bean plants grow taller. Which variable should the student change?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Amount of sunlight",
+      "b": "Type of bean",
+      "c": "Size of pot",
+      "d": "Amount of water"
+    },
+    "answer": "a"
+  }
+    ],
+    "secondChance": [
+      {
+    "number": 28,
+    "question": "What force pulls objects toward Earth?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Gravity",
+      "b": "Friction",
+      "c": "Magnetism"
+    },
+    "answer": "a",
+    "second_chance": true
+  },
+  {
+    "number": 29,
+    "question": "Which of these is a renewable energy resource?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Coal",
+      "b": "Solar",
+      "c": "Oil"
+    },
+    "answer": "b",
+    "second_chance": true
+  },
+  {
+    "number": 30,
+    "question": "Which of these is a living (biotic) part of an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Rock",
+      "b": "Water",
+      "c": "Frog"
+    },
+    "answer": "c",
+    "second_chance": true
+  }
+    ]
   },
   "grade7": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "Why are decomposers important in an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "They create sunlight",
+      "b": "They break down dead matter and recycle nutrients",
+      "c": "They stop all predators",
+      "d": "They remove oxygen from the air"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 2,
+    "question": "What may happen if a predator is removed from an ecosystem?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The prey population may increase",
+      "b": "All plants will disappear immediately",
+      "c": "The prey population will always become extinct",
+      "d": "Nothing in the ecosystem will change"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "question": "Why is good soil important for growing crops?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It provides water, nutrients, and support",
+      "b": "It keeps plants from using sunlight",
+      "c": "It prevents roots from growing",
+      "d": "It removes all microorganisms"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 4,
+    "question": "What is one possible problem with growing the same crop in the same field every year?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The soil may lose certain nutrients",
+      "b": "The soil becomes unlimited in nutrients",
+      "c": "Plants stop needing water",
+      "d": "Crops become immune to all pests"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 5,
+    "question": "A metal spoon becomes warm when left in hot soup. What type of heat transfer is this?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Conduction",
+      "b": "Condensation",
+      "c": "Evaporation",
+      "d": "Reflection"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 6,
+    "question": "Which statement best describes temperature?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The total amount of matter in an object",
+      "b": "A measure related to the average motion of particles",
+      "c": "The weight of an object",
+      "d": "The amount of light an object gives off"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 7,
+    "question": "Why are triangles often used in bridges and towers?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "They are easy to bend",
+      "b": "They help make structures stable and strong",
+      "c": "They remove all forces",
+      "d": "They make structures lighter than air"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 8,
+    "question": "What are the three main types of rock?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Hard, soft, and liquid",
+      "b": "Igneous, sedimentary, and metamorphic",
+      "c": "Sand, soil, and clay",
+      "d": "Lava, magma, and crystal"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 9,
+    "question": "How can igneous rock eventually become sedimentary rock?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It can weather into sediments that become compacted and cemented",
+      "b": "It can turn directly into water",
+      "c": "It can only become magma",
+      "d": "It cannot change into another rock type"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 10,
+    "question": "Which force can cause parts of a structure to be pulled apart?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Tension",
+      "b": "Gravity only",
+      "c": "Temperature",
+      "d": "Reflection"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 11,
+    "question": "In a food chain, which organisms are the producers?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Rabbits",
+      "b": "Green plants",
+      "c": "Wolves",
+      "d": "Mushrooms"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 12,
+    "question": "What term describes all of the members of one species living in the same area?",
+    "type": "short_answer",
+    "answer": "Population",
+    "keywords": [
+      "population"
+    ]
+  },
+  {
+    "number": 13,
+    "question": "What happens to energy as it moves from one level of a food chain to the next?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It increases",
+      "b": "It stays exactly the same",
+      "c": "Some is lost as heat",
+      "d": "It is destroyed completely"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 14,
+    "question": "Which of these is a limiting factor for a deer population?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The amount of available food",
+      "b": "The colour of the deer",
+      "c": "The name of the forest",
+      "d": "The time of day"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 15,
+    "question": "Which gas do green plants take in for photosynthesis?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Oxygen",
+      "b": "Carbon dioxide",
+      "c": "Nitrogen",
+      "d": "Helium"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 16,
+    "question": "Which part of a plant absorbs water and minerals from the soil?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Leaves",
+      "b": "Roots",
+      "c": "Flowers",
+      "d": "Seeds"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 17,
+    "question": "What is the green pigment in plants that captures light energy for photosynthesis?",
+    "type": "short_answer",
+    "answer": "Chlorophyll",
+    "keywords": [
+      "chlorophyll"
+    ]
+  },
+  {
+    "number": 18,
+    "question": "Which layer of soil contains the most organic matter (humus)?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Topsoil",
+      "b": "Subsoil",
+      "c": "Bedrock",
+      "d": "Parent material"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 19,
+    "question": "A farmer plants wheat in the same field every year, and the harvest gets smaller each year. In one or two sentences, explain a possible reason and one way to fix it.",
+    "type": "short_answer",
+    "answer": "The wheat uses up the soil's nutrients; rotating crops or adding fertilizer can restore them.",
+    "keywords": [
+      "nutrient",
+      "rotat"
+    ]
+  },
+  {
+    "number": 20,
+    "question": "Which method of heat transfer happens in fluids such as air or water when warmer parts rise and cooler parts sink?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Conduction",
+      "b": "Convection",
+      "c": "Radiation",
+      "d": "Insulation"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 21,
+    "question": "Heat from the Sun reaches Earth through space. Which type of heat transfer is this?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Conduction",
+      "b": "Convection",
+      "c": "Radiation",
+      "d": "Evaporation"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 22,
+    "question": "Which statement about heat is correct?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Heat flows from a cooler object to a warmer object",
+      "b": "Heat flows from a warmer object to a cooler object",
+      "c": "Heat cannot flow through solids",
+      "d": "Heat is the same as temperature"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 23,
+    "question": "Which force squeezes or pushes the parts of a structure together?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Tension",
+      "b": "Compression",
+      "c": "Torsion",
+      "d": "Shear"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 24,
+    "question": "What force twists a structure, like wringing out a wet towel?",
+    "type": "short_answer",
+    "answer": "Torsion",
+    "keywords": [
+      "torsion"
+    ]
+  },
+  {
+    "number": 25,
+    "question": "Which change would make a tall tower more stable?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Making the base wider",
+      "b": "Making the base narrower",
+      "c": "Moving the mass higher",
+      "d": "Using lighter material at the base"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 26,
+    "question": "Which type of rock forms when magma or lava cools and hardens?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Sedimentary",
+      "b": "Metamorphic",
+      "c": "Igneous",
+      "d": "Fossil"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 27,
+    "question": "What type of rock forms when heat and pressure change existing rock?",
+    "type": "short_answer",
+    "answer": "Metamorphic",
+    "keywords": [
+      "metamorphic"
+    ]
+  }
+    ],
+    "secondChance": [
+      {
+    "number": 28,
+    "question": "What are green plants called, since they make their own food?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Producers",
+      "b": "Consumers",
+      "c": "Decomposers"
+    },
+    "answer": "a",
+    "second_chance": true
+  },
+  {
+    "number": 29,
+    "question": "Heat always moves from:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A warm object to a cooler object",
+      "b": "A cool object to a warm object",
+      "c": "Neither"
+    },
+    "answer": "a",
+    "second_chance": true
+  },
+  {
+    "number": 30,
+    "question": "Which of these is one of the three main types of rock?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Igneous",
+      "b": "Liquid",
+      "c": "Crystal"
+    },
+    "answer": "a",
+    "second_chance": true
+  }
+    ]
   },
   "grade8": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "According to the particle model of matter, how are the particles in a gas arranged and moving?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Far apart and moving rapidly in all directions",
+      "b": "Tightly packed and fixed in place",
+      "c": "Close together but sliding past each other",
+      "d": "Not moving at all"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 2,
+    "question": "Which property describes a fluid's resistance to flow?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Density",
+      "b": "Viscosity",
+      "c": "Buoyancy",
+      "d": "Solubility"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 3,
+    "question": "Which of these is a solution?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Salad",
+      "b": "Muddy water",
+      "c": "Sugar dissolved in water",
+      "d": "Sand and gravel"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 4,
+    "question": "In salt water, what is the term for the salt, the substance that is dissolved?",
+    "type": "short_answer",
+    "answer": "Solute",
+    "keywords": [
+      "solute"
+    ]
+  },
+  {
+    "number": 5,
+    "question": "A block has a mass of 200 g and a volume of 50 cm³. What is its density in g/cm³?",
+    "type": "short_answer",
+    "answer": "4 g/cm³",
+    "keywords": [
+      "4"
+    ]
+  },
+  {
+    "number": 6,
+    "question": "A person wearing snowshoes sinks less in snow than the same person wearing boots. Why?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Snowshoes make the person lighter",
+      "b": "Snowshoes spread the force over a larger area, which reduces the pressure",
+      "c": "Snowshoes increase gravity",
+      "d": "Boots are made of a denser material"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 7,
+    "question": "Which system uses standard symbols to identify hazardous materials used in workplaces such as science labs?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "WHMIS",
+      "b": "EnerGuide",
+      "c": "The periodic table",
+      "d": "The metric system"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 8,
+    "question": "Oil floats on water. Explain why, in one or two sentences, using the idea of density.",
+    "type": "short_answer",
+    "answer": "Oil is less dense than water (it has a lower density), so it floats on top of the water.",
+    "keywords": [
+      "dens"
+    ]
+  },
+  {
+    "number": 9,
+    "question": "Which cell part contains the genetic material and controls the activities of the cell?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Mitochondrion",
+      "b": "Nucleus",
+      "c": "Vacuole",
+      "d": "Cell wall"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 10,
+    "question": "Which cell part is found in plant cells but not animal cells and carries out photosynthesis?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Nucleus",
+      "b": "Mitochondrion",
+      "c": "Chloroplast",
+      "d": "Cell membrane"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 11,
+    "question": "What is the term for the movement of particles from an area of high concentration to an area of low concentration?",
+    "type": "short_answer",
+    "answer": "Diffusion",
+    "keywords": [
+      "diffusion"
+    ]
+  },
+  {
+    "number": 12,
+    "question": "A microscope has a 10× eyepiece and a 40× objective lens. What is the total magnification?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "50×",
+      "b": "400×",
+      "c": "4×",
+      "d": "4000×"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 13,
+    "question": "Which list shows the levels of organization in a living thing from simplest to most complex?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Cell, tissue, organ, organ system",
+      "b": "Tissue, cell, organ system, organ",
+      "c": "Organ, tissue, cell, organ system",
+      "d": "Organ system, organ, tissue, cell"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 14,
+    "question": "Which body system carries blood and nutrients around the body?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Digestive system",
+      "b": "Respiratory system",
+      "c": "Nervous system",
+      "d": "Circulatory system"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 15,
+    "question": "A light ray hits a flat mirror with an angle of incidence of 30°. What is the angle of reflection?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "30°",
+      "b": "60°",
+      "c": "90°",
+      "d": "15°"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 16,
+    "question": "Which type of electromagnetic wave has the shortest wavelength?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Radio waves",
+      "b": "Microwaves",
+      "c": "Visible light",
+      "d": "X-rays"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 17,
+    "question": "Which type of lens is thicker in the middle and converges light rays?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Concave lens",
+      "b": "Convex lens",
+      "c": "Plane mirror"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 18,
+    "question": "Which part of the eye contains the light-sensitive cells called rods and cones?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Cornea",
+      "b": "Iris",
+      "c": "Retina",
+      "d": "Pupil"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 19,
+    "question": "What is the term for the bending of light as it passes from one material to another, such as from air into water?",
+    "type": "short_answer",
+    "answer": "Refraction",
+    "keywords": [
+      "refraction"
+    ]
+  },
+  {
+    "number": 20,
+    "question": "A 20 N force lifts a box 3 m straight up. How much work is done on the box, in joules?",
+    "type": "short_answer",
+    "answer": "60 J",
+    "keywords": [
+      "60"
+    ]
+  },
+  {
+    "number": 21,
+    "question": "A ramp is an example of which simple machine?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Pulley",
+      "b": "Inclined plane",
+      "c": "Lever",
+      "d": "Wheel and axle"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 22,
+    "question": "A machine uses 100 J of input work and produces 80 J of output work. What is its efficiency as a percentage?",
+    "type": "short_answer",
+    "answer": "80%",
+    "keywords": [
+      "80"
+    ]
+  },
+  {
+    "number": 23,
+    "question": "What is the main reason a real machine is less than 100% efficient?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Gravity",
+      "b": "Friction",
+      "c": "Magnetism",
+      "d": "Buoyancy"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 24,
+    "question": "Where is most of Earth's fresh water stored?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Rivers and lakes",
+      "b": "Groundwater",
+      "c": "The atmosphere",
+      "d": "Glaciers and ice caps"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 25,
+    "question": "What is the term for the area of land that drains into a particular river or lake?",
+    "type": "short_answer",
+    "answer": "Watershed",
+    "keywords": [
+      "watershed"
+    ]
+  },
+  {
+    "number": 26,
+    "question": "Which water cycle process changes water vapour into liquid droplets that form clouds?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Evaporation",
+      "b": "Condensation",
+      "c": "Precipitation",
+      "d": "Collection"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 27,
+    "question": "Fertilizer from farmland washes into a lake and causes an algal bloom. What is a likely effect on the fish in the lake?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "More dissolved oxygen is available",
+      "b": "Less dissolved oxygen is available when the algae die and decompose",
+      "c": "The water becomes colder",
+      "d": "The water becomes clearer"
+    },
+    "answer": "b"
+  }
+    ],
+    "secondChance": [
+      {
+    "number": 28,
+    "question": "Which part of a cell contains the genetic material?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Nucleus",
+      "b": "Cell membrane",
+      "c": "Vacuole"
+    },
+    "answer": "a",
+    "second_chance": true
+  },
+  {
+    "number": 29,
+    "question": "Which unit is used to measure work?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Newton",
+      "b": "Joule",
+      "c": "Metre"
+    },
+    "answer": "b",
+    "second_chance": true
+  },
+  {
+    "number": 30,
+    "question": "When light bounces off a surface, this is called:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Reflection",
+      "b": "Refraction",
+      "c": "Absorption"
+    },
+    "answer": "a",
+    "second_chance": true
+  }
+    ]
   },
   "grade9": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "Why does genetic variation within a species help it survive?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It makes every individual identical, so none are vulnerable",
+      "b": "It increases the chance that some individuals survive if conditions change",
+      "c": "It prevents mutations from occurring",
+      "d": "It guarantees the species will never go extinct"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 2,
+    "question": "A pea plant has the genotype Bb, where B (purple flowers) is dominant and b (white flowers) is recessive. What colour are its flowers?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Purple",
+      "b": "White",
+      "c": "Half purple and half white",
+      "d": "Pink"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 3,
+    "question": "What is the name of the molecule that carries the genetic information inside the cell's nucleus?",
+    "type": "short_answer",
+    "answer": "DNA",
+    "keywords": [
+      "dna"
+    ]
+  },
+  {
+    "number": 4,
+    "question": "Which type of reproduction produces offspring that are genetically identical to the single parent?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Sexual reproduction",
+      "b": "Asexual reproduction",
+      "c": "Selective breeding",
+      "d": "Pollination"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 5,
+    "question": "Which statement best describes natural selection?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Individuals with traits better suited to their environment are more likely to survive and reproduce",
+      "b": "Every individual changes its traits during its lifetime to fit its environment",
+      "c": "Humans choose which individuals will reproduce",
+      "d": "All mutations help an individual survive"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 6,
+    "question": "A population of beetles contains green and brown beetles. Birds eat the green beetles more often because they are easier to see. Over many generations, what will happen to the proportion of brown beetles, and why?",
+    "type": "short_answer",
+    "answer": "It will increase, because more brown beetles survive to reproduce and pass on their trait.",
+    "keywords": [
+      "increase",
+      "survive"
+    ]
+  },
+  {
+    "number": 7,
+    "question": "A farmer breeds only the cows that produce the most milk. This is an example of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Natural selection",
+      "b": "Selective breeding",
+      "c": "Extinction",
+      "d": "Asexual reproduction"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 8,
+    "question": "What term describes the complete disappearance of a species from Earth?",
+    "type": "short_answer",
+    "answer": "Extinction",
+    "keywords": [
+      "extinct"
+    ]
+  },
+  {
+    "number": 9,
+    "question": "Which observation is the best evidence of a chemical change?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Ice melting",
+      "b": "Sugar dissolving in water",
+      "c": "Gas bubbles forming when baking soda meets vinegar",
+      "d": "Cutting a sheet of paper"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 10,
+    "question": "Elements in the same group (column) of the periodic table tend to have:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The same mass",
+      "b": "The same number of protons",
+      "c": "Similar chemical properties",
+      "d": "The same state at room temperature"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 11,
+    "question": "How many protons are in an atom of carbon, which has an atomic number of 6?",
+    "type": "short_answer",
+    "answer": "6",
+    "keywords": [
+      "6"
+    ]
+  },
+  {
+    "number": 12,
+    "question": "Which subatomic particle has a negative charge and moves around the nucleus?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Proton",
+      "b": "Neutron",
+      "c": "Electron",
+      "d": "Ion"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 13,
+    "question": "What is the common name for the compound sodium chloride, NaCl?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Baking soda",
+      "b": "Table salt",
+      "c": "Sugar",
+      "d": "Bleach"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 14,
+    "question": "In a closed container, 5 g of substance A reacts completely with 3 g of substance B to form one new substance. What is the mass of the new substance?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "2 g",
+      "b": "8 g",
+      "c": "15 g",
+      "d": "5 g"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 15,
+    "question": "Which pH value represents the most acidic solution?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "2",
+      "b": "7",
+      "c": "9",
+      "d": "12"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 16,
+    "question": "Blue litmus paper turns red when placed in a solution. What does this show?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The solution is acidic",
+      "b": "The solution is basic",
+      "c": "The solution is neutral",
+      "d": "The solution is salt water"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 17,
+    "question": "Which pollutants released when fossil fuels are burned contribute to acid rain?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Sulfur dioxide and nitrogen oxides",
+      "b": "Helium and neon",
+      "c": "Hydrogen and oxygen",
+      "d": "Argon and nitrogen"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 18,
+    "question": "A water sample contains 5 mg of a contaminant in 1 000 000 mg of water. What is the concentration in parts per million (ppm)?",
+    "type": "short_answer",
+    "answer": "5 ppm",
+    "keywords": [
+      "5"
+    ]
+  },
+  {
+    "number": 19,
+    "question": "What are the products of a neutralization reaction between an acid and a base?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Salt and water",
+      "b": "Hydrogen and oxygen",
+      "c": "Carbon dioxide and water",
+      "d": "A metal and a gas"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 20,
+    "question": "A 12 V battery pushes 3 A of current through a resistor. What is the resistance?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "36 Ω",
+      "b": "4 Ω",
+      "c": "0.25 Ω",
+      "d": "15 Ω"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 21,
+    "question": "In a parallel circuit with three bulbs, one bulb burns out. What happens to the other two bulbs?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Both go out",
+      "b": "Both stay lit",
+      "c": "Both get dimmer",
+      "d": "One goes out and the other stays lit"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 22,
+    "question": "A balloon rubbed on hair becomes negatively charged. This is because the balloon:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Lost protons",
+      "b": "Lost electrons",
+      "c": "Gained protons",
+      "d": "Gained electrons"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 23,
+    "question": "A 1500 W kettle runs for 2 hours. How much energy does it use in kilowatt-hours (kWh)?",
+    "type": "short_answer",
+    "answer": "3 kWh",
+    "keywords": [
+      "3"
+    ]
+  },
+  {
+    "number": 24,
+    "question": "A battery transforms which form of energy into electrical energy?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Chemical energy",
+      "b": "Nuclear energy",
+      "c": "Sound energy",
+      "d": "Kinetic energy"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 25,
+    "question": "Which instrument splits starlight into a spectrum so scientists can identify the elements in a star?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Radio telescope",
+      "b": "Space probe",
+      "c": "Remote sensing satellite",
+      "d": "Spectroscope"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 26,
+    "question": "A light-year is a unit of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Time",
+      "b": "Speed",
+      "c": "Distance",
+      "d": "Brightness"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 27,
+    "question": "Which instrument collects radio waves from distant objects in space?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Spectroscope",
+      "b": "Radio telescope",
+      "c": "Refracting telescope",
+      "d": "Space probe"
+    },
+    "answer": "b"
+  }
+    ]
   }
 }

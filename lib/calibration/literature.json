@@ -1,26 +1,1563 @@
 {
   "grade4": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+  "number": 1,
+  "question": "What is the main idea of a story?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "The most important message or topic",
+    "b": "The title",
+    "c": "The first sentence",
+    "d": "The longest word"
+  },
+  "answer": "a"
+},
+{
+  "number": 2,
+  "question": "Which word contains the prefix 'un-'?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "happy",
+    "b": "unhappy",
+    "c": "happiness",
+    "d": "happily"
+  },
+  "answer": "b"
+},
+{
+  "number": 3,
+  "question": "Which type of text gives facts and information?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Non-fiction",
+    "b": "Fantasy",
+    "c": "Poetry",
+    "d": "Drama"
+  },
+  "answer": "a"
+},
+{
+  "number": 4,
+  "question": "Which should come first when telling the events of a story?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "The ending",
+    "b": "The beginning",
+    "c": "The problem",
+    "d": "The lesson"
+  },
+  "answer": "b"
+},
+{
+  "number": 5,
+  "question": "What is a character in a story?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "A person or animal in the story",
+    "b": "The title",
+    "c": "The setting",
+    "d": "The author"
+  },
+  "answer": "a"
+},
+{
+  "number": 6,
+  "question": "Which word best describes a brave character?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Courageous",
+    "b": "Tiny",
+    "c": "Quiet",
+    "d": "Sleepy"
+  },
+  "answer": "a"
+},
+{
+  "number": 7,
+  "question": "What does the suffix '-ful' mean in the word 'helpful'?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Full of",
+    "b": "Without",
+    "c": "Before",
+    "d": "After"
+  },
+  "answer": "a"
+},
+{
+  "number": 8,
+  "question": "A text about penguins that includes facts and photos is most likely what type of text?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Non-fiction",
+    "b": "Fantasy",
+    "c": "Mystery",
+    "d": "Fairy tale"
+  },
+  "answer": "a"
+},
+{
+  "number": 9,
+  "question": "Why is it important to listen carefully when someone is speaking?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "To understand their message",
+    "b": "To finish faster",
+    "c": "To change the topic",
+    "d": "To avoid learning"
+  },
+  "answer": "a"
+},
+{
+  "number": 10,
+  "question": "What is a paragraph?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "A group of related sentences about one idea",
+    "b": "A single word",
+    "c": "A chapter title",
+    "d": "A punctuation mark"
+  },
+  "answer": "a"
+}
+    ],
+    "secondChance": [
+      {
+  "number": 11,
+  "question": "Which type of text contains real facts?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Non-fiction",
+    "b": "Fantasy",
+    "c": "Fairy tale"
+  },
+  "answer": "a"
+},
+{
+  "number": 12,
+  "question": "What is the main idea?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "The most important point",
+    "b": "The title",
+    "c": "The author's name"
+  },
+  "answer": "a"
+},
+{
+  "number": 13,
+  "question": "Which word contains the prefix 'un-'?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "unhappy",
+    "b": "happy",
+    "c": "happily"
+  },
+  "answer": "a"
+}
+    ]
   },
   "grade5": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+  "number": 1,
+  "question": "Why might an author write an article about recycling?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "To inform readers",
+    "b": "To tell a fairy tale",
+    "c": "To write a poem",
+    "d": "To confuse readers"
+  },
+  "answer": "a"
+},
+{
+  "number": 2,
+  "question": "Which statement is an opinion?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Dogs have four legs",
+    "b": "The Earth orbits the Sun",
+    "c": "Summer is the best season",
+    "d": "Water freezes at 0°C"
+  },
+  "answer": "c"
+},
+{
+  "number": 3,
+  "question": "A character hides during a storm. What can you infer?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "The character is afraid",
+    "b": "The character is gardening",
+    "c": "The character is sleeping",
+    "d": "The character is studying"
+  },
+  "answer": "a"
+},
+{
+  "number": 4,
+  "question": "What is the author's purpose in a newspaper article?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "To inform",
+    "b": "To create fantasy",
+    "c": "To write poetry",
+    "d": "To tell a joke"
+  },
+  "answer": "a"
+},
+{
+  "number": 5,
+  "question": "What is the best summary?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "A short explanation of the most important points",
+    "b": "Every detail from the text",
+    "c": "The first sentence only",
+    "d": "A list of vocabulary words"
+  },
+  "answer": "a"
+},
+{
+  "number": 6,
+  "question": "Which text structure shows events in order?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Sequence",
+    "b": "Compare and contrast",
+    "c": "Cause and effect",
+    "d": "Problem and solution"
+  },
+  "answer": "a"
+},
+{
+  "number": 7,
+  "question": "What does the word 'predict' mean while reading?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Guess what may happen next",
+    "b": "Read faster",
+    "c": "Write a report",
+    "d": "Memorize vocabulary"
+  },
+  "answer": "a"
+},
+{
+  "number": 8,
+  "question": "Which sentence uses correct punctuation?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Where are you going?",
+    "b": "Where are you going.",
+    "c": "Where are you going,",
+    "d": "Where are you going!"
+  },
+  "answer": "a"
+},
+{
+  "number": 9,
+  "question": "What does context help readers understand?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "The meaning of unfamiliar words",
+    "b": "The page number",
+    "c": "The author's age",
+    "d": "The book cover"
+  },
+  "answer": "a"
+},
+{
+  "number": 10,
+  "question": "Which genre contains made-up stories with magical elements?",
+  "type": "multiple_choice",
+  "choices": {
+    "a": "Fantasy",
+    "b": "Biography",
+    "c": "Non-fiction",
+    "d": "News article"
+  },
+  "answer": "a"
+}
+    ],
+    "secondChance": [
+      [
+  {
+    "number": 11,
+    "question": "Which statement is an opinion?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Summer is the best season",
+      "b": "Water freezes at 0°C",
+      "c": "Dogs have four legs"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 12,
+    "question": "What is the author's purpose in an informational article?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To inform",
+      "b": "To write fantasy",
+      "c": "To tell a joke"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 13,
+    "question": "What does it mean to predict while reading?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Guess what will happen next",
+      "b": "Memorize the story",
+      "c": "Write a summary"
+    },
+    "answer": "a"
+  }
+]
+    ]
   },
   "grade6": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "Read: \"The playground was empty, and Maya zipped up her jacket as dark clouds gathered.\" What can you infer?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "It is likely about to rain",
+      "b": "It is very hot",
+      "c": "Maya is indoors",
+      "d": "The playground is crowded"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 2,
+    "question": "Which sentence best summarizes: \"Students collected bottles, sorted them, and delivered them to a recycling depot\"?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Students enjoyed a holiday",
+      "b": "Students organized a recycling effort",
+      "c": "Students bought new bottles",
+      "d": "Students avoided school"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 3,
+    "question": "Which detail best supports the claim \"The library is popular\"?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The library has blue walls",
+      "b": "The library opens at nine",
+      "c": "More than 200 students visit it daily",
+      "d": "The librarian drinks tea"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 4,
+    "question": "Which word best replaces \"happy\" in \"The team was happy after winning the tournament\"?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "furious",
+      "b": "delighted",
+      "c": "uncertain",
+      "d": "exhausted"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 5,
+    "question": "Which sentence uses a comma correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Before lunch we finished, the project.",
+      "b": "Before lunch, we finished the project.",
+      "c": "Before, lunch we finished the project.",
+      "d": "Before lunch we, finished the project."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "question": "What is the main purpose of a persuasive letter asking the principal for more recycling bins?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To entertain with a fictional story",
+      "b": "To convince the principal to take action",
+      "c": "To explain how bins are manufactured",
+      "d": "To list unrelated facts"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 7,
+    "question": "Read: \"The first attempt failed. Nevertheless, Aiden tried a different approach.\" What does \"Nevertheless\" signal?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A contrast despite the setback",
+      "b": "A list of materials",
+      "c": "An earlier date",
+      "d": "A cause that guarantees success"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 8,
+    "question": "A website claims \"All homework is harmful\" but provides no studies or sources. What should you do first?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Share it immediately",
+      "b": "Check reliable evidence and other sources",
+      "c": "Assume it is true",
+      "d": "Ignore the author and title"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 9,
+    "question": "Which sentence uses the apostrophe correctly to show that the backpacks belong to several students?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The student's backpacks were lined up.",
+      "b": "The students' backpacks were lined up.",
+      "c": "The students backpacks' were lined up.",
+      "d": "The students's backpacks were lined up."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 10,
+    "question": "Read: \"The river wound like a silver ribbon through the valley.\" Which technique is used?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A simile",
+      "b": "A statistic",
+      "c": "A direct quotation",
+      "d": "An instruction"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 11,
+    "question": "Which sentence uses a colon correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "We need three things: pencils, paper, and glue.",
+      "b": "We need: three things pencils, paper, and glue.",
+      "c": "We need three: things pencils, paper, and glue.",
+      "d": "We need three things pencils: paper, and glue."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 12,
+    "question": "Which sentence is written in the past tense?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "She walks to school.",
+      "b": "She will walk to school.",
+      "c": "She walked to school.",
+      "d": "She is walking to school."
+    },
+    "answer": "c"
+  },
+  {
+    "number": 13,
+    "question": "Which sentence is a compound sentence?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The dog barked.",
+      "b": "The dog barked, and the cat ran away.",
+      "c": "Barking loudly.",
+      "d": "When the dog barked."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 14,
+    "question": "Which sentence has correct subject-verb agreement?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The children plays outside.",
+      "b": "The children play outside.",
+      "c": "The child play outside.",
+      "d": "The children is playing outside."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 15,
+    "question": "Which group of words is a dependent clause?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "because it started to rain",
+      "b": "The game was cancelled.",
+      "c": "We went home.",
+      "d": "Rain fell."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 16,
+    "question": "What is the term for the character who works against the main character (the protagonist) in a story?",
+    "type": "short_answer",
+    "answer": "Antagonist",
+    "keywords": [
+      "antagonist"
+    ]
+  },
+  {
+    "number": 17,
+    "question": "The prefix \"un-\" in the word \"unfair\" means:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Again",
+      "b": "Not",
+      "c": "Before",
+      "d": "Too much"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 18,
+    "question": "The root \"port\" means \"carry.\" What does the word \"transport\" most likely mean?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To carry across",
+      "b": "To stop",
+      "c": "To hide",
+      "d": "To break"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 19,
+    "question": "Which opening sentence is the strongest lead for an article about recycling?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Recycling is a thing.",
+      "b": "Every minute, thousands of plastic bottles end up in landfills.",
+      "c": "I will write about recycling.",
+      "d": "Some people recycle."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 20,
+    "question": "A ballad is a:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Poem or song that tells a short story",
+      "b": "List of facts",
+      "c": "Recipe",
+      "d": "Set of rules"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 21,
+    "question": "A text says one sport is \"the best in the world\" and only mentions its good points. What is this an example of?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Bias",
+      "b": "A fact",
+      "c": "A summary",
+      "d": "A definition"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 22,
+    "question": "Why should you list the sources you used in a research project?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To give credit to the authors and let readers find the information",
+      "b": "To make the project longer",
+      "c": "To hide where you found facts",
+      "d": "To avoid editing"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 23,
+    "question": "Which sentence uses a transition to show a result?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The road was icy; therefore, school buses ran late.",
+      "b": "The road was icy; for example, school buses ran late.",
+      "c": "The road was icy; meanwhile, school buses ran.",
+      "d": "The road was icy; similarly, buses ran late."
+    },
+    "answer": "a"
+  }
+    ],
+    "secondChance": [
+ {
+    "number": 24,
+    "question": "Which sentence uses capital letters correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "we visited calgary in july.",
+      "b": "We visited Calgary in July.",
+      "c": "We visited calgary in July.",
+      "d": "we visited Calgary In july."
+    },
+    "answer": "b",
+    "second_chance": true
+  },
+  {
+    "number": 25,
+    "question": "Which word is spelled correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "recieve",
+      "b": "receive",
+      "c": "receeve",
+      "d": "reseive"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 26,
+    "question": "In one or two sentences, summarize this passage: \"Maria planted seeds in a pot and watered them every day. After two weeks, tiny green shoots appeared. Soon she had a healthy bean plant.\"",
+    "type": "short_answer",
+    "answer": "Maria planted seeds and cared for them until they grew into a healthy bean plant.",
+    "keywords": [
+      "seed",
+      "plant"
+    ],
+    "second_chance": true
+  }
+    ]
   },
   "grade7": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      {
+    "number": 1,
+    "question": "Read: \"Although the plan was risky, Nia checked her calculations and presented the evidence.\" Which trait does Nia show?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Carelessness",
+      "b": "Thoughtful determination",
+      "c": "Dishonesty",
+      "d": "Indifference"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 2,
+    "question": "A news article uses the headline \"Our Town Faces Disaster!\" but offers only one person's opinion. What should a reader question first?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The font size alone",
+      "b": "The reliability and possible bias of the reporting",
+      "c": "The date of the next holiday",
+      "d": "Whether the headline rhymes"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 3,
+    "question": "Which sentence states a clear thesis for an argument?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "School lunches exist.",
+      "b": "I ate lunch yesterday.",
+      "c": "Schools should offer more local food because it supports nutrition and communities.",
+      "d": "Food is a topic."
+    },
+    "answer": "c"
+  },
+  {
+    "number": 4,
+    "question": "Which evidence most strongly supports \"Daily reading improves vocabulary\"?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A friend prefers movies",
+      "b": "A controlled study found vocabulary gains among daily readers",
+      "c": "A book cover is colourful",
+      "d": "Some books are expensive"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 5,
+    "question": "Read: \"The hallway was a beehive before the concert.\" What does this metaphor suggest?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The hallway contained insects",
+      "b": "The hallway was busy and noisy",
+      "c": "The hallway was empty",
+      "d": "The concert was cancelled"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "question": "Which revision creates the clearest transition? \"The experiment failed. ___, we changed one variable and tried again.\"",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "For example",
+      "b": "However",
+      "c": "Next",
+      "d": "Similarly"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 7,
+    "question": "Which is the most reliable source for a claim about local water quality?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "An anonymous comment with no evidence",
+      "b": "A current municipal water-quality report with test results",
+      "c": "An advertisement for bottled water",
+      "d": "An unrelated celebrity interview"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 8,
+    "question": "Read: \"First the council reviewed costs; next it invited public comments; finally it voted.\" How is this text organized?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Compare and contrast",
+      "b": "Chronological sequence",
+      "c": "Cause and effect only",
+      "d": "Problem and solution only"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 9,
+    "question": "Which sentence uses a semicolon correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The survey was short; but.",
+      "b": "The survey was short; the results were useful.",
+      "c": "The survey; was short the results were useful.",
+      "d": "The survey was; short the results were useful."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 10,
+    "question": "Two articles disagree about a new school policy. What is the strongest critical-reading approach?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Choose the article with the boldest title",
+      "b": "Compare each author's evidence, perspective, and purpose",
+      "c": "Believe whichever article appeared first",
+      "d": "Avoid reading either article"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 11,
+    "question": "What is the main purpose of a topic sentence in a paragraph?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To tell the reader what the paragraph is mostly about",
+      "b": "To end the paragraph",
+      "c": "To list sources",
+      "d": "To add a rhyme"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 12,
+    "question": "\"The sun smiled down on the picnic.\" Which technique is used?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Personification",
+      "b": "Simile",
+      "c": "Hyperbole",
+      "d": "Alliteration"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 13,
+    "question": "\"I'm so hungry I could eat a horse!\" Which technique is used?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Simile",
+      "b": "Hyperbole",
+      "c": "Personification",
+      "d": "Metaphor"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 14,
+    "question": "Which word is an adverb in this sentence? \"The turtle moved slowly across the road.\"",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "turtle",
+      "b": "moved",
+      "c": "slowly",
+      "d": "road"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 15,
+    "question": "Which sentence is a compound sentence?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The bus was late.",
+      "b": "The bus was late, so we waited inside.",
+      "c": "Waiting for the bus.",
+      "d": "Because the bus was late."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 16,
+    "question": "Which sentence uses the apostrophe correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The cats toys were scattered.",
+      "b": "The cat's toys were scattered.",
+      "c": "The cats' toy's were scattered.",
+      "d": "The cat's' toys were scattered."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 17,
+    "question": "Which word correctly completes the sentence? \"___ going to the library after school.\"",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Their",
+      "b": "There",
+      "c": "They're",
+      "d": "Thier"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 18,
+    "question": "Which sentence is a fact?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Alberta is a province in Canada.",
+      "b": "Alberta has the best weather.",
+      "c": "Winter in Alberta is boring.",
+      "d": "Everyone loves Alberta."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 19,
+    "question": "Which sentence is written from the first-person point of view?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "I walked home alone, wondering what to say.",
+      "b": "She walked home alone, wondering what to say.",
+      "c": "You walked home alone, wondering what to say.",
+      "d": "They walked home alone, wondering what to say."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 20,
+    "question": "Read this story opening: \"On a foggy morning in 1920, the ship pulled into Halifax harbour.\" What is the setting?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A foggy morning in 1920 at Halifax harbour",
+      "b": "A ship's engine room",
+      "c": "A modern airport",
+      "d": "A school classroom"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 21,
+    "question": "The main problem a character faces in a story is called the:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Conflict",
+      "b": "Setting",
+      "c": "Theme",
+      "d": "Dialogue"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 22,
+    "question": "What is the term for the main message or lesson a story teaches about life?",
+    "type": "short_answer",
+    "answer": "Theme",
+    "keywords": [
+      "theme"
+    ]
+  },
+  {
+    "number": 23,
+    "question": "Which is the best way to take notes while researching?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Copy whole paragraphs word for word",
+      "b": "Write key ideas in your own words and record the source",
+      "c": "Write only the title of the book",
+      "d": "Memorize everything"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 24,
+    "question": "A student copies a sentence from a website into a report without saying where it came from. What should the student have done?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Credited the source",
+      "b": "Deleted the sentence",
+      "c": "Added more adjectives",
+      "d": "Made the sentence longer"
+    },
+    "answer": "a"
+  }
+    ],
+    "secondChance": [
+      {
+    "number": 25,
+    "question": "In one or two sentences, explain the difference between a fact and an opinion.",
+    "type": "short_answer",
+    "answer": "A fact can be proven true, but an opinion is what someone thinks or feels.",
+    "keywords": [
+      "prove"
+    ],
+    "second chance": true
+  },
+  {
+    "number": 26,
+    "question": "In a group discussion, which behaviour shows respect for others' ideas?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Listening without interrupting and building on others' ideas",
+      "b": "Talking over others to share your idea first",
+      "c": "Ignoring ideas you disagree with",
+      "d": "Making fun of a different opinion"
+    },
+    "answer": "a",
+    "second chance": true
+  }
+    ]
   },
   "grade8": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      [
+  {
+    "number": 1,
+    "question": "What is the main problem or struggle a character faces in a story called?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Theme",
+      "b": "Setting",
+      "c": "Conflict",
+      "d": "Resolution"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 2,
+    "question": "The time and place in which a story happens is called the:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Plot",
+      "b": "Setting",
+      "c": "Theme",
+      "d": "Tone"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 3,
+    "question": "What is the term for the most exciting or tense point in a story, where the conflict reaches its peak?",
+    "type": "short_answer",
+    "answer": "Climax",
+    "keywords": [
+      "climax"
+    ]
+  },
+  {
+    "number": 4,
+    "question": "\"I never expected to see him again, and my hands trembled as he walked in.\" What point of view is this?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "First person",
+      "b": "Second person",
+      "c": "Third person",
+      "d": "Omniscient"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 5,
+    "question": "Which sentence shows a character's personality indirectly, through an action?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Mia was very generous.",
+      "b": "Mia handed her lunch to the new student without being asked.",
+      "c": "Mia is a nice girl.",
+      "d": "The narrator says Mia is kind."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "question": "\"Her voice was as smooth as silk.\" This is an example of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Metaphor",
+      "b": "Personification",
+      "c": "Simile",
+      "d": "Alliteration"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 7,
+    "question": "What literary device is used in this sentence? \"The wind whispered through the trees.\"",
+    "type": "short_answer",
+    "answer": "Personification",
+    "keywords": [
+      "personification"
+    ]
+  },
+  {
+    "number": 8,
+    "question": "A story shows a girl who practises every day and finally earns a spot on the team. Which theme fits best?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Hard work and perseverance can lead to success",
+      "b": "Winning is everything",
+      "c": "Some people are just born lucky",
+      "d": "Practice is boring"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 9,
+    "question": "In poetry, what is a stanza?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A line that rhymes",
+      "b": "A group of lines that forms a unit in a poem",
+      "c": "The title of the poem",
+      "d": "The biography of the poet"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 10,
+    "question": "In poetry, what does imagery mean?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Words and details that appeal to the senses",
+      "b": "The pattern of rhyme at the ends of lines",
+      "c": "The number of syllables in each line",
+      "d": "The name of the poet"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 11,
+    "question": "\"Reluctant to speak in front of the class, Sam stared at his shoes.\" What does the word reluctant mean?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Eager",
+      "b": "Tired",
+      "c": "Angry",
+      "d": "Unwilling"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 12,
+    "question": "Which sentence is an opinion?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Winter is the best season.",
+      "b": "Water boils at 100°C at sea level.",
+      "c": "Edmonton is the capital of Alberta.",
+      "d": "Calgary is in Alberta."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 13,
+    "question": "A charity advertisement shows a photo of a hungry child. Which persuasive technique is being used?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Emotional appeal",
+      "b": "Statistics",
+      "c": "Expert opinion",
+      "d": "Bandwagon"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 14,
+    "question": "Which is the strongest thesis statement for a persuasive essay?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "My essay is about school lunches.",
+      "b": "Lunch is a meal.",
+      "c": "Some people like lunch.",
+      "d": "School lunches should include more vegetables because they improve students' health and focus."
+    },
+    "answer": "d"
+  },
+  {
+    "number": 15,
+    "question": "Which feature is most important in instructional writing?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Rhyming lines",
+      "b": "A surprise ending",
+      "c": "Clear steps listed in a logical order",
+      "d": "The author's opinions"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 16,
+    "question": "Which sentence uses commas correctly in a list?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "We bought apples, oranges, and bananas.",
+      "b": "We bought apples oranges, and bananas.",
+      "c": "We bought, apples, oranges and bananas.",
+      "d": "We, bought apples oranges and bananas."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 17,
+    "question": "Which sentence is written correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Its raining outside.",
+      "b": "It's raining outside.",
+      "c": "Its' raining outside.",
+      "d": "Its raining, outside."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 18,
+    "question": "Which sentence has correct subject–verb agreement?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The students was ready.",
+      "b": "The dogs barks loudly.",
+      "c": "Neither of the answers is correct.",
+      "d": "The books is on the table."
+    },
+    "answer": "c"
+  },
+  {
+    "number": 19,
+    "question": "Which sentence is a fragment?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Running through the park.",
+      "b": "She ran home.",
+      "c": "We left early.",
+      "d": "The dog barked."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 20,
+    "question": "Which sentence is a run-on?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "I was tired, so I went to bed.",
+      "b": "I was tired I went to bed.",
+      "c": "I was tired. I went to bed.",
+      "d": "I went to bed because I was tired."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 21,
+    "question": "Which source is most reliable for a research project about Alberta's history?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "An anonymous social media post",
+      "b": "A website run by a museum or university",
+      "c": "A friend's opinion",
+      "d": "An advertisement"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 22,
+    "question": "What is the purpose of citing your sources in a research project?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "To make the project longer",
+      "b": "To give credit to the original authors and let readers find the information",
+      "c": "To hide where the information came from",
+      "d": "To avoid revising"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 23,
+    "question": "A cartoon-character cereal commercial airs on Saturday morning. Who is the most likely target audience?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Children",
+      "b": "Seniors",
+      "c": "Business executives",
+      "d": "Teachers"
+    },
+    "answer": "a"
+  }
+]
+
+    ],
+    "secondChance": [
+      {
+    "number": 24,
+    "question": "What does it mean to make an inference when you read? Answer in one sentence.",
+    "type": "short_answer",
+    "answer": "Using clues from the text and what you already know to figure out something the author does not say directly.",
+    "keywords": [
+      "clue",
+      "text"
+    ],
+    "second chance": true
+  },
+  {
+    "number": 25,
+    "question": "A classmate shares an opinion you disagree with during a group discussion. Which response is the most respectful?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Interrupt and tell them they are wrong",
+      "b": "Say \"I see your point, but I see it differently because...\"",
+      "c": "Ignore them and talk to someone else",
+      "d": "Roll your eyes and sigh"
+    },
+    "answer": "b",
+    "second chance": true
+  }
+    ]
   },
   "grade9": {
-    "primary": [],
-    "secondChance": []
+    "primary": [
+      [
+  {
+    "number": 1,
+    "question": "\"The classroom was a zoo during the substitute's first lesson.\" This sentence is an example of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Simile",
+      "b": "Metaphor",
+      "c": "Hyperbole",
+      "d": "Alliteration"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 2,
+    "question": "\"The old house groaned and sighed as the storm rolled in.\" This is an example of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Onomatopoeia",
+      "b": "Simile",
+      "c": "Personification",
+      "d": "Irony"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 3,
+    "question": "\"As Daniel walked into the room, he wondered whether anyone had noticed his torn jacket.\" This passage is told from which point of view?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "First person",
+      "b": "Second person",
+      "c": "Third person limited",
+      "d": "Third person omniscient"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 4,
+    "question": "A boy lies about his talents to impress classmates. When the lie is exposed, they stop trusting him. Which theme fits best?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Popularity matters most",
+      "b": "Friends are not worth keeping",
+      "c": "Lying is normal",
+      "d": "Dishonesty can damage trust"
+    },
+    "answer": "d"
+  },
+  {
+    "number": 5,
+    "question": "Maya checked her phone for the fifth time in ten minutes, then pushed her untouched dinner aside. What is the best inference?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Maya had a big lunch",
+      "b": "Maya is anxious and waiting for news",
+      "c": "Maya hates her phone",
+      "d": "The dinner is too hot"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 6,
+    "question": "Which sentence uses a semicolon correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "We were tired; so we left.",
+      "b": "We were tired; we left early.",
+      "c": "We were; tired we left early.",
+      "d": "We were tired, we left early."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 7,
+    "question": "\"The scientist's explanation was so lucid that even the youngest students understood it.\" What does lucid mean?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Confusing",
+      "b": "Lengthy",
+      "c": "Clear",
+      "d": "Loud"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 8,
+    "question": "\"Everyone at school is switching to Zap Energy drinks. Don't be the only one left out!\" Which persuasive technique is this?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Expert testimonial",
+      "b": "Statistical evidence",
+      "c": "Bandwagon",
+      "d": "Logical reasoning"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 9,
+    "question": "Which sentence is an opinion?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Winter is the best season.",
+      "b": "Water boils at 100°C at sea level.",
+      "c": "Edmonton is the capital of Alberta.",
+      "d": "Calgary is in Alberta."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 10,
+    "question": "Which sentence has correct subject–verb agreement?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The box of pencils are on the desk.",
+      "b": "Each of the students are ready.",
+      "c": "The students was ready.",
+      "d": "The team of players is late."
+    },
+    "answer": "d"
+  },
+  {
+    "number": 11,
+    "question": "What is the term for a writer's hints or clues about events that will happen later in the story?",
+    "type": "short_answer",
+    "answer": "Foreshadowing",
+    "keywords": [
+      "foreshadow"
+    ]
+  },
+  {
+    "number": 12,
+    "question": "What is it called when the outcome of a situation is the opposite of what is expected?",
+    "type": "short_answer",
+    "answer": "Irony",
+    "keywords": [
+      "irony"
+    ]
+  },
+  {
+    "number": 13,
+    "question": "In a story, a caged bird is used to represent a character's lack of freedom. The bird is an example of a:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Symbol",
+      "b": "Simile",
+      "c": "Rhyme",
+      "d": "Flashback"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 14,
+    "question": "Which word best describes the mood of this sentence? \"The fog crept over the empty street as the streetlamps flickered and died.\"",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Joyful",
+      "b": "Eerie",
+      "c": "Humorous",
+      "d": "Relaxed"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 15,
+    "question": "\"I've told you a million times to clean your room!\" This is an example of:",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Simile",
+      "b": "Personification",
+      "c": "Hyperbole",
+      "d": "Metaphor"
+    },
+    "answer": "c"
+  },
+  {
+    "number": 16,
+    "question": "Which source would be most credible for a research report on Alberta's climate data?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "A personal blog",
+      "b": "A Government of Alberta or scientific agency website",
+      "c": "A social media post",
+      "d": "A product advertisement"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 17,
+    "question": "A website sells vitamins and claims its vitamins cure every illness. What should a careful researcher conclude?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "The site is likely biased because it profits from sales",
+      "b": "The claim must be true",
+      "c": "The site is a neutral source",
+      "d": "The claim is scientific evidence"
+    },
+    "answer": "a"
+  },
+  {
+    "number": 18,
+    "question": "In one sentence, explain what a thesis statement does in an essay.",
+    "type": "short_answer",
+    "answer": "It states the main point or argument of the essay.",
+    "keywords": [
+      "main"
+    ]
+  },
+  {
+    "number": 19,
+    "question": "Which transition word shows contrast?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Therefore",
+      "b": "However",
+      "c": "Furthermore",
+      "d": "Similarly"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 20,
+    "question": "Which sentence is punctuated correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "After the game we went for pizza.",
+      "b": "After the game, we went for pizza.",
+      "c": "After, the game we went for pizza.",
+      "d": "After the game we, went for pizza."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 21,
+    "question": "Which sentence uses the correct word?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Their going to the park.",
+      "b": "They're going to the park.",
+      "c": "There going to the park.",
+      "d": "Theyre going to the park."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 22,
+    "question": "Which sentence contains a dependent clause?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "We stayed inside because it was raining.",
+      "b": "We stayed inside.",
+      "c": "It was raining.",
+      "d": "Rain fell."
+    },
+    "answer": "a"
+  },
+  {
+    "number": 23,
+    "question": "Which is an example of active listening during a group discussion?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Interrupting to share your own idea",
+      "b": "Paraphrasing what the speaker said to confirm understanding",
+      "c": "Checking your phone",
+      "d": "Finishing the speaker's sentences"
+    },
+    "answer": "b"
+  },
+  {
+    "number": 24,
+    "question": "A famous hockey player appears in an advertisement for a sports drink and says he drinks it every day. Which persuasive technique is this?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "Celebrity endorsement",
+      "b": "Statistics",
+      "c": "Bandwagon",
+      "d": "Slogan"
+    },
+    "answer": "a"
+  }
+]
+    ],
+    "secondChance": [
+        {
+    "number": 25,
+    "question": "Which sentence uses a colon correctly?",
+    "type": "multiple_choice",
+    "choices": {
+      "a": "I need: milk, eggs and bread.",
+      "b": "I need three things: milk, eggs, and bread.",
+      "c": "I need three things, milk: eggs, and bread.",
+      "d": "I need three: things milk, eggs, and bread."
+    },
+    "answer": "b"
+  },
+  {
+    "number": 26,
+    "question": "In one or two sentences, explain what it means to make an inference when reading.",
+    "type": "short_answer",
+    "answer": "Using clues from the text and what you already know to figure out something the author does not say directly.",
+    "keywords": [
+      "clue",
+      "text"
+    ]
+  }
+    ]
   }
 }

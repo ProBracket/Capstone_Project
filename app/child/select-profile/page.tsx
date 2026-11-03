@@ -1,24 +1,28 @@
 "use client";
 
-export default function SelectProfilePage() {
-  const children = [
-    {
-      id: "1",
-      name: "Emma",
-      avatar: "😀",
-    },
-    {
-      id: "2",
-      name: "Noah",
-      avatar: "🚀",
-    },
-    {
-      id: "3",
-      name: "Ava",
-      avatar: "🐱",
-    },
-  ];
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
+export default function SelectProfilePage() {
+ const [children, setChildren] = useState<any[]>([]);
+
+useEffect(() => {
+    async function loadChildren() {
+      const { data, error } = await supabase
+        .from("children")
+        .select("*");
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setChildren(data || []);
+    }
+
+    loadChildren();
+  }, []);
+ 
   return (
     <div
       style={{
@@ -36,32 +40,36 @@ export default function SelectProfilePage() {
           marginTop: "40px",
         }}
       >
-        {children.map((child) => (
-  <button
-    key={child.id}
-    style={{
-      border: "none",
-      background: "none",
-      cursor: "pointer",
-      fontSize: "20px",
-    }}
-    onClick={() => {
-      localStorage.setItem(
-        "selectedChildId",
-        child.id
-      );
+        {children.length === 0 ? (
+  <p>No child profiles found.</p>
+) : (
+  children.map((child) => (
+    <button
+      key={child.id}
+      style={{
+        border: "none",
+        background: "none",
+        cursor: "pointer",
+        fontSize: "20px",
+      }}
+      onClick={() => {
+        localStorage.setItem(
+          "selectedChildId",
+          child.id
+        );
 
-      window.location.href =
-        "/child/calibration";
-    }}
-  >
-    <div style={{ fontSize: "60px" }}>
-      {child.avatar}
-    </div>
+        window.location.href =
+          "/calibration";
+      }}
+    >
+      <div style={{ fontSize: "60px" }}>
+        😀
+      </div>
 
-    <div>{child.name}</div>
-  </button>
-))}
+      <div>{child.name}</div>
+    </button>
+  ))
+)}
       </div>
     </div>
   );
