@@ -6,7 +6,7 @@
 "use client";
 
 import { useState } from "react";
-import { addChild, getAge, gradeLabel, type Child } from "@/lib/children";
+import { addChild, gradeLabel, type Child } from "@/lib/children";
 
 // 0 = Kindergarten, then grades 1–12
 const GRADES = Array.from({ length: 13 }, (_, grade) => grade);
