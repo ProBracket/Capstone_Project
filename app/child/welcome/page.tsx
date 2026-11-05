@@ -19,7 +19,7 @@ export default function WelcomePage() {
           <Link href="/child/chat">
             <div className="bg-white p-6 rounded-xl shadow-lg">
               <h2 className="text-2xl font-bold">
-                🤖 Chat with ThinkFirst AI
+                🤖 Chat with Bud
               </h2>
             </div>
           </Link>
