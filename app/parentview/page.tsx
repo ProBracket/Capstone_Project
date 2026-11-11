@@ -289,6 +289,13 @@ export default function ParentView() {
               <ChildProfiles
                 profiles={profiles}
                 onAdded={(child) => setProfiles((prev) => [...prev, child])}
+                // A child was changed (e.g. microphone switched): go through the list
+                // and swap in the new version where the id matches; keep everyone else as-is.
+                onUpdated={(updated) =>
+                  setProfiles((prev) =>
+                    prev.map((child) => (child.id === updated.id ? updated : child))
+                  )
+                }
                 onBack={() => setScreen("dashboard")}
               />
             )}

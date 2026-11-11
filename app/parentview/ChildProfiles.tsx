@@ -6,7 +6,13 @@
 "use client";
 
 import { useState } from "react";
-import { addChild, getAge, gradeLabel, type Child } from "@/lib/children";
+import {
+  addChild,
+  getAge,
+  gradeLabel,
+  setVoiceEnabled,
+  type Child,
+} from "@/lib/children";
 
 // 0 = Kindergarten, then grades 1–12
 const GRADES = Array.from({ length: 13 }, (_, grade) => grade);
@@ -14,16 +20,32 @@ const GRADES = Array.from({ length: 13 }, (_, grade) => grade);
 type Props = {
   profiles: Child[];
   onAdded: (child: Child) => void; // tells the page so the picker updates too
+  // Tells the page that a child was changed (e.g. microphone switched on),
+  // so the page can swap in the new version. Same idea as onAdded.
+  onUpdated: (child: Child) => void;
   onBack: () => void;
 };
 
-export default function ChildProfiles({ profiles, onAdded, onBack }: Props) {
+export default function ChildProfiles({
+  profiles,
+  onAdded,
+  onUpdated,
+  onBack,
+}: Props) {
   const [name, setName] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(""); // "YYYY-MM-DD" from the date input
   const [grade, setGrade] = useState(""); // "" until a grade is picked
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(""); // red banner
   const [message, setMessage] = useState(""); // green banner
+
+  // --- Microphone switch state (separate from the Add Child form above) ---
+  // The id of the child whose switch is saving right now, or null when nothing is saving.
+  // Used to disable that one switch so it can't be clicked twice mid-save.
+  const [voiceSavingId, setVoiceSavingId] = useState<string | null>(null);
+  // Red banner above the list if a switch fails to save. Kept separate from `error`
+  // so switch problems don't appear inside the "Add a Child" form.
+  const [voiceError, setVoiceError] = useState("");
 
   // Today as "YYYY-MM-DD" so the date picker can't choose a future birthday
   const today = new Date().toLocaleDateString("en-CA");
@@ -70,6 +92,38 @@ export default function ChildProfiles({ profiles, onAdded, onBack }: Props) {
     setMessage(`${data.name} was added.`);
   }
 
+  /** Runs when the parent clicks a child's microphone switch.
+   * Saves the opposite of the current setting, then updates the screen.
+   */
+  async function handleVoiceToggle(child: Child) {
+    setVoiceError(""); // clear any old error from a previous click
+    setVoiceSavingId(child.id); // disable this child's switch while saving
+
+    // `!` flips true ↔ false: if the mic is on, turn it off, and vice versa
+    const { data, error } = await setVoiceEnabled(child.id, !child.voice_enabled);
+
+    setVoiceSavingId(null); // saving finished (successfully or not), re-enable the switch
+
+    if (error) {
+      // When the PIN switch is OFF, the database quietly refuses to update the row.
+      // That shows up as one of two codes:
+      //   "42501"    = blocked by row-level security
+      //   "PGRST116" = we asked for exactly one updated row (.single()) but got none,
+      //                because the security rule hid the row from the update
+      // Either way it means the parent session is locked, so show a helpful message.
+      setVoiceError(
+        error.code === "42501" || error.code === "PGRST116"
+          ? "Your parent session was locked. Go back home and enter your PIN again."
+          : error.message
+      );
+      return; // stop here: nothing was saved, so the switch stays as it was
+    }
+
+    // Saved! Send the updated child (straight from the database) up to the page.
+    // The page replaces the old version in its list, and the switch redraws in its new position.
+    onUpdated(data);
+  }
+
   return (
     <section className="rounded-lg border border-slate-200 bg-white p-6">
       <h2 className="text-xl font-semibold">Child Profiles</h2>
@@ -80,17 +134,49 @@ export default function ChildProfiles({ profiles, onAdded, onBack }: Props) {
         </p>
       ) : (
         <div className="mt-4 space-y-2">
+          {/* Shown only when a microphone switch failed to save */}
+          {voiceError && (
+            <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+              {voiceError}
+            </p>
+          )}
+
           {profiles.map((child) => (
             <div
               key={child.id}
-              className="rounded-md border border-slate-200 px-4 py-3"
+              // flex + justify-between: child's info on the left, mic switch on the right
+              className="flex items-center justify-between gap-4 rounded-md border border-slate-200 px-4 py-3"
             >
-              <p className="font-medium">{child.name}</p>
-              <p className="text-sm text-slate-500">
-                Age {getAge(child.date_of_birth)} · {gradeLabel(child.grade)}
-              </p>
+              <div>
+                <p className="font-medium">{child.name}</p>
+                <p className="text-sm text-slate-500">
+                  Age {getAge(child.date_of_birth)} · {gradeLabel(child.grade)}
+                </p>
+              </div>
+
+              {/* Microphone switch. Wrapping the checkbox in a <label> makes the
+                  text clickable too, and lets screen readers announce what it's for. */}
+              <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  // Shows the value saved in the database (ticked = mic allowed)
+                  checked={child.voice_enabled}
+                  // Clicking saves the opposite value (see handleVoiceToggle above)
+                  onChange={() => handleVoiceToggle(child)}
+                  // Can't be clicked again while this child's switch is saving
+                  disabled={voiceSavingId === child.id}
+                  className="h-4 w-4"
+                />
+                🎤 Microphone
+              </label>
             </div>
           ))}
+
+          {/* Explains to the parent what the switch does (informed consent) */}
+          <p className="text-xs text-slate-500">
+            🎤 Microphone lets your child talk to their tutor instead of typing.
+            Only the text of what they say is saved, never the recording.
+          </p>
         </div>
       )}
 

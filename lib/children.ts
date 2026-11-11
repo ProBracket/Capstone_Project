@@ -10,9 +10,18 @@ export type Child = {
   name: string;
   date_of_birth: string; // "YYYY-MM-DD"
   grade: number; // 0 = Kindergarten, 1–12 = grade
+  // The parent's microphone switch for this child.
+  // true  = the child may talk to Bud using the microphone
+  // false = the child can only type (this is the default for new children)
+  voice_enabled: boolean;
 };
 
-const CHILD_COLUMNS = "id, name, date_of_birth, grade";
+// Which columns to ask Supabase for whenever we load a child.
+// Supabase sends back ONLY the columns listed here, so keep this in sync with
+// the Child type above: every field there must be listed here too, or its
+// value will silently be undefined.
+// Every function below uses this one list, so a new column only needs adding once.
+const CHILD_COLUMNS = "id, name, date_of_birth, grade, voice_enabled";
 
 /** Gets the logged-in parent's children, in the order they were added. Returns { data, error }. */
 export function getChildren() {
@@ -32,6 +41,23 @@ export function addChild(name: string, dateOfBirth: string, grade: number) {
     .insert({ name: name.trim(), date_of_birth: dateOfBirth, grade })
     .select(CHILD_COLUMNS)
     .single();
+}
+
+/** Turns the microphone on or off for one child.
+ * Returns { data: the updated child, error }.
+ *
+ * Like addChild, this only works while the parent area is unlocked (PIN entered).
+ * That rule lives in the database, not here, so a child can never switch their
+ * own microphone on, even by calling this function directly.
+ */
+export function setVoiceEnabled(childId: string, enabled: boolean) {
+  return supabase
+    .from("children") // 1. go to the children table
+    .update({ voice_enabled: enabled }) // 2. change only this one column
+    .eq("id", childId) // 3. ...and only on the row whose id matches this child.
+    //                       Without this line, it would update EVERY child the parent has.
+    .select(CHILD_COLUMNS) // 4. send back the updated row, so the screen shows what was really saved
+    .single(); // 5. as one object instead of a list (we expect exactly one row)
 }
 
 /** Works out age in whole years from a "YYYY-MM-DD" date of birth.
