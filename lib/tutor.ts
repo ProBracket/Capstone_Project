@@ -105,6 +105,13 @@ export const PRACTICE_PROBLEMS: Problem[] = [
 // BLOCK 3: What Bud remembers (the "state")
 // ─────────────────────────────────────────────────────────────
 
+// How one problem ended. Only these three words are allowed:
+//   "first-try"  = correct with no wrong tries
+//   "with-hints" = correct after 1 to 3 wrong tries (so after some hints)
+//   "explained"  = 4 wrong tries, so Bud explained the answer
+// Used for the summary parents see (Block 6).
+export type ProblemResult = "first-try" | "with-hints" | "explained";
+
 // Everything Bud needs to remember to decide what to say next.
 // Each time the child sends a message, Bud reads this state, replies, and
 // returns a NEW updated copy. The old state is never changed directly; this
@@ -121,14 +128,20 @@ export type TutorState = {
 
   // true once every problem is done. Then the conversation is over.
   finished: boolean;
+
+  // How each finished problem went, in order. One result is added each time
+  // a problem ends, e.g. ["first-try", "with-hints"] after two problems.
+  results: ProblemResult[];
 };
 
 // The state at the start of every new conversation:
-// first problem (0), no wrong tries yet (0), not finished (false).
+// first problem (0), no wrong tries yet (0), not finished (false),
+// and no results yet (an empty list []).
 export const START_STATE: TutorState = {
   problemIndex: 0,
   wrongTries: 0,
   finished: false,
+  results: [],
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -334,12 +347,22 @@ function isChitChat(childMessage: string): boolean {
  * explains an answer.
  *
  * firstLine: what Bud says before the next problem, e.g. "🎉 Yes, that's right!"
+ * result:    how the problem that just ended went, e.g. "first-try"
  *
  * Not exported: only getBudReply uses it.
  */
-function moveToNextProblem(state: TutorState, firstLine: string): BudReply {
+function moveToNextProblem(
+  state: TutorState,
+  firstLine: string,
+  result: ProblemResult
+): BudReply {
   // The position of the next problem in the list.
   const nextIndex = state.problemIndex + 1;
+
+  // A NEW list: all the old results, plus this problem's result at the end.
+  // .concat() never changes the old list, it makes a new one.
+  // e.g. ["first-try"].concat("explained") → ["first-try", "explained"]
+  const newResults = state.results.concat(result);
 
   // No problems left? (With 3 problems, positions are 0, 1, 2, so
   // nextIndex 3 means we've run out.)
@@ -351,6 +374,7 @@ function moveToNextProblem(state: TutorState, firstLine: string): BudReply {
         problemIndex: state.problemIndex, // stay on the last problem (there is no next one)
         wrongTries: 0,
         finished: true, // the conversation is over
+        results: newResults, // includes the last problem's result
       },
     };
   }
@@ -362,6 +386,7 @@ function moveToNextProblem(state: TutorState, firstLine: string): BudReply {
       problemIndex: nextIndex, // move to the next problem
       wrongTries: 0, // new problem, so wrong tries start again from 0
       finished: false,
+      results: newResults, // remember how the problem we just finished went
     },
   };
 }
@@ -394,7 +419,19 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   // Check 1: correct answer. This is checked FIRST, so a message like
   // "thanks, it's 56" counts as correct even though it also has "thanks".
   if (isCorrect(problem, childMessage)) {
-    return moveToNextProblem(state, "🎉 Yes, that's right! Great thinking.");
+    // Record how it was solved: no wrong tries → "first-try",
+    // otherwise the child needed at least one hint → "with-hints".
+    // `let` (instead of const) because the value may change on the next line.
+    let result: ProblemResult = "with-hints";
+    if (state.wrongTries === 0) {
+      result = "first-try"; // === means "is exactly equal to"
+    }
+
+    return moveToNextProblem(
+      state,
+      "🎉 Yes, that's right! Great thinking.",
+      result
+    );
   }
 
   // Check 2: the child wants the answer without trying.
@@ -440,6 +477,7 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
         problemIndex: state.problemIndex, // same problem: the child tries again
         wrongTries: newWrongTries, // remember how many wrong tries so far
         finished: false,
+        results: state.results, // no problem finished, so the results don't change
       },
     };
   }
@@ -449,6 +487,66 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   // correct answer.
   return moveToNextProblem(
     state,
-    "Good effort! Let's work through it together.\n\n" + problem.explanation
+    "Good effort! Let's work through it together.\n\n" + problem.explanation,
+    "explained" // record that Bud had to explain this one
   );
+}
+
+// ─────────────────────────────────────────────────────────────
+// BLOCK 6: The summary parents see in chat history
+// ─────────────────────────────────────────────────────────────
+
+/** Turns the results in a state into one short sentence for parents.
+ * Example: "Practised 3 problems: 1 solved on the first try,
+ *           1 solved with hints, 1 explained by Bud."
+ *
+ * Saved with the conversation when it ends, and shown in the parent's
+ * chat history.
+ */
+export function getSummary(state: TutorState): string {
+  // Start each count at 0. `let` because these numbers go up in the loop.
+  let firstTry = 0;
+  let withHints = 0;
+  let explained = 0;
+
+  // Go through the results one at a time and add 1 to the matching count.
+  // count++ is short for count = count + 1.
+  for (const result of state.results) {
+    if (result === "first-try") {
+      firstTry++;
+    } else if (result === "with-hints") {
+      withHints++;
+    } else {
+      explained++; // the only result left is "explained"
+    }
+  }
+
+  // How many problems were finished in total.
+  const total = state.results.length;
+
+  // The child left before finishing even one problem.
+  if (total === 0) {
+    return "Started a conversation but didn't finish any problems.";
+  }
+
+  // "1 problem" but "2 problems": only add the "s" when there's more than one.
+  let problemWord = "problems";
+  if (total === 1) {
+    problemWord = "problem";
+  }
+
+  // Build the sentence from the counts.
+  let summary =
+    `Practised ${total} ${problemWord}: ` +
+    `${firstTry} solved on the first try, ` +
+    `${withHints} solved with hints, ` +
+    `${explained} explained by ${TUTOR_NAME}.`;
+
+  // If the conversation isn't finished, the child left part-way through.
+  // The ! means "not": !state.finished is true when finished is false.
+  if (!state.finished) {
+    summary = summary + " Stopped before the end.";
+  }
+
+  return summary;
 }
