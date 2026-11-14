@@ -27,11 +27,15 @@ export function onSignInOrOut(callback: () => void) {
 /** Logs in with an email and password.
  * Returns { data: { user, session }, error }; error is set when the
  * account doesn't exist or the password is wrong.
+ * adding Captcha Turnstile in the LOgin page
  */
-export function signInWithEmail(email: string, password: string) {
+export function signInWithEmail(email: string, password: string, captchaToken: string) {
   return supabase.auth.signInWithPassword({
     email: email.trim(), // remove accidental spaces before/after the email
     password: password,
+    options: {
+      captchaToken,
+    }
   });
 }
 /** Creates a new account with a name, email and password.
@@ -42,7 +46,8 @@ export function signInWithEmail(email: string, password: string) {
 export function signUpWithEmail(
   fullName: string,
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signUp({
     // remove accidental spaces before/after the email
@@ -52,6 +57,8 @@ export function signUpWithEmail(
       // saved on the account so the Parent Profile page
       // can show the name (lib/profile.ts reads full_name)
       data: { full_name: fullName.trim() },
+      // Token comes from Turnstile check on the signup page
+      captchaToken,
     },
   });
 }

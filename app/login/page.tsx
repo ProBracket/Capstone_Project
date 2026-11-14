@@ -8,10 +8,11 @@
 // and for handling the form
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signInWithEmail, signInWithGoogle } from "@/lib/auth";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {
   const router = useRouter(); // lets us move to another page in code
@@ -20,6 +21,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState(""); // what's typed in the password box
   const [error, setError] = useState(""); // red message under the title
   const [loading, setLoading] = useState(false); // true while we wait for Supabase
+  const [token, setToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   // Runs when the form is submitted (button click or pressing Enter)
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -34,19 +37,34 @@ export default function LoginPage() {
       return;
     }
 
+    if (!token) {
+      setError("Please complete the security check.");
+      return;
+    }
+
     setLoading(true);
 
     // Ask Supabase to check the email and password
-    const { error } = await signInWithEmail(email, password);
+    const { error } = await signInWithEmail(email, password, token);
 
     setLoading(false);
+    
+    turnstileRef.current?.reset();
+    setToken("");
 
     if (error) {
+      // security check expired or failed
+      if (error.code === "captcha_failed") {
+        setError("Security check failed. Please try again.");
+        return;
+      }
+      
       // Account doesn't exist or password is wrong → stay here and show the message.
       // We use the same message for both so nobody can guess which emails have accounts.
       setError("Incorrect email or password");
       return;
     }
+
 
     // Success → go to the Parent Profile page
     router.push("/parentview");
@@ -113,6 +131,14 @@ export default function LoginPage() {
                 className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
               />
             </div>
+
+            <Turnstile 
+              ref={turnstileRef}
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setToken(token)}
+              onExpire={() => setToken("")}
+              onError={() => setToken("")}
+              />
 
             {/* Disabled while loading so it can't be clicked twice */}
             <button
