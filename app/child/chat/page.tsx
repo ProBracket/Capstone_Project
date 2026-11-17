@@ -2,7 +2,9 @@
  *
  * This file only handles the SCREEN: showing messages, the typing box,
  * and (later) the microphone and Bud's voice.
- * What Bud says is decided in lib/tutor.ts.
+ * What Bud says is decided in lib/tutor.ts. The page then asks the AI
+ * (app/api/bud/route.ts) to word that reply more naturally, and falls back to
+ * the rule-based message if the AI is unavailable.
  */
 
 // "use client" makes this page run in the browser. It needs to, because it
@@ -14,6 +16,7 @@ import {
   getBudReply,
   getOpeningReply,
   TUTOR_NAME,
+  type BudStep,
   type TutorState,
 } from "@/lib/tutor";
 
@@ -31,6 +34,38 @@ type ChatMessage = {
 // Bud's first message and starting state. Calculated once, when the file
 // loads, because every conversation starts the same way.
 const OPENING = getOpeningReply();
+
+// ─────────────────────────────────────────────────────────────
+// PIECE C2b: Asking the AI to word Bud's reply
+// ─────────────────────────────────────────────────────────────
+
+// What /api/bud sends back (see app/api/bud/route.ts).
+//   reply null   = use the rule-based message
+//   blocked true = the child's message wasn't allowed; show reply instead
+type BudAIResult = {
+  reply: string | null;
+  blocked: boolean;
+};
+
+/** Sends the child's message and the current step to /api/bud.
+ * Never throws: if anything fails (offline, server error), it returns
+ * reply: null so the page simply shows the rule-based message.
+ */
+async function askBudAI(childMessage: string, step: BudStep): Promise<BudAIResult> {
+  try {
+    const response = await fetch("/api/bud", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ childMessage, step }),
+    });
+    if (!response.ok) {
+      return { reply: null, blocked: false };
+    }
+    return await response.json();
+  } catch {
+    return { reply: null, blocked: false };
+  }
+}
 
 export default function ChatPage() {
   // The list of messages on screen. Starts with Bud's opening message.
@@ -52,39 +87,70 @@ export default function ChatPage() {
   // What the child has typed in the box so far (empty to start).
   const [draft, setDraft] = useState("");
 
+  // true while waiting for the AI. Shows "Bud is thinking…" and stops the
+  // child sending a second message before the first one is answered.
+  const [thinking, setThinking] = useState(false);
+
   /** Runs when the child presses Send (or the Enter key).
    * SubmitEvent = the event a form fires when it's submitted. (The other pages
    * use React.FormEvent, which the latest React types mark as outdated.)
+   * async = this function waits for the AI's reply partway through.
    */
-  function handleSend(event: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSend(event: React.SubmitEvent<HTMLFormElement>) {
     // Stop the browser's default form behaviour, which would reload the page.
     event.preventDefault();
 
-    // Remove spaces at the start and end. Ignore empty messages.
+    // Remove spaces at the start and end. Ignore empty messages,
+    // and ignore new messages while Bud is still answering the last one.
     const text = draft.trim();
-    if (text === "") {
+    if (text === "" || thinking) {
       return;
     }
 
-    // Ask Bud for a reply. All the rules live in lib/tutor.ts;
-    // the page only passes the message along and shows the answer.
+    // 1. The rules decide what happens (correct, hint 2, explain...).
+    //    All the rules live in lib/tutor.ts.
     const reply = getBudReply(tutorState, text);
 
-    // Add two new bubbles: the child's message, then Bud's reply.
-    // .concat() makes a NEW list (the old one is never changed), which is
-    // what React needs to notice the change and redraw.
-    setMessages(
-      messages.concat(
-        { role: "child", text: text },
-        { role: "assistant", text: reply.message }
-      )
-    );
-
-    // Keep Bud's updated memory for the next message.
-    setTutorState(reply.state);
-
-    // Empty the typing box, ready for the next message.
+    // 2. Show the child's message straight away and empty the typing box.
+    //    (previous) => ... means "start from the latest list", which matters
+    //    because the list may have changed while we wait for the AI.
+    //    .concat() makes a NEW list, which is what React needs to redraw.
+    setMessages((previous) => previous.concat({ role: "child", text: text }));
     setDraft("");
+
+    // 3. Ask the AI to word the reply. Start with the rule-based message;
+    //    it is used whenever the AI doesn't give a usable reply.
+    let budText = reply.message;
+    let countThisMessage = true; // false if the message was blocked
+
+    // "done" (conversation over) never needs the AI.
+    if (reply.step.kind !== "done") {
+      setThinking(true);
+      const ai = await askBudAI(text, reply.step);
+      setThinking(false);
+
+      if (ai.blocked && ai.reply !== null) {
+        // Not allowed: show the "talk with a parent" message and keep the old
+        // state, so a blocked message never counts as a try.
+        budText = ai.reply;
+        countThisMessage = false;
+      } else if (ai.reply !== null) {
+        // The AI's words, then the part that always comes from the rules
+        // (the next problem, or the problem repeated), if there is one.
+        budText = ai.reply;
+        if (reply.nextLine !== "") {
+          budText = budText + "\n\n" + reply.nextLine;
+        }
+      }
+    }
+
+    // 4. Show Bud's reply.
+    setMessages((previous) => previous.concat({ role: "assistant", text: budText }));
+
+    // 5. Keep Bud's updated memory for the next message (unless blocked).
+    if (countThisMessage) {
+      setTutorState(reply.state);
+    }
   }
 
   // ─────────────────────────────────────────────────────────────
@@ -97,15 +163,15 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
 
   // useEffect: "after the screen redraws, run this code".
-  // The [messages] at the end means: only run it when `messages` changes,
-  // i.e. whenever a new bubble is added.
+  // The [messages, thinking] at the end means: only run it when one of those
+  // changes, i.e. whenever a new bubble or the "thinking" bubble appears.
   useEffect(() => {
     // Scroll the chat so the bottom marker (the newest message) is in view.
     // ?. means "only if it exists": skip it if the marker isn't on screen yet.
     // behavior "smooth" = glide instead of jumping;
     // block "nearest"   = scroll only as much as needed (so the whole page doesn't jump).
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }, [messages]);
+  }, [messages, thinking]);
 
   /** Runs when the child clicks "Start over" after finishing.
    * Puts all three pieces of state back to how they were at the start.
@@ -147,6 +213,13 @@ export default function ChatPage() {
             </div>
           ))}
 
+          {/* A temporary bubble while waiting for the AI's reply. */}
+          {thinking && (
+            <div className="self-start rounded-2xl bg-slate-100 text-slate-500 italic px-4 py-3">
+              {TUTOR_NAME} is thinking… 💭
+            </div>
+          )}
+
           {/* Invisible marker after the last message. The auto-scroll
               (useEffect above) scrolls to here. */}
           <div ref={bottomRef} />
@@ -187,7 +260,9 @@ export default function ChatPage() {
           />
           <button
             type="submit"
-            disabled={tutorState.finished}
+            // Also greyed out while Bud is thinking. (The typing box stays on,
+            // so the child can start typing their next message.)
+            disabled={tutorState.finished || thinking}
             className="rounded-2xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
           >
             Send

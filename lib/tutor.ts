@@ -3,7 +3,9 @@
  * This file decides WHAT BUD SAYS. Nothing else.
  * - No database (saving messages is lib/conversations.ts)
  * - No screen (that is app/child/chat/page.tsx)
- * - No AI yet: Bud follows simple rules written below
+ * - No AI in this file: the rules below decide what happens. The AI only
+ *   re-words Bud's replies afterwards (app/api/bud/route.ts), and if the AI
+ *   is unavailable, the messages written here are shown as they are.
  *
  * The Think First rule: Bud never gives the answer before the child has tried.
  *   1st wrong try → hint 1 (small)
@@ -201,11 +203,49 @@ export function isCorrect(problem: Problem, childAnswer: string): boolean {
 // BLOCK 5a: Bud's reply, asking a problem, and the opening message
 // ─────────────────────────────────────────────────────────────
 
-// What every Bud function gives back: the message to show (and read aloud),
-// plus the updated state to use for the child's next message.
+// What kind of reply Bud is giving. The AI route (app/api/bud/route.ts) uses
+// this to decide what it is allowed to say, e.g. for "hint" it is given the
+// hint but never the answer.
+//   "opening"   = the first message of a conversation
+//   "correct"   = the child got it right
+//   "hint"      = a wrong try, answered with hint 1, 2 or 3
+//   "explain"   = the 4th wrong try, so Bud explains the answer
+//   "encourage" = the child asked for the answer before trying
+//   "chit-chat" = a friendly message like "thanks" or "hi"
+//   "done"      = the conversation is already over
+export type BudStepKind =
+  | "opening"
+  | "correct"
+  | "hint"
+  | "explain"
+  | "encourage"
+  | "chit-chat"
+  | "done";
+
+// Which step of the conversation a reply belongs to.
+export type BudStep = {
+  kind: BudStepKind;
+  problemIndex: number; // the problem this reply is about (counts from 0)
+  hintNumber: number; // 1, 2 or 3 when kind is "hint"; 0 for every other kind
+};
+
+// What every Bud function gives back.
 export type BudReply = {
+  // The complete rule-based message. Shown exactly as written whenever the
+  // AI is not used or fails.
   message: string;
+
+  // The updated state to use for the child's next message.
   state: TutorState;
+
+  // What kind of reply this is (see BudStep above).
+  step: BudStep;
+
+  // The end of the message that always comes from the rules, never the AI:
+  // the next problem, the current problem repeated, or the "you finished"
+  // line. "" (empty) when there is nothing to add.
+  // The AI writes only the part BEFORE this line.
+  nextLine: string;
 };
 
 /** Builds the text Bud uses to ask a problem.
@@ -235,6 +275,9 @@ export function getOpeningReply(): BudReply {
       askProblem(0),
     // A brand-new conversation always starts from the starting state.
     state: START_STATE,
+    // The opening is always the rule-based text; it is not sent to the AI.
+    step: { kind: "opening", problemIndex: 0, hintNumber: 0 },
+    nextLine: askProblem(0),
   };
 }
 
@@ -348,13 +391,15 @@ function isChitChat(childMessage: string): boolean {
  *
  * firstLine: what Bud says before the next problem, e.g. "🎉 Yes, that's right!"
  * result:    how the problem that just ended went, e.g. "first-try"
+ * kind:      "correct" or "explain", which tells the AI what kind of reply this is
  *
  * Not exported: only getBudReply uses it.
  */
 function moveToNextProblem(
   state: TutorState,
   firstLine: string,
-  result: ProblemResult
+  result: ProblemResult,
+  kind: "correct" | "explain"
 ): BudReply {
   // The position of the next problem in the list.
   const nextIndex = state.problemIndex + 1;
@@ -364,18 +409,27 @@ function moveToNextProblem(
   // e.g. ["first-try"].concat("explained") → ["first-try", "explained"]
   const newResults = state.results.concat(result);
 
+  // This reply is about the problem that just ended (not the next one).
+  const step: BudStep = {
+    kind: kind,
+    problemIndex: state.problemIndex,
+    hintNumber: 0,
+  };
+
   // No problems left? (With 3 problems, positions are 0, 1, 2, so
   // nextIndex 3 means we've run out.)
   if (nextIndex >= PRACTICE_PROBLEMS.length) {
+    const finishedLine = "🌟 You finished all the problems! Great thinking today.";
     return {
-      message:
-        firstLine + "\n\n🌟 You finished all the problems! Great thinking today.",
+      message: firstLine + "\n\n" + finishedLine,
       state: {
         problemIndex: state.problemIndex, // stay on the last problem (there is no next one)
         wrongTries: 0,
         finished: true, // the conversation is over
         results: newResults, // includes the last problem's result
       },
+      step: step,
+      nextLine: finishedLine,
     };
   }
 
@@ -388,6 +442,8 @@ function moveToNextProblem(
       finished: false,
       results: newResults, // remember how the problem we just finished went
     },
+    step: step,
+    nextLine: askProblem(nextIndex),
   };
 }
 
@@ -410,6 +466,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     return {
       message: "We're all done for today! 🌟 Great job thinking first.",
       state: state,
+      step: { kind: "done", problemIndex: state.problemIndex, hintNumber: 0 },
+      nextLine: "",
     };
   }
 
@@ -430,7 +488,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     return moveToNextProblem(
       state,
       "🎉 Yes, that's right! Great thinking.",
-      result
+      result,
+      "correct"
     );
   }
 
@@ -441,6 +500,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     return {
       message: ENCOURAGE_TO_TRY + "\n\n" + askProblem(state.problemIndex),
       state: state,
+      step: { kind: "encourage", problemIndex: state.problemIndex, hintNumber: 0 },
+      nextLine: askProblem(state.problemIndex),
     };
   }
 
@@ -450,6 +511,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     return {
       message: CHIT_CHAT_REPLY + "\n\n" + askProblem(state.problemIndex),
       state: state,
+      step: { kind: "chit-chat", problemIndex: state.problemIndex, hintNumber: 0 },
+      nextLine: askProblem(state.problemIndex),
     };
   }
 
@@ -479,6 +542,13 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
         finished: false,
         results: state.results, // no problem finished, so the results don't change
       },
+      step: {
+        kind: "hint",
+        problemIndex: state.problemIndex,
+        hintNumber: newWrongTries, // 1st wrong try → hint 1, and so on
+      },
+      // Nothing is added after a hint: the child simply tries again.
+      nextLine: "",
     };
   }
 
@@ -488,7 +558,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   return moveToNextProblem(
     state,
     "Good effort! Let's work through it together.\n\n" + problem.explanation,
-    "explained" // record that Bud had to explain this one
+    "explained", // record that Bud had to explain this one
+    "explain"
   );
 }
 
