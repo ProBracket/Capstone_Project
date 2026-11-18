@@ -65,4 +65,21 @@ export function signInWithGoogle() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/parentview`}
     });
+} 
+/** Sends a "reset your password" email.
+ * The link in the email opens our /reset-password page.
+ * Returns { error }; error is null when the request was accepted.
+ */
+export function sendPasswordReset(email: string) {
+  return supabase.auth.resetPasswordForEmail(email.trim(), {
+    // where the link in the email takes the parent
+    // (works on localhost and on the Vercel site)
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+} 
+/** Saves a new password for the parent who opened the reset link.
+ * Returns { error }; error is null on success.
+ */
+export function updatePassword(newPassword: string) {
+  return supabase.auth.updateUser({ password: newPassword });
 }
