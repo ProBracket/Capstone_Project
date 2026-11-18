@@ -55,6 +55,13 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-12">
       <div className="mx-auto max-w-md">
+        {/* goes back to the homepage (app/page.tsx) */}
+        <Link
+          href="/"
+          className="mb-6 inline-block font-medium text-blue-700 hover:underline"
+        >
+          ← Back to home
+        </Link>
         <header className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
             ThinkFirst
@@ -112,6 +119,15 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
               />
+              {/* goes to the Forgot password page (app/forgot-password/page.tsx) */}
+              <div className="mt-2 text-right">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-blue-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             {/* Disabled while loading so it can't be clicked twice */}
