@@ -24,34 +24,6 @@ export function onSignInOrOut(callback: () => void) {
   return () => data.subscription.unsubscribe();
 }
 
-/**
- * Get all children from the database.
- */
-export async function getChildren() {
-  return await supabase
-    .from("children")
-    .select("*")
-    .order("id", { ascending: true });
-}
-
-/**
- * Add a child to the database.
- */
-export async function addChild(
-  nickname: string,
-  age: number
-) {
-  return supabase
-    .from("children")
-    .insert([
-      {
-        nickname,
-        age,
-      },
-    ])
-    .select();
-}
-
 /** Logs in with an email and password.
  * Returns { data: { user, session }, error }; error is set when the
  * account doesn't exist or the password is wrong.

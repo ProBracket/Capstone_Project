@@ -10,6 +10,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signInWithEmail, signInWithGoogle } from "@/lib/auth";
 
@@ -124,7 +125,7 @@ export default function LoginPage() {
             </button>
             <button type="button" onClick={() => signInWithGoogle()}
               className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-5 py-3 font-medium text-gray-800 hover:bg-gray-50">
-              <img src="/google-logo.svg" alt="" className="h-5 w-5"/>Continue with Google
+              <Image src="/google-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />Continue with Google
             </button>
           </form>
           
