@@ -28,12 +28,16 @@ export function onSignInOrOut(callback: () => void) {
  * Returns { data: { user, session }, error }; error is set when the
  * account doesn't exist or the password is wrong.
  */
-export function signInWithEmail(email: string, password: string) {
+export function signInWithEmail(
+  email: string,
+  password: string
+) {
   return supabase.auth.signInWithPassword({
-    email: email.trim(), // remove accidental spaces before/after the email
-    password: password,
+    email: email.trim(),
+    password,
   });
 }
+
 /** Creates a new account with a name, email and password.
  * Returns { data: { user, session }, error }.
  * - session is set → the parent is logged in right away
@@ -45,12 +49,9 @@ export function signUpWithEmail(
   password: string
 ) {
   return supabase.auth.signUp({
-    // remove accidental spaces before/after the email
     email: email.trim(),
-    password: password,
+    password,
     options: {
-      // saved on the account so the Parent Profile page
-      // can show the name (lib/profile.ts reads full_name)
       data: { full_name: fullName.trim() },
     },
   });
