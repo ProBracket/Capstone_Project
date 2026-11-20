@@ -194,3 +194,72 @@ export function determineFinalGrade(
 
   return currentGrade;
 }
+
+// ─────────────────────────────────────────────────────────────
+// The grade ladder: moving between grades until the level is found
+// ─────────────────────────────────────────────────────────────
+
+// The lowest and highest grades that have questions.
+export const LOWEST_GRADE = 4;
+export const HIGHEST_GRADE = 9;
+
+// Saved as the final grade when the child does not pass Grade 4.
+// Shown to people as "Below Grade 4" (see gradeLevelLabel).
+export const BELOW_LOWEST_GRADE = LOWEST_GRADE - 1;
+
+// What the ladder remembers between grades.
+// null = nothing passed (or failed) yet.
+export type LadderMemory = {
+  highestPassed: number | null;
+  lowestFailed: number | null;
+};
+
+// What climbLadder decides after each grade.
+export type LadderStep = LadderMemory & {
+  done: boolean; // true = the test is over for this subject
+  nextGrade: number; // the grade to test next (only used when done is false)
+  finalGrade: number; // the child's level (only used when done is true)
+};
+
+/** Decides what happens after the child finishes a grade.
+ *
+ * Passed → remember it, then go up one grade, unless this is the top grade
+ *          or the grade above was already failed (then the test is over).
+ * Failed → remember it, then go down one grade, unless this is the bottom
+ *          grade or the grade below was already passed (then the test is over).
+ *
+ * Because the ladder remembers what was passed and failed, it can never go
+ * back and forth between two grades forever.
+ * The final level is always the highest grade passed, or BELOW_LOWEST_GRADE
+ * if no grade was passed.
+ */
+export function climbLadder(
+  grade: number,
+  passed: boolean,
+  memory: LadderMemory
+): LadderStep {
+  // Update the memory with this grade's result.
+  const highestPassed = passed ? grade : memory.highestPassed;
+  const lowestFailed = passed ? memory.lowestFailed : grade;
+
+  // The level so far: the highest grade passed, or "below the lowest grade".
+  const finalGrade = highestPassed ?? BELOW_LOWEST_GRADE;
+
+  // Is there anywhere left to go?
+  const done = passed
+    ? grade === HIGHEST_GRADE || lowestFailed === grade + 1
+    : grade === LOWEST_GRADE || highestPassed === grade - 1;
+
+  return {
+    highestPassed,
+    lowestFailed,
+    done,
+    nextGrade: passed ? grade + 1 : grade - 1,
+    finalGrade,
+  };
+}
+
+/** Turns a final grade into text, e.g. 6 → "Grade 6", 3 → "Below Grade 4". */
+export function gradeLevelLabel(grade: number): string {
+  return grade < LOWEST_GRADE ? `Below Grade ${LOWEST_GRADE}` : `Grade ${grade}`;
+}
