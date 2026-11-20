@@ -10,10 +10,11 @@
 // (needed for useState and the form)
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUpWithEmail } from "@/lib/auth";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 export default function SignUpPage() {
   // tool to go to another page in code
@@ -25,7 +26,9 @@ export default function SignUpPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-
+  const [token, setToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
+   
   // red message ("" = no box shown)
   const [error, setError] = useState("");
 
@@ -56,14 +59,25 @@ export default function SignUpPage() {
     }
 
     // Supabase needs at least 6 characters
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
       return;
     }
 
     // both passwords must match
     if (password !== confirm) {
       setError("Passwords do not match.");
+      return;
+    }
+
+    if (/[a-z]/.test(password) === false || /[A-Z]/.test(password) === false || /[0-9]/.test(password) === false) {
+      setError("Password must contain an uppercase letter, a lowercase letter, and a number.");
+      return;
+    }
+
+    // Security Check for Turnstile, if it is done.
+    if (!token) {
+      setError("Please complete the security check.");
       return;
     }
 
@@ -75,11 +89,16 @@ export default function SignUpPage() {
     const { data, error } = await signUpWithEmail(
       fullName,
       email,
-      password
+      password,
+      token
     );
 
     // Supabase answered → button unlocked
     setLoading(false);
+
+    // tokens only work once then get a fresh one for the next try
+    turnstileRef.current?.reset();
+    setToken("");
 
     // Supabase said no (bad email, etc.)
     if (error) {
@@ -226,6 +245,14 @@ export default function SignUpPage() {
                 className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
               />
             </div>
+
+            <Turnstile
+              ref={turnstileRef} 
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setToken(token)}
+              onExpire={() => setToken("")}
+              onError={() => setToken("")}
+              />
 
             {/* button: locked while waiting */}
             <button

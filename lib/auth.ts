@@ -27,14 +27,18 @@ export function onSignInOrOut(callback: () => void) {
 /** Logs in with an email and password.
  * Returns { data: { user, session }, error }; error is set when the
  * account doesn't exist or the password is wrong.
+ * adding Captcha Turnstile in the LOgin page
  */
 export function signInWithEmail(
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signInWithPassword({
     email: email.trim(),
     password,
+    options: {
+      captchaToken: captchaToken}
   });
 }
 
@@ -46,13 +50,16 @@ export function signInWithEmail(
 export function signUpWithEmail(
   fullName: string,
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signUp({
     email: email.trim(),
     password,
     options: {
       data: { full_name: fullName.trim() },
+      // Token comes from Turnstile check on the signup page
+      captchaToken,
     },
   });
 }
