@@ -31,11 +31,14 @@ export function onSignInOrOut(callback: () => void) {
  */
 export function signInWithEmail(
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signInWithPassword({
     email: email.trim(),
     password,
+    options: {
+      captchaToken: captchaToken}
   });
 }
 
