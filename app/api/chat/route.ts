@@ -34,6 +34,7 @@ const conversation = history
   model: "gpt-4o-mini",
 
   input: `
+        ${BUD_PROMPT}
         Conversation History:
 
         ${conversation}

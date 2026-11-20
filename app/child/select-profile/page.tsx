@@ -57,6 +57,10 @@ useEffect(() => {
           "selectedChildId",
           child.id
         );
+        localStorage.setItem(
+        "selectedChildName",
+        child.name
+        );
 
         window.location.href =
           "/calibration";

@@ -1,6 +1,7 @@
 
 "use client";
 
+
 import { useState } from "react";
 
 import {
@@ -8,6 +9,10 @@ import {
   determineResult,
   determineNextGrade,
 } from "@/lib/calibration";
+
+
+import { createAIProfile } from "@/lib/ai-profiles";
+
 
 import mathQuestions from "@/lib/calibration/math.json";
 import scienceQuestions from "@/lib/calibration/science.json";
@@ -137,11 +142,24 @@ setResults((prev) => ({
   [subject]: finalGrade,
 }));
 
-setCompletedSubjects((prev) =>
-  prev.includes(subject)
-    ? prev
-    : [...prev, subject]
-);
+const updatedSubjects =
+  completedSubjects.includes(subject)
+    ? completedSubjects
+    : [...completedSubjects, subject];
+
+setCompletedSubjects(updatedSubjects);
+
+if (updatedSubjects.length === 3) {
+  const childId =
+    localStorage.getItem("selectedChildId");
+
+  const childName =
+    localStorage.getItem("selectedChildName");
+
+    console.log(childId);
+    console.log(childName);
+    console.log(updatedSubjects);
+}
   }
 
   return (

@@ -3,15 +3,17 @@
  * - If the account exists in Supabase → go to the Parent Profile page (/parentview).
  * - If not (or the password is wrong) → show "Incorrect email or password"
  *   and stay on this page.
- * No sign-up and no email verification here.
  */
 // "use client" makes this run in the browser, which it needs for useState
 // and for handling the form
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { signInWithEmail } from "@/lib/auth";
+import { signInWithEmail, signInWithGoogle } from "@/lib/auth";
+import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
 
 export default function LoginPage() {
   const router = useRouter(); // lets us move to another page in code
@@ -20,6 +22,8 @@ export default function LoginPage() {
   const [password, setPassword] = useState(""); // what's typed in the password box
   const [error, setError] = useState(""); // red message under the title
   const [loading, setLoading] = useState(false); // true while we wait for Supabase
+  const [token, setToken] = useState("");
+  const turnstileRef = useRef<TurnstileInstance>(null);
 
   // Runs when the form is submitted (button click or pressing Enter)
   async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
@@ -34,19 +38,34 @@ export default function LoginPage() {
       return;
     }
 
+    if (!token) {
+      setError("Please complete the security check.");
+      return;
+    }
+
     setLoading(true);
 
     // Ask Supabase to check the email and password
-    const { error } = await signInWithEmail(email, password);
+    const { error } = await signInWithEmail(email, password, token);
 
     setLoading(false);
+    
+    turnstileRef.current?.reset();
+    setToken("");
 
     if (error) {
+      // security check expired or failed
+      if (error.code === "captcha_failed") {
+        setError("Security check failed. Please try again.");
+        return;
+      }
+      
       // Account doesn't exist or password is wrong → stay here and show the message.
       // We use the same message for both so nobody can guess which emails have accounts.
       setError("Incorrect email or password");
       return;
     }
+
 
     // Success → go to the Parent Profile page
     router.push("/parentview");
@@ -55,6 +74,13 @@ export default function LoginPage() {
   return (
     <main className="min-h-screen bg-gray-100 px-4 py-12">
       <div className="mx-auto max-w-md">
+        {/* goes back to the homepage (app/page.tsx) */}
+        <Link
+          href="/"
+          className="mb-6 inline-block font-medium text-blue-700 hover:underline"
+        >
+          ← Back to home
+        </Link>
         <header className="mb-8 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
             ThinkFirst
@@ -112,7 +138,24 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
               />
+              {/* goes to the Forgot password page (app/forgot-password/page.tsx) */}
+              <div className="mt-2 text-right">
+                <Link
+                  href="/forgot-password"
+                  className="font-medium text-blue-700 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
             </div>
+
+            <Turnstile 
+              ref={turnstileRef}
+              siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY!}
+              onSuccess={(token) => setToken(token)}
+              onExpire={() => setToken("")}
+              onError={() => setToken("")}
+              />
 
             {/* Disabled while loading so it can't be clicked twice */}
             <button
@@ -122,7 +165,22 @@ export default function LoginPage() {
             >
               {loading ? "Logging in..." : "Log in"}
             </button>
+            <button type="button" onClick={() => signInWithGoogle()}
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-gray-300 bg-white px-5 py-3 font-medium text-gray-800 hover:bg-gray-50">
+              <Image src="/google-logo.svg" alt="" width={20} height={20} className="h-5 w-5" />Continue with Google
+            </button>
           </form>
+          
+          {/* goes to the Create account page (app/signup/page.tsx) */}
+          <p className="mt-6 text-center text-gray-600">
+            Don&apos;t have an account?
+          </p>
+          <Link
+            href="/signup"
+            className="mt-2 block w-full rounded-lg border border-blue-700 px-5 py-3 text-center font-medium text-blue-700 hover:bg-blue-50"
+          >
+            Create account
+          </Link>
         </section>
       </div>
     </main>
