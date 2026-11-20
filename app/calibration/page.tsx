@@ -10,6 +10,7 @@ import {
   determineResult,
   gradeLevelLabel,
   LOWEST_GRADE,
+  shuffleQuestions,
   type GradeQuestions,
   type LadderMemory,
 } from "@/lib/calibration";
@@ -22,8 +23,34 @@ import type { Question } from "@/lib/calibration";
 
 import { supabase } from "@/lib/supabase";
 
+/** Gets one list of questions from the JSON files, in their original order.
+ * phase "primary" = the main questions, "secondChance" = the short retry.
+ * Returns an empty list if that grade has no questions of that kind.
+ */
+function getQuestionList(
+  subjectName: string,
+  grade: number,
+  phase: "primary" | "secondChance"
+): Question[] {
+  const questionData =
+    subjectName === "math"
+      ? mathQuestions
+      : subjectName === "science"
+      ? scienceQuestions
+      : literatureQuestions;
+
+  const gradeQuestions = questionData[
+    `grade${grade}` as keyof typeof questionData
+  ] as GradeQuestions;
+
+  return (gradeQuestions[phase] ?? []) as Question[];
+}
+
 export default function CalibrationPage() {
-  const [subject, setSubject] = useState("math");
+  // null until the child picks a subject. The questions are shuffled when a
+  // subject is picked (a click only happens in the browser), so the server
+  // and the browser never draw the page with two different question orders.
+  const [subject, setSubject] = useState<string | null>(null);
   const [currentGrade, setCurrentGrade] =
     useState(LOWEST_GRADE);
 
@@ -71,29 +98,20 @@ export default function CalibrationPage() {
 const [completedSubjects, setCompletedSubjects] =
   useState<string[]>([]);
 
-  const questionData =
-    subject === "math"
-      ? mathQuestions
-      : subject === "science"
-      ? scienceQuestions
-      : literatureQuestions;
-
-  // Both question lists for the current grade.
-  const gradeQuestions = questionData[
-    `grade${currentGrade}` as keyof typeof questionData
-  ] as GradeQuestions;
-
-  // The list being answered right now (main or second chance).
-  // ?? [] = an empty list if this grade has no second-chance questions.
-  const questions = (gradeQuestions[phase] ?? []) as Question[];
+  // The list being answered right now (main or second chance), already
+  // shuffled. Kept in state so the order stays the same while the child
+  // answers, instead of changing every time the page redraws.
+  const [questions, setQuestions] = useState<Question[]>([]);
 
   const question = questions[currentQuestion];
 
-  /** Gets the page ready for a new list of questions. */
+  /** Gets the page ready for a new list of questions, in a random order. */
   function startQuestions(
+    subjectName: string,
     grade: number,
     newPhase: "primary" | "secondChance"
   ) {
+    setQuestions(shuffleQuestions(getQuestionList(subjectName, grade, newPhase)));
     setCurrentGrade(grade);
     setPhase(newPhase);
     setCurrentQuestion(0);
@@ -107,7 +125,8 @@ const [completedSubjects, setCompletedSubjects] =
     setSubject(newSubject);
 
     // A new subject starts from the bottom of the ladder with no memory.
-    startQuestions(LOWEST_GRADE, "primary");
+    // newSubject is passed in because `subject` only updates on the next redraw.
+    startQuestions(newSubject, LOWEST_GRADE, "primary");
     setLadder({ highestPassed: null, lowestFailed: null });
     setFinished(false);
     setScore(null);
@@ -117,6 +136,12 @@ const [completedSubjects, setCompletedSubjects] =
    * climbLadder decides whether to move to another grade or stop.
    */
   function finishGrade(passed: boolean) {
+    // Can't happen (questions only show after a subject is picked),
+    // but TypeScript needs to know subject isn't null below.
+    if (subject === null) {
+      return;
+    }
+
     const step = climbLadder(currentGrade, passed, ladder);
 
     setLadder({
@@ -125,7 +150,7 @@ const [completedSubjects, setCompletedSubjects] =
     });
 
     if (!step.done) {
-      startQuestions(step.nextGrade, "primary");
+      startQuestions(subject, step.nextGrade, "primary");
       return;
     }
 
@@ -145,6 +170,11 @@ const [completedSubjects, setCompletedSubjects] =
   }
 
   function nextQuestion() {
+    // Nothing to answer before a subject is picked.
+    if (subject === null || !question) {
+      return;
+    }
+
     const updatedAnswers = {
       ...answers,
       [question.number]:
@@ -188,13 +218,13 @@ const [completedSubjects, setCompletedSubjects] =
     const outcome = determineResult(result.percentage);
 
     if (outcome === "secondChance") {
-      const retryQuestions = gradeQuestions.secondChance ?? [];
+      const retryQuestions = getQuestionList(subject, currentGrade, "secondChance");
 
       // Some grades have no second-chance questions yet.
       // Then a score of 60% to 69% counts as not passed.
       if (retryQuestions.length > 0) {
         setPrimaryPercentage(result.percentage);
-        startQuestions(currentGrade, "secondChance");
+        startQuestions(subject, currentGrade, "secondChance");
         return;
       }
     }
@@ -246,22 +276,31 @@ const [completedSubjects, setCompletedSubjects] =
         </button>
       </div>
 
-      <h2
-        style={{
-          textTransform:
-            "capitalize",
-        }}
-      >
-        {subject} Calibration
-      </h2>
+      {/* Before a subject is picked, only ask the child to pick one. */}
+      {subject === null && (
+        <p>Choose a subject to start.</p>
+      )}
 
-      <p>
-        Current Grade: Grade{" "}
-        {currentGrade}
-      </p>
-      <p>
-        Highest Passed Grade: {ladder.highestPassed ?? "none yet"}
-      </p>
+      {subject !== null && (
+        <>
+          <h2
+            style={{
+              textTransform:
+                "capitalize",
+            }}
+          >
+            {subject} Calibration
+          </h2>
+
+          <p>
+            Current Grade: Grade{" "}
+            {currentGrade}
+          </p>
+          <p>
+            Highest Passed Grade: {ladder.highestPassed ?? "none yet"}
+          </p>
+        </>
+      )}
 
       {/* The questions are hidden once this subject's level is found. */}
       {!finished && question && (

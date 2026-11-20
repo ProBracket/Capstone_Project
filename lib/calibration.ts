@@ -259,6 +259,26 @@ export function climbLadder(
   };
 }
 
+/** Returns a copy of the questions in a random order.
+ * The original list is not changed.
+ *
+ * Uses the Fisher–Yates shuffle: go from the last position to the first,
+ * and swap each question with a random one at or before it. Every order
+ * is equally likely.
+ */
+export function shuffleQuestions(questions: Question[]): Question[] {
+  const shuffled = [...questions]; // copy, so the imported JSON list stays as it is
+
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    // A random position from 0 to i (inclusive).
+    const j = Math.floor(Math.random() * (i + 1));
+    // Swap the questions at positions i and j.
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  return shuffled;
+}
+
 /** Turns a final grade into text, e.g. 6 → "Grade 6", 3 → "Below Grade 4". */
 export function gradeLevelLabel(grade: number): string {
   return grade < LOWEST_GRADE ? `Below Grade ${LOWEST_GRADE}` : `Grade ${grade}`;
