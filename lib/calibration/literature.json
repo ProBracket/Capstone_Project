@@ -282,7 +282,6 @@
 }
     ],
     "secondChance": [
-      [
   {
     "number": 11,
     "question": "Which statement is an opinion?",
@@ -316,7 +315,6 @@
     },
     "answer": "a"
   }
-]
     ]
   },
   "grade6": {
@@ -950,7 +948,6 @@
   },
   "grade8": {
     "primary": [
-      [
   {
     "number": 1,
     "question": "What is the main problem or struggle a character faces in a story called?",
@@ -1221,7 +1218,6 @@
     },
     "answer": "a"
   }
-]
 
     ],
     "secondChance": [
@@ -1253,7 +1249,6 @@
   },
   "grade9": {
     "primary": [
-      [
   {
     "number": 1,
     "question": "\"The classroom was a zoo during the substitute's first lesson.\" This sentence is an example of:",
@@ -1533,7 +1528,6 @@
     },
     "answer": "a"
   }
-]
     ],
     "secondChance": [
         {
