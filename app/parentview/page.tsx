@@ -14,6 +14,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import { getCurrentUser, onSignInOrOut, signOut } from "@/lib/auth";
 import { getChildren, gradeLabel, type Child } from "@/lib/children";
@@ -30,6 +31,8 @@ type Screen =
   | "child-profiles";
 
 export default function ParentView() {
+  // tool to go to another page in code
+  const router = useRouter();
   const [user, setUser] = useState<User | null>(null); // null = not signed in
   const [profiles, setProfiles] = useState<Child[]>([]);
   const [loading, setLoading] = useState(true); // true until the first user check finishes
@@ -116,8 +119,12 @@ export default function ParentView() {
 
     if (error) {
       setError(error.message);
+      return;
     }
-    // onSignInOrOut reloads the page state after a successful sign out
+
+    // Signed out → back to the website homepage.
+    // replace (not push) so the Back button doesn't return to /parentview
+    router.replace("/");
   }
 
   return (
