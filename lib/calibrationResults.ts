@@ -10,7 +10,10 @@
  * outputs the same, and nothing else in the app needs to change:
  *   - saveCalibrationResults: insert one row per subject
  *   - hasCompletedCalibration: true if the child has results for every subject
+ *   - getCalibrationResults: the child's latest result for each subject
  */
+
+import { getChild } from "@/lib/children";
 
 // The subjects a child must finish for calibration to count as done.
 export const CALIBRATION_SUBJECTS = ["math", "science", "literature"] as const;
@@ -43,6 +46,36 @@ export async function saveCalibrationResults(
     // use the app; they will just be asked to do calibration again next time.
     return { error: "Could not save the calibration results." };
   }
+}
+
+/** Gets a child's saved calibration results, or null if there are none. */
+export async function getCalibrationResults(
+  childId: string
+): Promise<CalibrationResults | null> {
+  try {
+    const saved = localStorage.getItem(storageKey(childId));
+    return saved === null ? null : (JSON.parse(saved) as CalibrationResults);
+  } catch {
+    return null;
+  }
+}
+
+/** The grade level Bud should talk at for one subject.
+ * Uses the child's calibration result for that subject if there is one,
+ * otherwise their school grade from their profile.
+ * Returns null if neither is known.
+ */
+export async function getChildLevel(
+  childId: string,
+  subject: (typeof CALIBRATION_SUBJECTS)[number]
+): Promise<number | null> {
+  const results = await getCalibrationResults(childId);
+  if (results !== null) {
+    return results[subject];
+  }
+
+  const { data } = await getChild(childId);
+  return data ? data.grade : null;
 }
 
 /** Checks whether a child has finished calibration (all subjects).

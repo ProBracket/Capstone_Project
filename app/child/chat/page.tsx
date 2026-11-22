@@ -13,11 +13,15 @@
 
 import { useEffect, useRef, useState } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
+import { getActiveChildId } from "@/lib/activeChild";
+import { getChildLevel } from "@/lib/calibrationResults";
 import {
   getBudReply,
   getOpeningReply,
+  PRACTICE_PROBLEMS,
   TUTOR_NAME,
   type BudStep,
+  type Problem,
   type TutorState,
 } from "@/lib/tutor";
 
@@ -48,16 +52,21 @@ type BudAIResult = {
   blocked: boolean;
 };
 
-/** Sends the child's message and the current step to /api/bud.
+/** Sends the child's message, the current step and the child's grade level
+ * to /api/bud. level null = unknown (the AI then uses its default wording).
  * Never throws: if anything fails (offline, server error), it returns
  * reply: null so the page simply shows the rule-based message.
  */
-async function askBudAI(childMessage: string, step: BudStep): Promise<BudAIResult> {
+async function askBudAI(
+  childMessage: string,
+  step: BudStep,
+  level: number | null
+): Promise<BudAIResult> {
   try {
     const response = await fetch("/api/bud", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ childMessage, step }),
+      body: JSON.stringify({ childMessage, step, level }),
     });
     if (!response.ok) {
       return { reply: null, blocked: false };
@@ -91,6 +100,33 @@ export default function ChatPage() {
   // true while waiting for the AI. Shows "Bud is thinking…" and stops the
   // child sending a second message before the first one is answered.
   const [thinking, setThinking] = useState(false);
+
+  // The child's grade level for each subject, once looked up.
+  // useRef (not useState) because changing it doesn't need to redraw anything.
+  const levels = useRef<Partial<Record<Problem["subject"], number | null>>>({});
+
+  /** The grade level Bud should talk at for this subject (TF-11).
+   * Looked up once per subject (lib/calibrationResults.ts), then remembered.
+   * null if no child is known (e.g. the chat was opened directly).
+   */
+  async function getLevel(subject: Problem["subject"]): Promise<number | null> {
+    if (subject in levels.current) {
+      return levels.current[subject] ?? null;
+    }
+
+    const childId = getActiveChildId();
+    let level: number | null = null;
+    if (childId !== null) {
+      try {
+        level = await getChildLevel(childId, subject);
+      } catch {
+        level = null; // e.g. offline: Bud still works, just without a level
+      }
+    }
+
+    levels.current[subject] = level;
+    return level;
+  }
 
   /** Runs when the child presses Send (or the Enter key).
    * SubmitEvent = the event a form fires when it's submitted. (The other pages
@@ -127,7 +163,11 @@ export default function ChatPage() {
     // "done" (conversation over) never needs the AI.
     if (reply.step.kind !== "done") {
       setThinking(true);
-      const ai = await askBudAI(text, reply.step);
+      // The child's level for this problem's subject, so the AI can use
+      // words that fit their grade (TF-11).
+      const subject = PRACTICE_PROBLEMS[reply.step.problemIndex].subject;
+      const level = await getLevel(subject);
+      const ai = await askBudAI(text, reply.step, level);
       setThinking(false);
 
       if (ai.blocked && ai.reply !== null) {
