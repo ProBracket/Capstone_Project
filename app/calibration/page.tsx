@@ -1,7 +1,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
+import Link from "next/link";
+import { getChild } from "@/lib/children";
+import {
+  CALIBRATION_SUBJECTS,
+  saveCalibrationResults,
+} from "@/lib/calibrationResults";
 
 import {
   calculateScore,
@@ -11,6 +17,7 @@ import {
   gradeLevelLabel,
   LOWEST_GRADE,
   shuffleQuestions,
+  startingGrade,
   type GradeQuestions,
   type LadderMemory,
 } from "@/lib/calibration";
@@ -46,7 +53,44 @@ function getQuestionList(
   return (gradeQuestions[phase] ?? []) as Question[];
 }
 
-export default function CalibrationPage() {
+export default function CalibrationPage({
+  searchParams,
+}: {
+  // The part of the address after "?", e.g. /calibration?childId=abc.
+  // Next.js passes it as a Promise; use() below waits for it.
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  // Which child is taking the test, from /calibration?childId=<id>.
+  // null if the page was opened without one (e.g. for testing).
+  const childIdParam = use(searchParams).childId;
+  const childId = typeof childIdParam === "string" ? childIdParam : null;
+
+  // The child's school grade (from their profile), or null if unknown.
+  const [schoolGrade, setSchoolGrade] = useState<number | null>(null);
+
+  // true while the child's profile is loading. The subject buttons wait for
+  // it, so the test doesn't start at the wrong grade.
+  const [childLoading, setChildLoading] = useState(childId !== null);
+
+  // Load the child's profile once, to find their school grade.
+  useEffect(() => {
+    if (childId === null) {
+      return;
+    }
+    getChild(childId).then(({ data }) => {
+      // data is null if the child wasn't found; the test then starts at Grade 4.
+      if (data) {
+        setSchoolGrade(data.grade);
+      }
+      setChildLoading(false);
+    });
+  }, [childId]);
+
+  // The grade every subject starts at: the child's school grade, kept
+  // within Grades 4 to 9. Grade 4 if the school grade is unknown.
+  const firstGrade =
+    schoolGrade === null ? LOWEST_GRADE : startingGrade(schoolGrade);
+
   // null until the child picks a subject. The questions are shuffled when a
   // subject is picked (a click only happens in the browser), so the server
   // and the browser never draw the page with two different question orders.
@@ -122,11 +166,16 @@ const [completedSubjects, setCompletedSubjects] =
   function changeSubject(
     newSubject: string
   ) {
+    // Wait for the child's profile, so the test starts at the right grade.
+    if (childLoading) {
+      return;
+    }
+
     setSubject(newSubject);
 
-    // A new subject starts from the bottom of the ladder with no memory.
+    // A new subject starts at the child's grade with no ladder memory.
     // newSubject is passed in because `subject` only updates on the next redraw.
-    startQuestions(newSubject, LOWEST_GRADE, "primary");
+    startQuestions(newSubject, firstGrade, "primary");
     setLadder({ highestPassed: null, lowestFailed: null });
     setFinished(false);
     setScore(null);
@@ -157,16 +206,34 @@ const [completedSubjects, setCompletedSubjects] =
     // The level is found: save it for the summary and end this subject.
     setFinished(true);
 
-    setResults((prev) => ({
-      ...prev,
-      [subject]: step.finalGrade,
-    }));
+    // The new results and finished subjects, worked out here (instead of
+    // inside the set functions) so they can also be saved just below.
+    const newResults = { ...results, [subject]: step.finalGrade };
+    const newCompleted = completedSubjects.includes(subject)
+      ? completedSubjects
+      : [...completedSubjects, subject];
 
-    setCompletedSubjects((prev) =>
-      prev.includes(subject)
-        ? prev
-        : [...prev, subject]
+    setResults(newResults);
+    setCompletedSubjects(newCompleted);
+
+    // Every subject done → save the results for this child, so they aren't
+    // sent to calibration again next time (lib/calibrationResults.ts).
+    const allDone = CALIBRATION_SUBJECTS.every((name) =>
+      newCompleted.includes(name)
     );
+    if (
+      allDone &&
+      childId !== null &&
+      newResults.math !== null &&
+      newResults.science !== null &&
+      newResults.literature !== null
+    ) {
+      void saveCalibrationResults(childId, {
+        math: newResults.math,
+        science: newResults.science,
+        literature: newResults.literature,
+      });
+    }
   }
 
   function nextQuestion() {
@@ -278,7 +345,11 @@ const [completedSubjects, setCompletedSubjects] =
 
       {/* Before a subject is picked, only ask the child to pick one. */}
       {subject === null && (
-        <p>Choose a subject to start.</p>
+        <p>
+          {childLoading
+            ? "Loading your profile…"
+            : `Choose a subject to start. Each subject starts at ${gradeLevelLabel(firstGrade)}.`}
+        </p>
       )}
 
       {subject !== null && (
@@ -454,6 +525,13 @@ const [completedSubjects, setCompletedSubjects] =
     <p>
       Literature: {results.literature === null ? "-" : gradeLevelLabel(results.literature)}
     </p>
+
+    {/* All subjects done: the child can go on to the rest of the app. */}
+    {completedSubjects.length === CALIBRATION_SUBJECTS.length && childId !== null && (
+      <Link href={`/child/welcome?childId=${childId}`}>
+        All done! Continue to ThinkFirst →
+      </Link>
+    )}
   </>
 )}
     </div>

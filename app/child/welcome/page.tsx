@@ -1,9 +1,21 @@
 import Link from "next/link";
 import ChildNavbar from "@/components/ChildNavbar";
+import CalibrationGate from "@/components/CalibrationGate";
 
-export default function WelcomePage() {
+export default async function WelcomePage({
+  searchParams,
+}: {
+  // The part of the address after "?". The profile picker opens this page
+  // as /child/welcome?childId=<id>.
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { childId } = await searchParams;
+
   return (
     <>
+      {/* First time using the app → sends the child to calibration. */}
+      <CalibrationGate childId={typeof childId === "string" ? childId : null} />
+
       <ChildNavbar />
 
       <main className="ml-64 p-8">

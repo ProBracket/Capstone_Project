@@ -31,6 +31,18 @@ export function getChildren() {
     .order("created_at", { ascending: true });
 }
 
+/** Gets one of the logged-in parent's children by id. Returns { data, error }.
+ * data is null if no child with this id belongs to the logged-in parent
+ * (row-level security hides other parents' children).
+ */
+export function getChild(childId: string) {
+  return supabase
+    .from("children")
+    .select(CHILD_COLUMNS)
+    .eq("id", childId) // only the row with this id
+    .maybeSingle(); // one object, or null if there's no match (instead of an error)
+}
+
 /** Adds a child for the logged-in parent and returns { data: the new child, error }.
  * Only works while the parent area is unlocked (PIN entered); otherwise
  * Supabase rejects it with a row-level security error (code "42501").

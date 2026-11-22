@@ -259,6 +259,15 @@ export function climbLadder(
   };
 }
 
+/** The grade the calibration test starts at for a child's school grade.
+ * The test only has Grades 4 to 9, so younger children start at 4 and
+ * older children start at 9.
+ * Examples: 6 → 6, 2 → 4, 0 (Kindergarten) → 4, 11 → 9.
+ */
+export function startingGrade(schoolGrade: number): number {
+  return Math.min(Math.max(schoolGrade, LOWEST_GRADE), HIGHEST_GRADE);
+}
+
 /** Returns a copy of the questions in a random order.
  * The original list is not changed.
  *
