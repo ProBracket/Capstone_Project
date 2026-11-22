@@ -57,10 +57,16 @@ const AI_KINDS: BudStepKind[] = [
   "explain",
   "encourage",
   "chit-chat",
+  "try-again",
 ];
 
 // Kinds where the answer must NOT appear in the AI's reply.
-const ANSWER_HIDDEN_KINDS: BudStepKind[] = ["hint", "encourage", "chit-chat"];
+const ANSWER_HIDDEN_KINDS: BudStepKind[] = [
+  "hint",
+  "encourage",
+  "chit-chat",
+  "try-again",
+];
 
 // Rules added after Laura's BUD_PROMPT for every reply from this route.
 const SAFETY_RULES = `
@@ -187,6 +193,16 @@ function buildTask(step: BudStep, problem: Problem): string {
       `${question}\n` +
       `The child said something friendly that is not an answer. Reply warmly ` +
       `in one sentence and invite them to keep going. Do NOT give the answer or a hint.`
+    );
+  }
+
+  if (step.kind === "try-again") {
+    return (
+      `${question}\n` +
+      `The child's message was not a real attempt (it was unclear, or an ` +
+      `answer they already tried). Kindly ask them to give the problem a real ` +
+      `try, and say that this message doesn't count as a try. Do NOT give ` +
+      `the answer or a hint.`
     );
   }
 
