@@ -1,66 +1,90 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import {
+  BookOpen,
+  ChartLine,
+  House,
+  MessageCircle,
+  Sprout,
+  Target,
+  Trophy,
+  Users,
+} from "lucide-react";
+
+// The child area's pages. "exact" means the link is only highlighted on that
+// exact page (so "My Home" isn't highlighted on every /child/... page).
+const LINKS = [
+  { href: "/child", label: "My Home", Icon: House, exact: true },
+  { href: "/child/chat", label: "Chat with Bud", Icon: MessageCircle },
+  { href: "/child/learning", label: "Learning", Icon: BookOpen },
+  { href: "/child/progress", label: "Progress", Icon: ChartLine },
+  { href: "/child/goals", label: "Goals", Icon: Target },
+  { href: "/child/challenges", label: "Challenges", Icon: Trophy },
+];
 
 export default function ChildNavbar() {
+  // The page we're on right now, e.g. "/child/chat"
+  const pathname = usePathname();
+
+  function isActive(href: string, exact?: boolean) {
+    return exact ? pathname === href : pathname.startsWith(href);
+  }
+
+  // Forget which child was picked, so the next child's chats
+  // aren't saved under this child's profile.
+  function switchLearner() {
+    localStorage.removeItem("selectedChildId");
+  }
+
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-indigo-700 to-purple-700 text-white shadow-2xl">
-
-      <div className="p-6 border-b border-indigo-500">
-        <h1 className="text-4xl font-extrabold">
+    <aside className="fixed left-0 top-0 flex h-screen w-sidebar flex-col border-r border-border bg-surface">
+      {/* Logo */}
+      <div className="flex items-center gap-2.5 px-6 py-6">
+        <div className="flex h-9 w-9 items-center justify-center rounded-control bg-primary text-on-primary">
+          <Sprout size={20} strokeWidth={2.25} />
+        </div>
+        <span className="text-lg font-semibold tracking-tight text-foreground">
           ThinkFirst
-        </h1>
-
-        <p className="text-indigo-200 mt-2">
-          Learn • Explore • Grow
-        </p>
+        </span>
       </div>
 
-      <nav className="mt-8 flex flex-col gap-2 px-4">
-
-        <Link
-          href="/child"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          🏠 My Home
-        </Link>
-
-        <Link
-          href="/child/chat"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          🤖 Chat
-        </Link>
-
-        <Link
-          href="/child/learning"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          📚 Learning
-        </Link>
-
-        <Link
-          href="/child/progress"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          📈 Progress
-        </Link>
-
-        <Link
-          href="/child/goals"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          🎯 Goals
-        </Link>
-
-        <Link
-          href="/child/challenges"
-          className="p-4 rounded-xl hover:bg-white/20 transition"
-        >
-          🏆 Challenges
-        </Link>
-
+      {/* Page links */}
+      <nav className="flex flex-col gap-1 px-3">
+        {LINKS.map(({ href, label, Icon, exact }) => {
+          const active = isActive(href, exact);
+          return (
+            <Link
+              key={href}
+              href={href}
+              aria-current={active ? "page" : undefined}
+              className={
+                active
+                  ? "flex items-center gap-3 rounded-control bg-primary-soft px-3 py-2.5 text-[15px] font-medium text-primary"
+                  : "flex items-center gap-3 rounded-control px-3 py-2.5 text-[15px] font-medium text-muted transition hover:bg-surface-muted hover:text-foreground"
+              }
+            >
+              <Icon size={20} strokeWidth={active ? 2.25 : 1.75} />
+              {label}
+            </Link>
+          );
+        })}
       </nav>
+
+      {/* Switch learner: pinned to the bottom (mt-auto).
+          Goes to the "Who's learning today?" picker, which locks the
+          parent dashboard behind the PIN again. */}
+      <div className="mt-auto border-t border-border p-3">
+        <Link
+          href="/parentview"
+          onClick={switchLearner}
+          className="flex items-center gap-3 rounded-control px-3 py-2.5 text-[15px] font-medium text-muted transition hover:bg-surface-muted hover:text-foreground"
+        >
+          <Users size={20} strokeWidth={1.75} />
+          Switch learner
+        </Link>
+      </div>
     </aside>
   );
 }
