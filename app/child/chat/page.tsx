@@ -16,8 +16,15 @@ import ChildNavbar from "@/components/ChildNavbar";
 import { getActiveChildId } from "@/lib/activeChild";
 import { getChildLevel } from "@/lib/calibrationResults";
 import {
+  endConversation,
+  saveMessage,
+  startConversation,
+  type MessageRole,
+} from "@/lib/conversations";
+import {
   getBudReply,
   getOpeningReply,
+  getSummary,
   PRACTICE_PROBLEMS,
   TUTOR_NAME,
   type BudStep,
@@ -128,6 +135,67 @@ export default function ChatPage() {
     return level;
   }
 
+  // ─────────────────────────────────────────────────────────────
+  // PIECE C6: Saving the conversation for parents (TF-15)
+  // ─────────────────────────────────────────────────────────────
+
+  // The id of this conversation in the database, once it has been started.
+  // Kept as a Promise so that two messages sent close together share the
+  // same conversation instead of starting two. null = not started yet.
+  const conversation = useRef<Promise<string | null> | null>(null);
+
+  // Saves happen one after another in this queue, so messages are stored
+  // in the same order the child saw them, even on a slow connection.
+  const saveQueue = useRef<Promise<void>>(Promise.resolve());
+
+  /** Gets this conversation's id, starting the conversation (and saving
+   * Bud's opening message) the first time it is needed.
+   * Returns null if there's no known child or the database refused.
+   */
+  function getConversationId(): Promise<string | null> {
+    if (conversation.current === null) {
+      conversation.current = (async () => {
+        const childId = getActiveChildId();
+        if (childId === null) {
+          return null; // chat opened without picking a child: nothing to save
+        }
+        const { data, error } = await startConversation(childId);
+        if (error || !data) {
+          console.error("Could not start the conversation:", error);
+          return null;
+        }
+        await saveMessage(data.id, "assistant", OPENING.message);
+        return data.id;
+      })();
+    }
+    return conversation.current;
+  }
+
+  /** Adds a save to the queue. Never throws: if saving fails, the chat
+   * keeps working and the problem is only logged for developers.
+   */
+  function queueSave(save: (conversationId: string) => PromiseLike<{ error: unknown }>) {
+    saveQueue.current = saveQueue.current.then(async () => {
+      try {
+        const conversationId = await getConversationId();
+        if (conversationId === null) {
+          return;
+        }
+        const { error } = await save(conversationId);
+        if (error) {
+          console.error("Could not save the conversation:", error);
+        }
+      } catch (error) {
+        console.error("Could not save the conversation:", error);
+      }
+    });
+  }
+
+  /** Saves one message on screen to the conversation. */
+  function recordMessage(role: MessageRole, text: string) {
+    queueSave((conversationId) => saveMessage(conversationId, role, text));
+  }
+
   /** Runs when the child presses Send (or the Enter key).
    * SubmitEvent = the event a form fires when it's submitted. (The other pages
    * use React.FormEvent, which the latest React types mark as outdated.)
@@ -154,6 +222,9 @@ export default function ChatPage() {
     //    .concat() makes a NEW list, which is what React needs to redraw.
     setMessages((previous) => previous.concat({ role: "child", text: text }));
     setDraft("");
+    // Saved for the parent's chat history, including messages that are
+    // blocked, so parents can see what their child tried to ask.
+    recordMessage("child", text);
 
     // 3. Ask the AI to word the reply. Start with the rule-based message;
     //    it is used whenever the AI doesn't give a usable reply.
@@ -185,12 +256,20 @@ export default function ChatPage() {
       }
     }
 
-    // 4. Show Bud's reply.
+    // 4. Show Bud's reply, and save it for the parent's chat history.
     setMessages((previous) => previous.concat({ role: "assistant", text: budText }));
+    recordMessage("assistant", budText);
 
     // 5. Keep Bud's updated memory for the next message (unless blocked).
     if (countThisMessage) {
       setTutorState(reply.state);
+
+      // This message finished the last problem: mark the conversation as
+      // ended and save the summary parents see (getSummary in lib/tutor.ts).
+      if (!tutorState.finished && reply.state.finished) {
+        const summary = getSummary(reply.state);
+        queueSave((conversationId) => endConversation(conversationId, summary));
+      }
     }
   }
 
@@ -221,6 +300,8 @@ export default function ChatPage() {
     setMessages([{ role: "assistant", text: OPENING.message }]);
     setTutorState(OPENING.state);
     setDraft("");
+    // The next message starts a new conversation in the parent's history.
+    conversation.current = null;
   }
 
   return (
