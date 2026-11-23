@@ -4,7 +4,7 @@
  * - Supabase needs the email confirmed first → show a green
  *   "check your email" message.
  * - Something wrong (email used, short password) → show a red message.
- * Same look as the login page (chunky box, colour circles).
+ * Same look as the login page (chunky box, colour circles), but no stickers.
  */
 // "use client" = runs in the browser
 // (needed for useState and the form)
@@ -134,10 +134,11 @@ export default function SignUpPage() {
   // same layout and colours as the login page
   return (
     <main className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
-      {/* soft coloured circles in the background corners (decoration only) */}
-      <div aria-hidden="true" className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-amber-200" />
-      <div aria-hidden="true" className="absolute -right-20 top-1/3 h-56 w-56 rounded-full bg-sky-200" />
-      <div aria-hidden="true" className="absolute -bottom-28 left-1/4 h-80 w-80 rounded-full bg-pink-200" />
+      {/* soft coloured circles in the background (decoration only).
+          Different spots from the login page: blue top-right, pink left, yellow bottom-right */}
+      <div aria-hidden="true" className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-200" />
+      <div aria-hidden="true" className="absolute -left-20 top-1/2 h-56 w-56 rounded-full bg-pink-200" />
+      <div aria-hidden="true" className="absolute -bottom-28 right-1/4 h-80 w-80 rounded-full bg-amber-200" />
 
       {/* small "back" link in the top-left corner: goes back to the login page */}
       <Link
