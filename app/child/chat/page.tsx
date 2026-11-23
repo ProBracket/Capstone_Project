@@ -23,6 +23,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const conversationIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -32,6 +33,41 @@ export default function ChatPage() {
   function pickSuggestion(text: string) {
     setMessage(text);
     inputRef.current?.focus();
+  }
+
+  // Creates the conversation on the first message and reuses it after that
+  async function getConversationId(childId: string) {
+    if (conversationIdRef.current) return conversationIdRef.current;
+
+    const { data, error } = await supabase
+    .from("conversations")
+    .insert({ child_id: childId })
+    .select("id")
+    .single();
+
+    if (error) {
+      console.error(error);
+      return null;
+    }
+
+    conversationIdRef.current = data.id;
+    return data.id;
+  }
+
+  // Saves one message to the transcript
+  async function saveMessage(
+    conversationId: string | null,
+    role: "child" | "assistant",
+    content: string 
+  ) {
+    if (!conversationId) return;
+
+    const { error } = await supabase.from("conversation_messages").insert({
+      conversation_id: conversationId,
+      role,
+      content,
+    });
+    if (error) console.error(error);
   }
 
   async function sendMessage(e: SubmitEvent<HTMLFormElement>) {
@@ -45,12 +81,8 @@ export default function ChatPage() {
     setMessages((prev) => [...prev, {role: "user", text: userMessage }]);
     setIsLoading(true);
 
-    const { error } = await supabase.from("chat_messages").insert({
-      child_id: childId,
-      role: "user",
-      message: userMessage,
-    });
-    if (error) console.error(error);
+    const conversationId = childId ? await getConversationId(childId) : null;
+    await saveMessage(conversationId, "child", userMessage);
 
     try {
       const response = await fetch("/api/chat", {
@@ -69,12 +101,7 @@ export default function ChatPage() {
         return;
       }
 
-      const { error: budError } = await supabase.from("chat_messages").insert({
-        child_id: childId,
-        role: "bud",
-        message: data.reply,
-      });
-      if (budError) console.error(budError);
+      await saveMessage(conversationId, "assistant", data.reply);
 
       setMessages((prev) => [...prev, {role: "bud", text: data.reply }]);
     } catch (err) {
