@@ -2,16 +2,21 @@ import OpenAI from "openai";
 import { isMessageAllowed } from "@/lib/moderation";
 import { BUD_PROMPT } from "@/lib/prompts";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 export async function POST(request: Request) {
   try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return Response.json(
+        { error: "Bud isn't set up yet (missing OpenAI key)." },
+        { status: 500 }
+      );
+    }
+    const openai = new OpenAI({ apiKey });
+
     const {
-            message,
-            history = [],
-        } = await request.json();
+      message,
+      history = [],
+    } = await request.json();
     
     if (!isMessageAllowed(message)) {
   return Response.json({
