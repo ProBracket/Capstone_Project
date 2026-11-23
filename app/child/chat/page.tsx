@@ -3,24 +3,47 @@
 import ChildNavbar from "@/components/ChildNavbar";
 import { useState, useEffect, useRef, type SubmitEvent } from "react";
 import { supabase } from "@/lib/supabase";
+import { 
+  getMessages,
+  listConversations,
+  type ConversationPreview,
+  type SavedMessage,
+} from "@/lib/conversations";
 
 type ChatMessage = {
   role: "user" | "bud";
   text: string;
 };
 
-// Ideas shown before the first message. Clicking one fills the typing box.
+
 const SUGGESTIONS = [
-  "Help me with fractions ➗",
-  "Why is the sky blue? 🌤️",
-  "Tell me a fun science fact 🔬",
-  "Help me write a story ✏️",
+  "Help me with fractions",
+  "Why is the sky blue?",
+  "Tell me a fun science fact",
+  "Help me write a story",
 ];
+
+function lastChatKey(childId: string) {
+  return `lastConversation${childId}`;
+}
+
+function toChatMessages(saved: SavedMessage[]): ChatMessage[] {
+  return saved.map((m) => ({
+    role: m.role === "child" ? "user" : "bud",
+    text: m.content,
+  }));
+}
+
+function shortDate(iso: string) {
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
 
 export default function ChatPage() {
   const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] =useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [conversations, setConversations] = useState<ConversationPreview[]>([]);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const conversationIdRef = useRef<string | null>(null);
@@ -29,36 +52,93 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isLoading]);
 
-  // Not named "use..." because React treats those names as hooks
+  useEffect(() => {
+    const childId = localStorage.getItem("selectedChildId");
+    if (!childId) return;
+    let cancelled = false;
+
+    async function load(childId: string) {
+      const list = await listConversations(childId);
+      if (cancelled) return;
+      setConversations(list);
+
+      const lastId = localStorage.getItem(lastChatKey(childId));
+      if(!lastId || !list.some((c) => c.id === lastId)) return;
+
+      const saved = await getMessages(lastId);
+      if (cancelled) return;
+      conversationIdRef.current = lastId;
+      setActiveId(lastId);
+      setMessages(toChatMessages(saved));
+    }
+    
+    load(childId);
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // clicking a chat in the list
+  async function openConversation(id: string) {
+    if (isLoading || id === conversationIdRef.current) return;
+
+    const saved = await getMessages(id);
+    conversationIdRef.current = id;
+    setActiveId(id);
+    setMessages(toChatMessages(saved));
+
+    const childId = localStorage.getItem("selectedChildId");
+    if (childId) localStorage.setItem(lastChatKey(childId), id);
+  }
+
+  // The "new chat" button
+  function startNewChat() {
+    if (isLoading) return;
+
+    conversationIdRef.current = null;
+    setActiveId(null);
+    setMessages([]);
+
+    const childId = localStorage.getItem("selectedChildId");
+    if (childId) localStorage.removeItem(lastChatKey(childId));
+    inputRef.current?.focus();
+  }
+
+  // Not named "use..." because React treats those name as hooks
   function pickSuggestion(text: string) {
     setMessage(text);
     inputRef.current?.focus();
   }
 
-  // Creates the conversation on the first message and reuses it after that
-  async function getConversationId(childId: string) {
+  async function getConversationId(childId: string, firstMessage: string) {
     if (conversationIdRef.current) return conversationIdRef.current;
 
     const { data, error } = await supabase
     .from("conversations")
     .insert({ child_id: childId })
-    .select("id")
+    .select("id, started_at")
     .single();
 
     if (error) {
       console.error(error);
       return null;
     }
-
     conversationIdRef.current = data.id;
+    setActiveId(data.id);
+    localStorage.setItem(lastChatKey(childId), data.id);
+
+    setConversations((prev) => [
+      { id: data.id, startedAt: data.started_at, title: firstMessage },
+      ...prev
+    ]);
     return data.id;
   }
 
-  // Saves one message to the transcript
+
   async function saveMessage(
     conversationId: string | null,
     role: "child" | "assistant",
-    content: string 
+    content: string
   ) {
     if (!conversationId) return;
 
@@ -70,57 +150,98 @@ export default function ChatPage() {
     if (error) console.error(error);
   }
 
-  async function sendMessage(e: SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if(!message.trim() || isLoading) return;
+async function sendMessage(e: SubmitEvent<HTMLFormElement>) {
+  e.preventDefault();
+  if (!message.trim() || isLoading) return;
 
-    const userMessage = message.trim();
-    const childId = localStorage.getItem("selectedChildId");
+  const userMessage = message.trim();
+  const childId = localStorage.getItem("selectedChildId");
 
-    setMessage("");
-    setMessages((prev) => [...prev, {role: "user", text: userMessage }]);
-    setIsLoading(true);
+  setMessage("")
+  setMessages((prev) => [...prev, { role: "user", text: userMessage }]);
+  setIsLoading(true);
 
-    const conversationId = childId ? await getConversationId(childId) : null;
-    await saveMessage(conversationId, "child", userMessage);
+  const conversationId = childId? await getConversationId(childId, userMessage) : null;
+  await saveMessage(conversationId, "child", userMessage);
 
-    try {
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {"Content-Type": "application/json"},
-        body: JSON.stringify({ message: userMessage, history: messages}),
-      });
+  try {
+    const response = await fetch ("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: userMessage, history: messages }),
+    });
 
-      const data = await response.json();
+    const data = await response.json();
 
-      if (!response.ok || !data.reply) {
-        setMessages((prev) => [
-          ...prev,
-          { role: "bud", text: "Oops, I couldn't think of an answer. Try again! 🌱"},
-        ]);
-        return;
-      }
-
-      await saveMessage(conversationId, "assistant", data.reply);
-
-      setMessages((prev) => [...prev, {role: "bud", text: data.reply }]);
-    } catch (err) {
-      console.error(err);
+    if (!response.ok || !data.reply) {
       setMessages((prev) => [
         ...prev,
-        { role: "bud", text: "Oops, something went wrong. Try again! 🌱"},
+        { role: "bud", text: "Oops, I couldn't think of an answer. Try again!"},
       ]);
-    } finally {
-      setIsLoading(false);
-      inputRef.current?.focus();
+      return;
     }
+
+    await saveMessage(conversationId, "assistant", data.reply);
+
+    setMessages((prev) => [...prev, {role: "bud", text: data.reply }]);
+  } catch (err) {
+    console.error(err);
+    setMessages((prev) => [
+      ...prev,
+      {role: "bud", text: "Oops, something went wrong. Try again"},
+    ]);
+  } finally {
+    setIsLoading(false);
+    inputRef.current?.focus();
   }
+}
 
   return (
      <>
       <ChildNavbar />
 
-      <main className="ml-sidebar h-screen bg-background p-6 flex justify-center">
+      <main className="ml-sidebar flex h-screen bg-background gap-6 p-6 flex justify-center">
+        <aside className="hidden w-64 shrink-0 flex-col overflow-hidden rounded-card border border-border bg-surface shadow-raised lg:flex">
+          <div className="border-b border-border p-4">
+            <button
+            type="button"
+            onClick={startNewChat}
+            disabled={isLoading}
+            className="w-full rounded-full bg-primary px-4 py-2 font-semibold text-on-primary transition hover:bg-primary-hover disabled:opacity-50"
+            >
+              + New Chat
+            </button>
+          </div>
+
+          <h2 className="px-4 pt-4 text-xs font-semibold uppercase tracking-wide text-muted">
+            Your chats
+          </h2>
+
+          <ul className="flex-1 overflow-y-auto p-2">
+            {conversations.length === 0 && (
+              <li className="px-2 py-3 text-sm text-muted">No chats yet. Say hi to Bud!</li>
+            )}
+            {conversations.map((c) => (
+              <li key={c.id}>
+                <button
+                type="button"
+                onClick={() => openConversation(c.id)}
+                disabled={isLoading}
+                aria-current={c.id === activeId ? "true" : undefined}
+                className={`w-full rounded-xl px-3 py-2 text-left transition disabled:opacity-50 ${
+                  c.id === activeId
+                  ? "bg-primary-soft text-foreground"
+                  : "text-foreground hover:bg-surface-muted"
+                }`}
+                >
+                  <span className="block truncate text-sm font-medium">{c.title}</span>
+                  <span className="block text-xs text-muted">{shortDate(c.startedAt)}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </aside>
+
         <div className="flex h-full w-full max-w-3xl flex-col overflow-hidden rounded-card border border-border bg-surface shadow-raised">
 
           {/* Header: Bud's avatar and name */}
