@@ -1,7 +1,15 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
 
 export default function WelcomePage() {
+  useEffect (() => {
+    const childId = new URLSearchParams(window.location.search).get("childId");
+    if (childId) localStorage.setItem("selectedChildId", childId);
+  }, []);
+
   return (
     <>
       <ChildNavbar />
