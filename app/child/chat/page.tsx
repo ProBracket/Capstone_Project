@@ -1,6 +1,8 @@
 "use client";
 
 import ChildNavbar from "@/components/ChildNavbar";
+// same sprout icon as the ThinkFirst logo in the navbar
+import { Sprout } from "lucide-react";
 import { useState, useEffect, useRef, type SubmitEvent } from "react";
 import { supabase } from "@/lib/supabase";
 
@@ -11,15 +13,14 @@ type ChatMessage = {
 
 // Ideas shown before the first message. Clicking one fills the typing box.
 const SUGGESTIONS = [
-  "Help me with fractions ➗",
-  "Why is the sky blue? 🌤️",
-  "Tell me a fun science fact 🔬",
-  "Help me write a story ✏️",
+  "Help me with fractions",
+  "Why is the sky blue?",
+  "Tell me a fun science fact",
+  "Help me write a story",
 ];
 
-// AI Chat intro page (/child/chat)
-// Uses the team's theme colours from app/globals.css
-// Stickers live in public/stickers/ (alt="" = decoration only)
+// Chat with Bud page (/child/chat)
+// Bud's picture = the teal sprout logo (same as the navbar)
 export default function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -99,7 +100,7 @@ export default function ChatPage() {
       if (!response.ok || !data.reply) {
         setMessages((prev) => [
           ...prev,
-          { role: "bud", text: "Oops, I couldn't think of an answer. Try again! 🌱"},
+          { role: "bud", text: "Oops, I couldn't think of an answer. Try again!"},
         ]);
         return;
       }
@@ -111,7 +112,7 @@ export default function ChatPage() {
       console.error(err);
       setMessages((prev) => [
         ...prev,
-        { role: "bud", text: "Oops, something went wrong. Try again! 🌱"},
+        { role: "bud", text: "Oops, something went wrong. Try again!"},
       ]);
     } finally {
       setIsLoading(false);
@@ -128,8 +129,8 @@ export default function ChatPage() {
 
           {/* Header: Bud's avatar and name */}
           <header className="flex items-center gap-4 border-b border-border px-6 py-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-soft text-2xl">
-              🌱
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary text-on-primary">
+              <Sprout aria-hidden="true" size={26} strokeWidth={2.25} />
             </div>
             <div>
               <h1 className="text-xl font-bold text-foreground">Bud</h1>
@@ -141,8 +142,8 @@ export default function ChatPage() {
           <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-6">
             {messages.length === 0 && (
               <div className="m-auto flex max-w-md flex-col items-center text-center">
-                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft text-5xl">
-                  🌱
+                <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-primary text-on-primary">
+                  <Sprout aria-hidden="true" size={44} strokeWidth={2.25} />
                 </div>
                 <h2 className="text-2xl font-bold text-foreground">Hi! I&apos;m Bud.</h2>
                 <p className="mt-2 text-lg text-muted">
@@ -176,8 +177,8 @@ export default function ChatPage() {
               ) : (
                 // Bud's message: left side, with a small avatar
                 <div key={index} className="flex max-w-[80%] items-end gap-2 self-start">
-                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base">
-                    🌱
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary">
+                    <Sprout aria-hidden="true" size={18} strokeWidth={2.25} />
                   </div>
                   <div className="rounded-2xl rounded-bl-md bg-surface-muted px-4 py-3 text-lg text-foreground whitespace-pre-line">
                     {msg.text}
@@ -189,8 +190,8 @@ export default function ChatPage() {
             {/* Typing dots while Bud is thinking */}
             {isLoading && (
               <div className="flex items-end gap-2 self-start">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base">
-                  🌱
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-on-primary">
+                  <Sprout aria-hidden="true" size={18} strokeWidth={2.25} />
                 </div>
                 <div className="flex gap-1 rounded-2xl rounded-bl-md bg-surface-muted px-4 py-4">
                   <span className="h-2 w-2 animate-bounce rounded-full bg-muted" />
