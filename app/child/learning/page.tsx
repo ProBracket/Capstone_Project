@@ -44,9 +44,9 @@ export default function LearningPage() {
           {/* white card */}
           <div className="bg-surface border border-border rounded-card shadow-card p-12">
 
-            {/* title with the Guided Learning sticker beside it */}
+            {/* title with a stack-of-books sticker beside it */}
             <div className="flex items-center justify-center gap-4 mb-12">
-              <Image src="/stickers/dino-pterodactyl.png" alt="" width={80} height={80} />
+              <Image src="/stickers/books.png" alt="" width={80} height={80} />
               <h1 className="text-5xl font-extrabold text-foreground">
                 Choose a Subject
               </h1>
@@ -56,7 +56,7 @@ export default function LearningPage() {
             <ul className="grid md:grid-cols-3 gap-8">
               {subjects.map((subject) => (
                 <li key={subject.href}>
-                  {/* rounded-card on the Link so the keyboard focus outline is rounded too */}
+                  {/* rounded-card on the Link so the focus outline is rounded */}
                   <Link href={subject.href} className="block h-full rounded-card">
                     <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
 
