@@ -56,7 +56,7 @@ export default function ChildDashboard() {
               <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
 
                 <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-primary-soft">
-                  <Image src="/stickers/dino-pterodactyl.png" alt="" width={96} height={96} />
+                  <Image src="/stickers/books.png" alt="" width={80} height={80} />
                 </div>
 
                 <h2 className="text-3xl font-bold text-foreground mb-3">
