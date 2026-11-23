@@ -28,3 +28,28 @@ export default function ChatPage() {
             {/* the dino is the AI buddy (same dino as the dashboard chat card) */}
             <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-primary-soft">
                     <Image src="/stickers/dino-brontosaurus.png" alt="" width={112} height={112} />
+                          </div>
+
+            <h1 className="text-5xl font-extrabold text-foreground mb-4">
+              ThinkFirst AI Chat
+            </h1>
+
+            <p className="text-xl text-muted mb-8">
+              Ask questions, explore ideas, and learn with your personal AI assistant.
+            </p>
+
+            {/* teal button, darker on hover */}
+            <button
+              type="button"
+              className="bg-primary hover:bg-primary-hover text-on-primary px-8 py-4 rounded-control font-bold shadow-card transition-colors"
+            >
+              Start Chat
+            </button>
+
+          </div>
+
+        </div>
+      </main>
+    </>
+  );
+}
