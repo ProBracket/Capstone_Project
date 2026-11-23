@@ -304,51 +304,77 @@ export default function ChatPage() {
     conversation.current = null;
   }
 
+  // Design from the chat redesign (#21, #22): Bud's header, bubbles with his
+  // avatar, typing dots, and the team's colour tokens from globals.css.
   return (
-    // <> </> (a "fragment") groups the sidebar and the page without adding
-    // an extra box to the screen.
     <>
-      {/* The child area's side menu (components/ChildNavbar.tsx), same as
-          the other child pages. It is fixed to the left edge of the screen. */}
       <ChildNavbar />
 
-      {/* Full-height page with a soft background, content centred.
-          ml-72 = a left margin wider than the side menu (w-64), so the chat
+      {/* ml-sidebar = a left margin the width of the side menu, so the chat
           sits beside the menu instead of underneath it. */}
-      <main className="ml-72 min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 px-8 py-12 flex justify-center">
-        {/* The chat card. flex-col stacks the title above the messages. */}
-        <div className="w-full max-w-3xl bg-white rounded-3xl shadow-xl p-6 flex flex-col">
-          <h1 className="text-3xl font-extrabold text-slate-800 mb-6">
-            Chat with {TUTOR_NAME} 🌱
-          </h1>
+      <main className="ml-sidebar h-screen bg-background p-6 flex justify-center">
+        <div className="flex h-full w-full max-w-3xl flex-col overflow-hidden rounded-card border border-border bg-surface shadow-raised">
 
-          {/* The list of messages, with a small gap between each one.
-              h-[60vh] = 60% of the screen's height; overflow-y-auto = scroll
-              inside this box when the messages don't fit, so the typing box
-              below always stays visible. */}
-          <div className="flex h-[60vh] flex-col gap-3 overflow-y-auto pr-2">
-            {/* .map() turns each message in the list into a chat bubble.
-                key={index} helps React keep track of which bubble is which. */}
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                // Child's messages on the right in indigo; Bud's on the left in grey.
+          {/* Header: Bud's avatar and name */}
+          <header className="flex items-center gap-4 border-b border-border px-6 py-4">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-soft text-2xl">
+              🌱
+            </div>
+            <div>
+              <h1 className="text-xl font-bold text-foreground">{TUTOR_NAME}</h1>
+              <p className="text-sm text-muted">Your Think First learning buddy</p>
+            </div>
+          </header>
+
+          {/* Messages. overflow-y-auto = scroll inside this box when the
+              messages don't fit, so the typing box always stays visible. */}
+          <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-6">
+            {messages.map((message, index) =>
+              message.role === "child" ? (
+                // Child's message: right side.
                 // whitespace-pre-line makes the "\n" line breaks from tutor.ts show up.
-                className={
-                  message.role === "child"
-                    ? "self-end max-w-[80%] rounded-2xl bg-indigo-600 text-white px-4 py-3 whitespace-pre-line"
-                    : "self-start max-w-[80%] rounded-2xl bg-slate-100 text-slate-800 px-4 py-3 whitespace-pre-line"
-                }
-              >
-                {message.text}
-              </div>
-            ))}
+                <div
+                  key={index}
+                  className="self-end max-w-[75%] rounded-2xl rounded-br-md bg-primary px-4 py-3 text-lg text-on-primary whitespace-pre-line"
+                >
+                  {message.text}
+                </div>
+              ) : (
+                // Bud's message: left side, with a small avatar.
+                <div key={index} className="flex max-w-[80%] items-end gap-2 self-start">
+                  <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base">
+                    🌱
+                  </div>
+                  <div className="rounded-2xl rounded-bl-md bg-surface-muted px-4 py-3 text-lg text-foreground whitespace-pre-line">
+                    {message.text}
+                  </div>
+                </div>
+              )
+            )}
 
-            {/* A temporary bubble while waiting for the AI's reply. */}
+            {/* Typing dots while Bud is thinking (waiting for the AI). */}
             {thinking && (
-              <div className="self-start rounded-2xl bg-slate-100 text-slate-500 italic px-4 py-3">
-                {TUTOR_NAME} is thinking… 💭
+              <div className="flex items-end gap-2 self-start">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base">
+                  🌱
+                </div>
+                <div className="flex gap-1 rounded-2xl rounded-bl-md bg-surface-muted px-4 py-4">
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted [animation-delay:150ms]" />
+                  <span className="h-2 w-2 animate-bounce rounded-full bg-muted [animation-delay:300ms]" />
+                </div>
               </div>
+            )}
+
+            {/* Only shown once every problem is finished. */}
+            {tutorState.finished && (
+              <button
+                type="button"
+                onClick={handleStartOver}
+                className="self-center rounded-full border border-primary px-6 py-2 font-semibold text-primary transition hover:bg-primary-soft"
+              >
+                Start over 🔄
+              </button>
             )}
 
             {/* Invisible marker after the last message. The auto-scroll
@@ -356,27 +382,15 @@ export default function ChatPage() {
             <div ref={bottomRef} />
           </div>
 
-          {/* Only shown once every problem is finished.
-              {condition && (...)} means "draw this only if condition is true". */}
-          {tutorState.finished && (
-            <button
-              type="button"
-              onClick={handleStartOver}
-              className="mt-4 self-center rounded-2xl border-2 border-indigo-600 px-6 py-2 font-bold text-indigo-600 hover:bg-indigo-50"
-            >
-              Start over 🔄
-            </button>
-          )}
-
-          {/* The typing box and Send button.
-              A <form> sends when the button is clicked OR when Enter is pressed,
-              so we don't need extra code for the Enter key. */}
-          <form onSubmit={handleSend} className="mt-6 flex gap-3">
+          {/* Typing box. A <form> sends when the button is clicked OR when
+              Enter is pressed, so no extra code is needed for the Enter key. */}
+          <form
+            onSubmit={handleSend}
+            className="flex gap-3 border-t border-border bg-surface px-6 py-4"
+          >
             <input
               type="text"
-              // The box always shows what's in `draft`...
               value={draft}
-              // ...and every key press saves the new text into `draft`.
               onChange={(event) => setDraft(event.target.value)}
               placeholder={
                 tutorState.finished ? "All done for today! 🌟" : "Type your answer..."
@@ -384,17 +398,13 @@ export default function ChatPage() {
               // No more typing once all the problems are finished.
               disabled={tutorState.finished}
               maxLength={200}
-              // text-slate-800: dark typed text, set here so it doesn't inherit the
-              // near-white text colour globals.css uses when the computer is in dark mode.
-              // placeholder:text-slate-400: the grey hint text stays lighter than real typing.
-              className="flex-1 rounded-2xl border border-slate-300 bg-white px-4 py-3 text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-500 disabled:bg-slate-100"
+              className="flex-1 rounded-full border border-border bg-background px-5 py-3 text-lg text-foreground placeholder:text-muted outline-none transition focus:border-primary disabled:bg-surface-muted"
             />
             <button
               type="submit"
-              // Also greyed out while Bud is thinking. (The typing box stays on,
-              // so the child can start typing their next message.)
-              disabled={tutorState.finished || thinking}
-              className="rounded-2xl bg-indigo-600 px-6 py-3 font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
+              // Greyed out while Bud is thinking or when the box is empty.
+              disabled={tutorState.finished || thinking || draft.trim() === ""}
+              className="rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition hover:bg-primary-hover disabled:opacity-50"
             >
               Send
             </button>

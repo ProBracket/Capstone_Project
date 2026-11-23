@@ -1,34 +1,25 @@
 /** Sends a child to the calibration test the first time they use the app.
  *
- * Placed on the child's welcome page. It shows nothing on screen. It:
- * 1. remembers which child is using the app in this tab (lib/activeChild.ts),
- *    so pages like the chat know who is there, and
- * 2. checks whether this child has finished calibration and, if not, moves
- *    them to /calibration?childId=<id>, which starts at their school grade.
+ * Placed on the child's welcome page (/child/welcome?childId=<id>). It shows
+ * nothing on screen: it checks whether this child has finished calibration
+ * and, if not, moves them to /calibration?childId=<id>, which starts at
+ * their school grade.
  */
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { setActiveChildId } from "@/lib/activeChild";
 import { hasCompletedCalibration } from "@/lib/calibrationResults";
 
-type Props = {
-  // The child using the app, or null if the page was opened without one.
-  childId: string | null;
-};
-
-export default function CalibrationGate({ childId }: Props) {
+export default function CalibrationGate() {
   const router = useRouter();
 
   useEffect(() => {
-    // No child chosen: nothing to check.
+    // The child picked on the profile picker, from the address (?childId=...).
+    const childId = new URLSearchParams(window.location.search).get("childId");
     if (childId === null) {
       return;
     }
-
-    // Remember this child for the other pages in this tab (e.g. the chat).
-    setActiveChildId(childId);
 
     // If the child leaves this page before the check finishes, ignore the
     // result instead of moving them to calibration from another page.
@@ -46,7 +37,7 @@ export default function CalibrationGate({ childId }: Props) {
     return () => {
       stillHere = false;
     };
-  }, [childId, router]);
+  }, [router]);
 
   // Nothing to show on screen.
   return null;

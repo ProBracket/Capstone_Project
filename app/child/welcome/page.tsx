@@ -1,20 +1,20 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
 import CalibrationGate from "@/components/CalibrationGate";
 
-export default async function WelcomePage({
-  searchParams,
-}: {
-  // The part of the address after "?". The profile picker opens this page
-  // as /child/welcome?childId=<id>.
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const { childId } = await searchParams;
+export default function WelcomePage() {
+  useEffect (() => {
+    const childId = new URLSearchParams(window.location.search).get("childId");
+    if (childId) localStorage.setItem("selectedChildId", childId);
+  }, []);
 
   return (
     <>
       {/* First time using the app → sends the child to calibration. */}
-      <CalibrationGate childId={typeof childId === "string" ? childId : null} />
+      <CalibrationGate />
 
       <ChildNavbar />
 
