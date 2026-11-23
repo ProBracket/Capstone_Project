@@ -27,4 +27,4 @@ export default function ChatPage() {
 
             {/* the dino is the AI buddy (same dino as the dashboard chat card) */}
             <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-primary-soft">
-              <Image src="/stickers/dino-brontosaurus
+                    <Image src="/stickers/dino-brontosaurus.png" alt="" width={112} height={112} />
