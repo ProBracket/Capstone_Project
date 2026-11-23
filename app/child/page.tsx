@@ -1,10 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
 import ChildNavbar from "@/components/ChildNavbar";
+// line icons (same icon set as Gael's navbar)
+import { Flame, Sprout, Trophy } from "lucide-react";
 
 // Child dashboard (/child)
 // Uses the team's theme colours from app/globals.css
-// Stickers live in public/stickers/ (alt="" = decoration only)
+// Line icons + the books sticker (public/stickers/books.png), no emojis
 export default function ChildDashboard() {
   return (
     <>
@@ -16,13 +18,9 @@ export default function ChildDashboard() {
 
           {/* ----- WELCOME ----- */}
           <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <h1 className="text-6xl font-extrabold text-foreground">
-                Welcome Back
-              </h1>
-              {/* small sparkle sticker next to the title */}
-              <Image src="/stickers/star-sparkles.png" alt="" width={56} height={56} />
-            </div>
+            <h1 className="text-6xl font-extrabold text-foreground mb-4">
+              Welcome Back
+            </h1>
 
             <p className="text-xl text-muted">
               Ready to continue your learning adventure today?
@@ -36,9 +34,10 @@ export default function ChildDashboard() {
             <Link href="/child/chat" className="block rounded-card">
               <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
 
-                {/* dino sticker inside a light teal circle */}
-                <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-primary-soft">
-                      <Image src="/stickers/plant-buddy.png" alt="" width={96} height={96} />
+                {/* sprout logo (same as the navbar) in a light teal circle,
+                    same style as the subject cards on the learning page */}
+                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft text-primary">
+                  <Sprout aria-hidden="true" className="h-10 w-10" strokeWidth={1.75} />
                 </div>
 
                 <h2 className="text-3xl font-bold text-foreground mb-3">
@@ -55,8 +54,9 @@ export default function ChildDashboard() {
             <Link href="/child/learning" className="block rounded-card">
               <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
 
-                <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-primary-soft">
-                  <Image src="/stickers/books.png" alt="" width={80} height={80} />
+                {/* colourful 3-books sticker (same as the learning page title) */}
+                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft">
+                  <Image src="/stickers/books.png" alt="" width={60} height={60} />
                 </div>
 
                 <h2 className="text-3xl font-bold text-foreground mb-3">
@@ -90,8 +90,10 @@ export default function ChildDashboard() {
                 Current Streak
               </h3>
 
-              <p className="text-4xl font-bold text-warning mt-3">
-                <span aria-hidden="true">🔥</span> 5 Days
+              {/* flame icon + number, side by side */}
+              <p className="flex items-center justify-center gap-2 text-4xl font-bold text-warning mt-3">
+                <Flame aria-hidden="true" size={36} strokeWidth={2.25} />
+                5 Days
               </p>
             </div>
 
@@ -100,8 +102,10 @@ export default function ChildDashboard() {
                 Badges Earned
               </h3>
 
-              <p className="text-4xl font-bold text-success mt-3">
-                <span aria-hidden="true">🏆</span> 7
+              {/* trophy icon + number, side by side */}
+              <p className="flex items-center justify-center gap-2 text-4xl font-bold text-success mt-3">
+                <Trophy aria-hidden="true" size={36} strokeWidth={2.25} />
+                7
               </p>
             </div>
 
