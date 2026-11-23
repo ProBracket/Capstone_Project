@@ -38,7 +38,7 @@ export default function ChildDashboard() {
 
                 {/* dino sticker inside a light teal circle */}
                 <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-primary-soft">
-                  <Image src="/stickers/dino-brontosaurus.png" alt="" width={96} height={96} />
+                      <Image src="/stickers/plant-buddy.png" alt="" width={96} height={96} />
                 </div>
 
                 <h2 className="text-3xl font-bold text-foreground mb-3">
