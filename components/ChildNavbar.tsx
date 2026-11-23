@@ -59,7 +59,8 @@ export default function ChildNavbar() {
         >
           🏆 Challenges
         </Link>
-
+        <Link
+          href="/parentview"></Link>
       </nav>
     </aside>
   );
