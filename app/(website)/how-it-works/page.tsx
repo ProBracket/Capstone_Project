@@ -1,5 +1,6 @@
 import PageHeader from "@/components/PageHeader";
 import SignupCta from "@/components/SignupCta";
+import TutorDemo from "@/components/TutorDemo";
 
 const setupSteps = [
   {
@@ -110,28 +111,8 @@ export default function HowitWorks() {
             </p>
           </div>
 
-          {/* Example conversation */}
-          <div className="rounded-card border border-border bg-surface p-5 shadow-raised"
-          aria-label="Example conversation"
-          >
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted">
-              Example conversation
-            </p>
-            <div className="mt-4 flex flex-col gap-3 text-sm">
-              <p className="max-w-[85%] self-end rounded-card bg-primary px-4 py-2 text-on-primary">
-                Why do leaves change color in the fall?
-              </p>
-              <p className="max-w-[85%] rounded-card bg-surface-muted px-4 py-2 text-foreground">
-                Great question! First, what do you think leaves use sunlight for?
-              </p>
-              <p className="max-w-[85%] self-end rounded-card bg-primary px-4 py-2 text-on-primary">
-                to make food?
-              </p>
-              <p className="max-w-[85%] rounded-card bg-surface-muted px-4 py-2 text-foreground">
-                Exactly. So what might happen to a leaf when the days get shorter and there&apos;s less sunlight?
-              </p>
-            </div>
-          </div>
+          {/* Scripted Demo, Running in browser */}
+          <TutorDemo />
         </section>
 
         {/* Parent Dashboard */}
