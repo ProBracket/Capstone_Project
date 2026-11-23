@@ -1,35 +1,30 @@
+import Image from "next/image";
 import ChildNavbar from "@/components/ChildNavbar";
 
+// AI Chat intro page (/child/chat)
+// Uses the team's theme colours from app/globals.css
+// Stickers live in public/stickers/ (alt="" = decoration only)
 export default function ChatPage() {
   return (
     <>
       <ChildNavbar />
 
-      <main className="ml-72 min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 pt-12 px-8 flex justify-center">
+      {/* ml-sidebar = leave room for the sidebar (same on every child page) */}
+      <main className="ml-sidebar min-h-screen bg-background pt-12 px-8 flex justify-center">
         <div className="w-full max-w-5xl">
 
-          <div className="bg-white rounded-3xl shadow-2xl p-12 text-center">
+          {/* white card ("relative" so the corner sparkle can sit inside it) */}
+          <div className="relative bg-surface border border-border rounded-card shadow-card p-12 text-center">
 
-            <div className="text-7xl mb-6">
-              🤖
-            </div>
+            {/* small sparkle sticker in the top-right corner */}
+            <Image
+              src="/stickers/star-sparkles.png"
+              alt=""
+              width={64}
+              height={64}
+              className="absolute top-6 right-6"
+            />
 
-            <h1 className="text-5xl font-extrabold text-slate-800 mb-4">
-              ThinkFirst AI Chat
-            </h1>
-
-            <p className="text-xl text-gray-600 mb-8">
-              Ask questions, explore ideas, and learn with your personal AI assistant.
-            </p>
-
-            <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-2xl font-bold shadow-lg transition-all">
-              Start Chat
-            </button>
-
-          </div>
-
-        </div>
-      </main>
-    </>
-  );
-}
+            {/* the dino is the AI buddy (same dino as the dashboard chat card) */}
+            <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-full bg-primary-soft">
+              <Image src="/stickers/dino-brontosaurus
