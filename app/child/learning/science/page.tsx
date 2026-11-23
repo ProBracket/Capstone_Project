@@ -1,57 +1,182 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
+
 import ChildNavbar from "@/components/ChildNavbar";
 
-export default function LearningPage() {
+import { getActiveChildId } from "@/lib/activeChild";
+
+import { getTopicsForSubject, } from "@/lib/lessons";
+
+type Topic = {
+  topic: string;
+  outcomes: string[];
+  keywords: string[];
+};
+
+export default function SciencePage() {
+  const [childId, setChildId] = useState<string | null>(null);
+
+  const [topics, setTopics] = useState<Topic[]>([]);
+
+  const [frameworkGrade, setFrameworkGrade] =
+    useState<number | null>(null);
+
+  const [selectedTopic, setSelectedTopic] =
+    useState<Topic | null>(null);
+
+  const [lesson, setLesson] =
+    useState<string | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadTopics() {
+      const activeChild = getActiveChildId();
+
+      setChildId(activeChild);
+
+      if (!activeChild) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const result = await getTopicsForSubject(
+          activeChild,
+          "science"
+        );
+
+        setTopics(result.topics);
+        setFrameworkGrade(result.frameworkGrade);
+      } catch (error) {
+        console.error(error);
+      }
+
+      setLoading(false);
+    }
+
+    loadTopics();
+  }, []);
+
+  async function handleTopicClick(
+    topic: Topic
+  ) {
+    setSelectedTopic(topic);
+
+    if (frameworkGrade === null) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+  "/api/lesson",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
+    body: JSON.stringify({
+      subject: "science",
+      frameworkGrade,
+      topic,
+    }),
+  }
+);
+
+const result = await response.json();
+
+setLesson(result.lesson);
+
+      setLesson(result.lesson);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <ChildNavbar />
 
-      <main className="ml-72 min-h-screen bg-linear-to-br from-blue-50 to-purple-50 pt-12 px-8 flex justify-center">
-        <div className="w-full max-w-6xl">
+      <main className="ml-64 min-h-screen p-8 bg-green-50">
+        <h1 className="text-4xl font-bold text-green-700 mb-4">
+          🔬 Science
+        </h1>
 
-          <div className="bg-white rounded-3xl shadow-2xl p-12">
+        {loading && (
+          <p>Loading topics...</p>
+        )}
 
-            <h1 className="text-5xl font-bold text-center mb-12">
-              📚 Choose a Subject
-            </h1>
+        {!loading && !childId && (
+          <p>No active child selected.</p>
+        )}
 
-            <div className="grid md:grid-cols-3 gap-8">
+        {!loading && childId && (
+          <>
+            <h2 className="text-2xl font-semibold mb-4">
+              Choose a Topic
+            </h2>
 
-              <Link href="/child/learning/math">
-                <div className="bg-blue-100 rounded-3xl p-10 text-center shadow-lg hover:scale-105 transition cursor-pointer">
-                  <div className="text-6xl mb-4">🧮</div>
-                  <h2 className="text-3xl font-bold">Math</h2>
-                  <p className="mt-2 text-gray-600">
-                    Numbers, Addition, Multiplication and more.
-                  </p>
-                </div>
-              </Link>
-
-              <Link href="/child/learning/science">
-                <div className="bg-green-100 rounded-3xl p-10 text-center shadow-lg hover:scale-105 transition cursor-pointer">
-                  <div className="text-6xl mb-4">🔬</div>
-                  <h2 className="text-3xl font-bold">Science</h2>
-                  <p className="mt-2 text-gray-600">
-                    Discover plants, animals, and space.
-                  </p>
-                </div>
-              </Link>
-
-              <Link href="/child/learning/literature">
-                <div className="bg-purple-100 rounded-3xl p-10 text-center shadow-lg hover:scale-105 transition cursor-pointer">
-                  <div className="text-6xl mb-4">📖</div>
-                  <h2 className="text-3xl font-bold">Literature</h2>
-                  <p className="mt-2 text-gray-600">
-                    Reading, grammar and storytelling.
-                  </p>
-                </div>
-              </Link>
-
+            <div className="grid gap-4">
+              {topics.map((topic) => (
+                <button
+                  key={topic.topic}
+                  onClick={() =>
+                    handleTopicClick(topic)
+                  }
+                  className="bg-white p-4 rounded-xl shadow text-left hover:bg-green-100"
+                >
+                  {topic.topic}
+                </button>
+              ))}
             </div>
 
-          </div>
+            {selectedTopic && (
+              <div className="mt-8 bg-white p-6 rounded-xl shadow">
+                <h3 className="text-xl font-bold mb-2">
+                  {selectedTopic.topic}
+                </h3>
 
-        </div>
+                <p className="font-semibold mb-2">
+                  Learning Outcomes
+                </p>
+
+                <ul className="list-disc pl-6">
+                  {selectedTopic.outcomes.map(
+                    (outcome) => (
+                      <li key={outcome}>
+                        {outcome}
+                      </li>
+                    )
+                  )}
+                </ul>
+
+                <p className="font-semibold mt-4 mb-2">
+                  Keywords
+                </p>
+
+                <p>
+                  {selectedTopic.keywords.join(
+                    ", "
+                  )}
+                </p>
+              </div>
+            )}
+
+            {lesson && (
+              <div className="mt-8 bg-white p-6 rounded-xl shadow">
+                <h3 className="text-xl font-bold mb-4">
+                  Generated Lesson
+                </h3>
+
+                <div className="whitespace-pre-wrap">
+                  {lesson}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </>
   );

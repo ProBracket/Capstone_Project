@@ -17,7 +17,10 @@
  * 5. If anything goes wrong (no key, network error), we send back reply: null
  *    and the page shows the rule-based message. Bud keeps working without the AI.
  *
- * The page sends:  { childMessage, step: { kind, problemIndex, hintNumber } }
+ * The page sends:  { childMessage, step: { kind, problemIndex, hintNumber }, level }
+ *   level = the child's grade level (0 = Kindergarten, 1–12), or null if
+ *           unknown. Only this number is shared with the AI (TF-11), never
+ *           the child's name or id.
  * We send back:    { reply: string | null, blocked: boolean }
  *   reply null     = "use the rule-based message"
  *   blocked true   = the child's message was not allowed; reply holds the
@@ -57,10 +60,16 @@ const AI_KINDS: BudStepKind[] = [
   "explain",
   "encourage",
   "chit-chat",
+  "try-again",
 ];
 
 // Kinds where the answer must NOT appear in the AI's reply.
-const ANSWER_HIDDEN_KINDS: BudStepKind[] = ["hint", "encourage", "chit-chat"];
+const ANSWER_HIDDEN_KINDS: BudStepKind[] = [
+  "hint",
+  "encourage",
+  "chit-chat",
+  "try-again",
+];
 
 // Rules added after Laura's BUD_PROMPT for every reply from this route.
 const SAFETY_RULES = `
@@ -82,6 +91,7 @@ type BudRequest = {
   childMessage: string;
   step: BudStep;
   problem: Problem;
+  level: number | null; // the child's grade level, or null if unknown
 };
 
 /** Checks the request body and returns it in a safe shape, or null if
@@ -95,9 +105,10 @@ function readRequest(body: unknown): BudRequest | null {
   }
 
   // Describe the shape we hope for. Every part is "unknown" until checked.
-  const { childMessage, step } = body as {
+  const { childMessage, step, level } = body as {
     childMessage?: unknown;
     step?: { kind?: unknown; problemIndex?: unknown; hintNumber?: unknown };
+    level?: unknown;
   };
 
   // The message must be text, not empty, and not too long.
@@ -140,6 +151,16 @@ function readRequest(body: unknown): BudRequest | null {
     hintNumber = step.hintNumber;
   }
 
+  // The grade level is optional. Anything that isn't a whole number from
+  // 0 (Kindergarten) to 12 is ignored, so the AI just uses its default wording.
+  const gradeLevel =
+    typeof level === "number" &&
+    Number.isInteger(level) &&
+    level >= 0 &&
+    level <= 12
+      ? level
+      : null;
+
   return {
     // Remove < and > so the child can't close the <child> tags early and
     // pretend to be giving instructions outside them.
@@ -148,7 +169,22 @@ function readRequest(body: unknown): BudRequest | null {
     // The problem is looked up HERE on the server, from our own list.
     // The page never sends the question, hint or answer.
     problem: PRACTICE_PROBLEMS[problemIndex],
+    level: gradeLevel,
   };
+}
+
+/** The line that tells the AI how simply to talk (TF-11), or "" if the
+ * child's level is unknown. Example: 5 → "...a Grade 5 student..."
+ */
+function levelInstruction(level: number | null): string {
+  if (level === null) {
+    return "";
+  }
+  const grade = level === 0 ? "Kindergarten" : `Grade ${level}`;
+  return (
+    `\nThe child is working at about a ${grade} level. Use words, ` +
+    `sentence lengths and examples that a ${grade} student easily understands.`
+  );
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -187,6 +223,16 @@ function buildTask(step: BudStep, problem: Problem): string {
       `${question}\n` +
       `The child said something friendly that is not an answer. Reply warmly ` +
       `in one sentence and invite them to keep going. Do NOT give the answer or a hint.`
+    );
+  }
+
+  if (step.kind === "try-again") {
+    return (
+      `${question}\n` +
+      `The child's message was not a real attempt (it was unclear, or an ` +
+      `answer they already tried). Kindly ask them to give the problem a real ` +
+      `try, and say that this message doesn't count as a try. Do NOT give ` +
+      `the answer or a hint.`
     );
   }
 
@@ -252,7 +298,7 @@ export async function POST(request: Request) {
   if (parsed === null) {
     return Response.json({ error: "Invalid request" }, { status: 400 });
   }
-  const { childMessage, step, problem } = parsed;
+  const { childMessage, step, problem, level } = parsed;
 
   // 2. Check the child's message before the AI sees it.
   if (!isMessageAllowed(childMessage)) {
@@ -272,8 +318,11 @@ export async function POST(request: Request) {
       model: MODEL,
       // Bud's personality (Laura's prompt) plus this route's safety rules.
       instructions: BUD_PROMPT + SAFETY_RULES,
-      // The task for this step, then the child's message inside its tags.
-      input: `${buildTask(step, problem)}\n\n<child>${childMessage}</child>`,
+      // The task for this step, how simply to talk (TF-11), then the
+      // child's message inside its tags.
+      input:
+        `${buildTask(step, problem)}${levelInstruction(level)}\n\n` +
+        `<child>${childMessage}</child>`,
       // Keeps replies short (and the cost low).
       max_output_tokens: 150,
     });

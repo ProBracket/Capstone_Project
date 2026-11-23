@@ -17,3 +17,13 @@ export async function createAIProfile(
       literature_level: literatureLevel,
     });
 }
+
+export async function getAIProfile(
+  childId: string
+) {
+  return await supabaseAI
+    .from("ai_profiles")
+    .select("*")
+    .eq("child_id", childId)
+    .single();
+}

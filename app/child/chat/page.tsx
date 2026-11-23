@@ -184,7 +184,7 @@ export default function ChatPage() {
 
   return (
     // Full-height page with a soft background, content centred.
-    <main className="min-h-screen bg-gradient-to-br from-slate-50 to-indigo-50 px-4 py-8 flex justify-center">
+    <main className="min-h-screen bg-linear-to-br from-slate-50 to-indigo-50 px-4 py-8 flex justify-center">
       {/* The chat card. flex-col stacks the title above the messages. */}
       <div className="w-full max-w-3xl bg-white rounded-3xl shadow-xl p-6 flex flex-col">
         <h1 className="text-3xl font-extrabold text-slate-800 mb-6">
