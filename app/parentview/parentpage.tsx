@@ -2,7 +2,7 @@
 
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
 import { Turnstile } from "@marsidev/react-turnstile";
 import type { User } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabase";
@@ -127,6 +127,19 @@ export default function ParentView() {
     notify(next);
   }
 
+  const syncUser = useCallback((next: User | null) => {
+    const accountId = next?.id ?? null;
+    if (userIdRef.current !== accountId) {
+      userIdRef.current = accountId;
+      setChildren([]);
+      setHistoryChildId("");
+      setError("");
+      setParentName(String(next?.user_metadata?.full_name ?? next?.user_metadata?.name ?? ""));
+      setScreen(accountId ? "home" : "login");
+    }
+    setUser(next);
+  }, []);
+
   // Supabase authentication listener
   useEffect(() => {
     let live = true;
@@ -140,7 +153,7 @@ export default function ParentView() {
           event === "SIGNED_OUT" ||
           event === "USER_UPDATED"
         ) {
-          setUser(session?.user ?? null);
+          syncUser(session?.user ?? null);
         }
       }
     );
@@ -148,12 +161,12 @@ export default function ParentView() {
     void supabase.auth.getUser()
       .then(({ data, error: authError }) => {
         if (!live) return;
-        setUser(authError ? null : data.user);
+        syncUser(authError ? null : data.user);
         setInitializing(false);
       })
       .catch(() => {
         if (!live) return;
-        setUser(null);
+        syncUser(null);
         setInitializing(false);
       });
 
@@ -161,7 +174,7 @@ export default function ParentView() {
       live = false;
       listener.subscription.unsubscribe();
     };
-  }, []);
+  }, [syncUser]);
 
   // Load parent's child profiles
   useEffect(() => {
@@ -170,26 +183,7 @@ export default function ParentView() {
     let live = true;
     const accountId = user?.id ?? null;
 
-    userIdRef.current = accountId;
-    setChildren([]);
-    setHistoryChildId("");
-    setError("");
-
-    if (!accountId) {
-      setScreen("login");
-      setParentName("");
-      return;
-    }
-
-    setParentName(
-      String(
-        user?.user_metadata?.full_name ??
-        user?.user_metadata?.name ??
-        ""
-      )
-    );
-
-    setScreen("home");
+    if (!accountId) return;
 
     void (async () => {
       const lock = await supabase.rpc("lock_parent_area");
@@ -226,30 +220,8 @@ export default function ParentView() {
   useEffect(() => {
     let active = true;
 
-    setConversations([]);
-    setConversationMessages([]);
-    setHistoryError("");
-
-    if (
-      screen !== "conversation-history" ||
-      !historyChildId ||
-      !user?.id
-    ) {
-      setHistoryLoading(false);
-      return () => {
-        active = false;
-      };
-    }
-
-    if (!children.some((child) => child.id === historyChildId)) {
-      setHistoryError("This child profile is not available.");
-      setHistoryLoading(false);
-      return () => {
-        active = false;
-      };
-    }
-
-    setHistoryLoading(true);
+    if (screen !== "conversation-history" || !user?.id ||
+        !children.some((child) => child.id === historyChildId)) return;
 
     void (async () => {
       try {
@@ -431,7 +403,7 @@ export default function ParentView() {
       setSignupCompleted(true);
 
       if (data.session && data.user) {
-        setUser(data.user);
+        syncUser(data.user);
       } else {
         setMessage(
           "Check your email for a confirmation link, then log in."
@@ -561,7 +533,7 @@ export default function ParentView() {
       if (result.error) {
         setError(result.error.message);
       } else {
-        setUser(result.data.user);
+        syncUser(result.data.user);
         setMessage("Parent profile saved.");
       }
     } catch (e) {
@@ -645,7 +617,7 @@ export default function ParentView() {
         return;
       }
 
-      setUser(null);
+      syncUser(null);
       setChildren([]);
       setHistoryChildId("");
       setPassword("");
@@ -739,7 +711,7 @@ export default function ParentView() {
               Welcome back!
             </h2>
             <p className="mb-6 text-[#6B7280]">
-              Log in to manage your family's learning.
+              Log in to manage your family&apos;s learning.
             </p>
 
             <form onSubmit={handleLogin} className="space-y-5">
@@ -1108,63 +1080,63 @@ export default function ParentView() {
 
         {/* PARENT DASHBOARD */}
         {screen === "dashboard" && user && (
-          <section className={card}>
+          <section className={card + " border-teal-200!"}>
             <p className="text-sm font-semibold uppercase tracking-wide text-[#0F766E]">
               Parent Area
             </p>
-            <h2 className="mt-2 text-3xl font-bold">
+            <h2 className="mt-2 text-3xl font-bold text-teal-900">
               Parent Dashboard
             </h2>
-            <p className="mb-8 mt-2 text-[#6B7280]">
-              Manage your family's learning experience.
+            <p className="mb-8 mt-2 text-slate-700">
+              Manage your family&apos;s learning experience.
             </p>
 
             <div className="grid gap-4 sm:grid-cols-2">
               <button
                 type="button"
-                className={tile}
+                className={tile + " bg-amber-100! hover:bg-amber-200!"}
                 onClick={() => notify("parent-profile")}
               >
                 <span className="mb-3 block text-3xl">👤</span>
                 <span className="block font-semibold">
                   Parent Profile
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
+                <span className="mt-1 block text-sm text-slate-700">
                   Manage your account information.
                 </span>
               </button>
 
               <button
                 type="button"
-                className={tile}
+                className={tile + " bg-sky-100! hover:bg-sky-200!"}
                 onClick={() => notify("child-profiles")}
               >
                 <span className="mb-3 block text-3xl">👨‍👩‍👧</span>
                 <span className="block font-semibold">
                   Child Profiles
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
+                <span className="mt-1 block text-sm text-slate-700">
                   View and add your children.
                 </span>
               </button>
 
               <button
                 type="button"
-                className={tile}
+                className={tile + " bg-pink-100! hover:bg-pink-200!"}
                 onClick={openConversationHistory}
               >
                 <span className="mb-3 block text-3xl">💬</span>
                 <span className="block font-semibold text-[#0F766E]">
                   AI Conversation History
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
-                  Review your child's AI conversations.
+                <span className="mt-1 block text-sm text-slate-700">
+                  Review your child&apos;s AI conversations.
                 </span>
               </button>
 
               <button
                 type="button"
-                className={tile}
+                className={tile + " bg-teal-100! hover:bg-teal-200!"}
                 onClick={() =>
                   openPolicy("consent", "dashboard")
                 }
@@ -1173,14 +1145,14 @@ export default function ParentView() {
                 <span className="block font-semibold">
                   Parental Consent &amp; Privacy
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
+                <span className="mt-1 block text-sm text-slate-700">
                   Review privacy and consent information.
                 </span>
               </button>
 
               <button
                 type="button"
-                className={tile}
+                className={tile + " bg-teal-100! hover:bg-teal-200!"}
                 onClick={() =>
                   openPolicy("terms", "dashboard")
                 }
@@ -1189,7 +1161,7 @@ export default function ParentView() {
                 <span className="block font-semibold">
                   Terms &amp; Conditions
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
+                <span className="mt-1 block text-sm text-slate-700">
                   Read the application terms.
                 </span>
               </button>
@@ -1204,7 +1176,7 @@ export default function ParentView() {
                 <span className="block font-semibold">
                   Log Out
                 </span>
-                <span className="mt-1 block text-sm text-[#6B7280]">
+                <span className="mt-1 block text-sm text-slate-700">
                   Sign out of your parent account.
                 </span>
               </button>
@@ -1245,9 +1217,13 @@ export default function ParentView() {
                   id="history-child"
                   className={field}
                   value={historyChildId}
-                  onChange={(e) =>
-                    setHistoryChildId(e.target.value)
-                  }
+                  onChange={(e) => {
+                    setConversations([]);
+                    setConversationMessages([]);
+                    setHistoryError("");
+                    setHistoryLoading(Boolean(e.target.value));
+                    setHistoryChildId(e.target.value);
+                  }}
                 >
                   <option value="">Select a child</option>
                   {children.map((child) => (
@@ -1257,7 +1233,7 @@ export default function ParentView() {
                   ))}
                 </select>
 
-                {historyChildId && (
+                {children.some((child) => child.id === historyChildId) && (
                   <div className="mt-5 space-y-4">
                     {historyLoading && (
                       <p
@@ -1649,7 +1625,7 @@ export default function ParentView() {
         )}
 
         <footer className="mt-10 text-center text-sm text-[#6B7280]">
-          ThinkFirst — Don't answer first. Think first.
+          ThinkFirst — Don&apos;t answer first. Think first.
         </footer>
       </div>
     </main>

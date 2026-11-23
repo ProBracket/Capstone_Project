@@ -60,12 +60,12 @@ export default function CalibrationPage() {
           </p>
 
           <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
-            Let's find your starting point!
+            Let&apos;s find your starting point!
           </h1>
 
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-[#6B7280]">
             Everyone learns differently. This quick check-in
-            will help ThinkFirst understand what you're ready
+            will help ThinkFirst understand what you&apos;re ready
             to learn next.
           </p>
         </section>
@@ -135,7 +135,7 @@ export default function CalibrationPage() {
               </h3>
 
               <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
-                You'll answer questions designed for your
+                You&apos;ll answer questions designed for your
                 grade. ThinkFirst will use your results
                 to guide your learning activities.
               </p>
@@ -171,7 +171,7 @@ export default function CalibrationPage() {
         </section>
 
         <footer className="mt-10 text-center text-sm text-[#6B7280]">
-          ThinkFirst — Don't answer first. Think first.
+          ThinkFirst — Don&apos;t answer first. Think first.
         </footer>
       </div>
     </main>
