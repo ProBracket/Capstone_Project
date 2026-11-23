@@ -15,6 +15,8 @@ import {
 // Child home page (/child) - bright, game-like style
 // "Chunky" buttons = a thick darker border on the bottom (border-b-4),
 // so they look like real buttons you can press.
+// Hover = float up with a shadow (same as the learning page cards).
+// Click = sink down a little.
 // Numbers are placeholders for now (later they come from Supabase).
 
 // the three subjects, each with its own bright colour
@@ -103,7 +105,7 @@ export default function ChildHome() {
             {/* chunky white button */}
             <Link
               href="/child/learning/math"
-              className="rounded-2xl border-b-4 border-teal-200 bg-white px-8 py-4 text-lg font-extrabold text-teal-700 hover:bg-teal-50 active:translate-y-1 active:border-b-0"
+              className="rounded-2xl border-b-4 border-teal-200 bg-white px-8 py-4 text-lg font-extrabold text-teal-700 transition hover:-translate-y-1 hover:shadow-raised active:translate-y-1 active:border-b-0"
             >
               Keep going
             </Link>
@@ -117,7 +119,7 @@ export default function ChildHome() {
               <li key={href}>
                 <Link
                   href={href}
-                  className={`block rounded-3xl border-b-8 p-6 active:translate-y-1 active:border-b-4 ${colour}`}
+                  className={`block rounded-3xl border-b-8 p-6 transition hover:-translate-y-1 hover:shadow-raised active:translate-y-1 active:border-b-4 ${colour}`}
                 >
                   <Icon aria-hidden="true" size={44} strokeWidth={2.25} />
                   <h3 className="mt-4 text-2xl font-extrabold">{title}</h3>
@@ -130,7 +132,7 @@ export default function ChildHome() {
           {/* ----- ASK BUD ----- */}
           <Link
             href="/child/chat"
-            className="mt-10 flex items-center gap-5 rounded-3xl border-2 border-b-8 border-border bg-surface p-6 hover:bg-surface-muted active:translate-y-1 active:border-b-4"
+            className="mt-10 flex items-center gap-5 rounded-3xl border-2 border-b-8 border-border bg-surface p-6 transition hover:-translate-y-1 hover:shadow-raised active:translate-y-1 active:border-b-4"
           >
             <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-on-primary">
               <Sprout aria-hidden="true" size={34} strokeWidth={2.25} />
