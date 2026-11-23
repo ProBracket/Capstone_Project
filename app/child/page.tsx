@@ -2,114 +2,144 @@ import Link from "next/link";
 import Image from "next/image";
 import ChildNavbar from "@/components/ChildNavbar";
 // line icons (same icon set as Gael's navbar)
-import { Flame, Sprout, Trophy } from "lucide-react";
+import {
+  BookOpen,
+  Calculator,
+  Flame,
+  FlaskConical,
+  Sprout,
+  Star,
+  Trophy,
+} from "lucide-react";
 
-// Child dashboard (/child)
-// Uses the team's theme colours from app/globals.css
-// Line icons + the books sticker (public/stickers/books.png), no emojis
-export default function ChildDashboard() {
+// Child home page (/child) - bright, game-like style
+// "Chunky" buttons = a thick darker border on the bottom (border-b-4),
+// so they look like real buttons you can press.
+// Numbers are placeholders for now (later they come from Supabase).
+
+// the three subjects, each with its own bright colour
+// (dark text on light colours so it is easy to read - accessibility)
+const subjects = [
+  {
+    href: "/child/learning/math",
+    title: "Math",
+    text: "Numbers and fractions",
+    Icon: Calculator,
+    colour: "bg-amber-300 border-amber-500 text-amber-950",
+  },
+  {
+    href: "/child/learning/science",
+    title: "Science",
+    text: "Plants, animals, space",
+    Icon: FlaskConical,
+    colour: "bg-sky-300 border-sky-500 text-sky-950",
+  },
+  {
+    href: "/child/learning/literature",
+    title: "Literature",
+    text: "Reading and stories",
+    Icon: BookOpen,
+    colour: "bg-pink-300 border-pink-500 text-pink-950",
+  },
+];
+
+export default function ChildHome() {
   return (
     <>
       <ChildNavbar />
 
       {/* ml-sidebar = leave room for the sidebar (same on every child page) */}
-      <main className="ml-sidebar min-h-screen bg-background pt-12 px-8 flex justify-center">
-        <div className="w-full max-w-6xl">
+      <main className="ml-sidebar min-h-screen bg-background px-10 py-10">
+        <div className="mx-auto max-w-5xl">
 
-          {/* ----- WELCOME ----- */}
-          <div className="text-center mb-12">
-            <h1 className="text-6xl font-extrabold text-foreground mb-4">
-              Welcome Back
-            </h1>
-
-            <p className="text-xl text-muted">
-              Ready to continue your learning adventure today?
-            </p>
-          </div>
-
-          {/* ----- TWO BIG CARDS ----- */}
-          <div className="grid md:grid-cols-2 gap-8">
-
-            {/* rounded-card on the Link so the keyboard focus outline is rounded too */}
-            <Link href="/child/chat" className="block rounded-card">
-              <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
-
-                {/* sprout logo (same as the navbar) in a light teal circle,
-                    same style as the subject cards on the learning page */}
-                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft text-primary">
-                  <Sprout aria-hidden="true" className="h-10 w-10" strokeWidth={1.75} />
-                </div>
-
-                <h2 className="text-3xl font-bold text-foreground mb-3">
-                  ThinkFirst AI Chat
-                </h2>
-
-                <p className="text-muted">
-                  Ask questions and learn with your personal AI assistant.
-                </p>
-
-              </div>
-            </Link>
-
-            <Link href="/child/learning" className="block rounded-card">
-              <div className="h-full bg-surface border border-border rounded-card shadow-card hover:shadow-raised hover:-translate-y-1 transition p-10 text-center">
-
-                {/* colourful 3-books sticker (same as the learning page title) */}
-                <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full bg-primary-soft">
-                  <Image src="/stickers/books.png" alt="" width={60} height={60} />
-                </div>
-
-                <h2 className="text-3xl font-bold text-foreground mb-3">
-                  Guided Learning
-                </h2>
-
-                <p className="text-muted">
-                  Continue learning Math, Science, and Literature.
-                </p>
-
-              </div>
-            </Link>
-
-          </div>
-
-          {/* ----- THREE STAT CARDS ----- */}
-          <div className="grid md:grid-cols-3 gap-6 mt-10">
-
-            <div className="bg-surface border border-border p-8 rounded-card shadow-card text-center">
-              <h3 className="text-lg text-muted">
-                Lessons Completed
-              </h3>
-
-              <p className="text-4xl font-bold text-primary mt-3">
-                12
-              </p>
+          {/* ----- TOP ROW: greeting on the left, stats on the right ----- */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 className="text-4xl font-extrabold text-foreground">Hi there!</h1>
+              <p className="mt-1 text-lg text-muted">Ready to learn something new?</p>
             </div>
 
-            <div className="bg-surface border border-border p-8 rounded-card shadow-card text-center">
-              <h3 className="text-lg text-muted">
-                Current Streak
-              </h3>
-
-              {/* flame icon + number, side by side */}
-              <p className="flex items-center justify-center gap-2 text-4xl font-bold text-warning mt-3">
-                <Flame aria-hidden="true" size={36} strokeWidth={2.25} />
-                5 Days
-              </p>
-            </div>
-
-            <div className="bg-surface border border-border p-8 rounded-card shadow-card text-center">
-              <h3 className="text-lg text-muted">
-                Badges Earned
-              </h3>
-
-              {/* trophy icon + number, side by side */}
-              <p className="flex items-center justify-center gap-2 text-4xl font-bold text-success mt-3">
-                <Trophy aria-hidden="true" size={36} strokeWidth={2.25} />
+            {/* little stat "pills": streak, badges, stars */}
+            <div className="flex gap-3">
+              <span className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2 text-lg font-extrabold text-orange-600">
+                <Flame aria-hidden="true" size={22} strokeWidth={2.5} />
+                5
+                <span className="sr-only">day streak</span>
+              </span>
+              <span className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2 text-lg font-extrabold text-amber-600">
+                <Trophy aria-hidden="true" size={22} strokeWidth={2.5} />
                 7
-              </p>
+                <span className="sr-only">badges</span>
+              </span>
+              <span className="flex items-center gap-2 rounded-full border-2 border-border bg-surface px-4 py-2 text-lg font-extrabold text-primary">
+                <Star aria-hidden="true" size={22} strokeWidth={2.5} />
+                12
+                <span className="sr-only">lessons done</span>
+              </span>
+            </div>
+          </div>
+
+          {/* ----- BIG CONTINUE CARD (the main thing to do) ----- */}
+          <section className="mt-8 flex flex-wrap items-center gap-8 rounded-3xl border-b-8 border-teal-900 bg-primary p-8 text-white">
+            <Image src="/stickers/books.png" alt="" width={120} height={120} />
+
+            <div className="min-w-60 flex-1">
+              <p className="font-bold text-teal-100">Math, lesson 3 of 5</p>
+              <h2 className="mt-1 text-3xl font-extrabold">Adding fractions</h2>
+
+              {/* progress bar */}
+              <div
+                className="mt-4 h-4 rounded-full bg-teal-900"
+                role="progressbar"
+                aria-valuenow={60}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label="Lesson progress"
+              >
+                <div className="h-4 w-3/5 rounded-full bg-amber-300" />
+              </div>
             </div>
 
-          </div>
+            {/* chunky white button */}
+            <Link
+              href="/child/learning/math"
+              className="rounded-2xl border-b-4 border-teal-200 bg-white px-8 py-4 text-lg font-extrabold text-teal-700 hover:bg-teal-50 active:translate-y-1 active:border-b-0"
+            >
+              Keep going
+            </Link>
+          </section>
+
+          {/* ----- SUBJECTS: one bright chunky tile each ----- */}
+          <h2 className="mt-10 text-2xl font-extrabold text-foreground">Pick a subject</h2>
+
+          <ul className="mt-4 grid gap-5 md:grid-cols-3">
+            {subjects.map(({ href, title, text, Icon, colour }) => (
+              <li key={href}>
+                <Link
+                  href={href}
+                  className={`block rounded-3xl border-b-8 p-6 active:translate-y-1 active:border-b-4 ${colour}`}
+                >
+                  <Icon aria-hidden="true" size={44} strokeWidth={2.25} />
+                  <h3 className="mt-4 text-2xl font-extrabold">{title}</h3>
+                  <p className="font-semibold opacity-80">{text}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+
+          {/* ----- ASK BUD ----- */}
+          <Link
+            href="/child/chat"
+            className="mt-10 flex items-center gap-5 rounded-3xl border-2 border-b-8 border-border bg-surface p-6 hover:bg-surface-muted active:translate-y-1 active:border-b-4"
+          >
+            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-primary text-on-primary">
+              <Sprout aria-hidden="true" size={34} strokeWidth={2.25} />
+            </span>
+            <span>
+              <span className="block text-2xl font-extrabold text-foreground">Ask Bud</span>
+              <span className="block text-lg text-muted">Stuck? Bud helps you think it through.</span>
+            </span>
+          </Link>
 
         </div>
       </main>
