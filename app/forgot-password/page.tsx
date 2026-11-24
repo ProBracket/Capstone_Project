@@ -1,200 +1,162 @@
-/** Reset password page (/reset-password).
- * The parent lands here from the link in the reset email.
- * Supabase reads the link and signs them in for this one step,
- * then they type a new password and press "Save new password".
- * - Saved → go to the Parent Profile page (/parentview).
- * - Link missing or expired → tell them to ask for a new one.
+/** Forgot password page (/forgot-password).
+ * The parent types their email and presses "Send reset link".
+ * Supabase emails them a link that opens /reset-password.
+ * We always show the same message, so nobody can find out
+ * which emails have accounts.
  */
 // "use client" = runs in the browser
-// (needed for useState, useEffect and the form)
+// (needed for useState and the form)
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { getCurrentUser, updatePassword } from "@/lib/auth";
+import { sendPasswordReset } from "@/lib/auth";
+// line icons (same icon set as the rest of the app)
+import { ArrowLeft, Sprout } from "lucide-react";
 
-export default function ResetPasswordPage() {
-  // tool to go to another page in code
-  const router = useRouter();
-
+export default function ForgotPasswordPage() {
   // ----- STATE = the page's memory -----
-  // what's typed in each box (starts empty)
-  const [password, setPassword] = useState("");
-  const [confirm, setConfirm] = useState("");
+  // what's typed in the email box
+  const [email, setEmail] = useState("");
 
   // red message ("" = no box shown)
   const [error, setError] = useState("");
 
+  // green message ("" = no box shown)
+  const [message, setMessage] = useState("");
+
   // waiting for Supabase?
   const [loading, setLoading] = useState(false);
 
-  // did the reset link work?
-  // "checking" → "ok" (show the form) or "bad" (link expired)
-  const [linkStatus, setLinkStatus] = useState("checking");
-
-  // ----- RUNS ONCE WHEN THE PAGE OPENS -----
-  // Supabase reads the link in the address bar and signs the
-  // parent in. We check that worked before showing the form.
-  useEffect(() => {
-    getCurrentUser().then(({ data }) => {
-      setLinkStatus(data.user ? "ok" : "bad");
-    });
-  }, []);
-
   // ----- MAIN LOGIC -----
-  // runs when you click "Save new password" or press Enter
-  async function handleSave(e: React.FormEvent<HTMLFormElement>) {
+  // runs when you click "Send reset link" or press Enter
+  async function handleSend(e: React.FormEvent<HTMLFormElement>) {
     // stop the page from reloading
     e.preventDefault();
 
-    // clear old message
+    // clear old messages
     setError("");
+    setMessage("");
 
-    // both boxes filled in?
-    if (!password || !confirm) {
-      setError("Please fill in both boxes.");
+    // email box filled in?
+    if (!email.trim()) {
+      setError("Please enter your email.");
       return;
     }
 
-    // Supabase needs at least 6 characters
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return;
-    }
-
-    // both passwords must match
-    if (password !== confirm) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    // button → "Saving..." (locked)
+    // button → "Sending..." (locked)
     setLoading(true);
 
     // ★ CALLS auth.ts ★
-    // ask Supabase to save the new password
-    const { error } = await updatePassword(password);
+    // ask Supabase to send the reset email
+    const { error } = await sendPasswordReset(email);
 
     // Supabase answered → button unlocked
     setLoading(false);
 
-    // Supabase said no (for example, same as the old password)
+    // something went wrong on Supabase's side
+    // (for example, too many requests)
     if (error) {
-      setError(error.message);
+      setError("Couldn't send the email. Please try again in a few minutes.");
       return;
     }
 
-    // saved → the parent is logged in, go to Parent Profile
-    router.push("/parentview");
+    // same message whether the account exists or not
+    setMessage(
+      "If an account exists for this email, we've sent a link to reset your password. Check your inbox."
+    );
   }
 
   // ----- WHAT THE USER SEES -----
-  // same layout and colours as the login page
+  // same layout and colours as the login and create account pages
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-12">
-      <div className="mx-auto max-w-md">
-        {/* top title */}
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ThinkFirst
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Choose a new password
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
+      {/* soft coloured circles in the background (decoration only).
+          Different spots from login and sign up: yellow top-right, blue left, pink bottom-right */}
+      <div aria-hidden="true" className="absolute -top-36 right-[15%] h-64 w-64 rounded-full bg-amber-200" />
+      <div aria-hidden="true" className="absolute -left-20 top-1/3 h-56 w-56 rounded-full bg-sky-200" />
+      <div aria-hidden="true" className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-pink-200" />
+
+      {/* small "back" link in the top-left corner: goes back to the login page */}
+      <Link
+        href="/login"
+        className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-control bg-surface/80 px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface"
+      >
+        <ArrowLeft aria-hidden="true" size={16} strokeWidth={2.25} />
+        Back to log in
+      </Link>
+
+      <div className="relative mx-auto max-w-md">
+        {/* logo (just a picture here, not a link) */}
+        <header className="mb-8 flex flex-col items-center text-center">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-control bg-primary text-on-primary">
+              <Sprout aria-hidden="true" size={22} strokeWidth={2.25} />
+            </span>
+            <span className="text-2xl font-semibold text-foreground">ThinkFirst</span>
+          </div>
+          <p className="mt-3 text-lg font-semibold text-foreground">No worries!</p>
+          <p className="mt-1 text-muted">We&apos;ll help you get back into your account.</p>
         </header>
 
-        {/* white card */}
-        <section className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
-          {/* still checking the link */}
-          {linkStatus === "checking" && (
-            <p className="text-gray-600">Checking your reset link...</p>
+        {/* Chunky game-style edge: thick border on the bottom (border-b-8) */}
+        <section className="rounded-3xl border-2 border-b-8 border-border bg-surface p-6 sm:p-8">
+          <h1 className="mb-2 text-2xl font-bold text-foreground">
+            Forgot password?
+          </h1>
+          <p className="mb-6 text-muted">
+            Enter the email you signed up with and we&apos;ll send you a link to make a new password.
+          </p>
+
+          {/* red box: only shows when there's an error */}
+          {error && (
+            <p
+              role="alert"
+              className="mb-5 rounded-control bg-danger-soft p-3 text-danger"
+            >
+              {error}
+            </p>
           )}
 
-          {/* link missing or expired */}
-          {linkStatus === "bad" && (
-            <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900">
-                Link expired
-              </h2>
-              <p className="text-gray-600">
-                This reset link has expired or was already used. Please ask for a new one.
-              </p>
-              <Link
-                href="/forgot-password"
-                className="block w-full rounded-lg bg-blue-700 px-5 py-3 text-center font-medium text-white hover:bg-blue-800"
+          {/* green box: only shows after the email is sent */}
+          {message && (
+            <p
+              role="status"
+              className="mb-5 rounded-control bg-success-soft p-3 text-success"
+            >
+              {message}
+            </p>
+          )}
+
+          {/* form: runs handleSend on click or Enter */}
+          <form onSubmit={handleSend} className="space-y-5">
+            {/* email box */}
+            <div>
+              <label
+                htmlFor="email"
+                className="mb-2 block font-semibold text-foreground"
               >
-                Send a new link
-              </Link>
+                Email
+              </label>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
+              />
             </div>
-          )}
 
-          {/* link worked → show the form */}
-          {linkStatus === "ok" && (
-            <>
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">
-                New password
-              </h2>
-
-              {/* red box: only shows when there's an error */}
-              {error && (
-                <p
-                  role="alert"
-                  className="mb-5 rounded-lg bg-red-50 p-3 text-red-700"
-                >
-                  {error}
-                </p>
-              )}
-
-              {/* form: runs handleSave on click or Enter */}
-              <form onSubmit={handleSave} className="space-y-5">
-                {/* new password box */}
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="mb-2 block font-semibold text-gray-800"
-                  >
-                    New Password
-                  </label>
-                  <input
-                    id="password"
-                    type="password"
-                    autoComplete="new-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
-                  />
-                </div>
-
-                {/* confirm password box */}
-                <div>
-                  <label
-                    htmlFor="confirm"
-                    className="mb-2 block font-semibold text-gray-800"
-                  >
-                    Confirm New Password
-                  </label>
-                  <input
-                    id="confirm"
-                    type="password"
-                    autoComplete="new-password"
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
-                  />
-                </div>
-
-                {/* button: locked while waiting */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
-                >
-                  {loading ? "Saving..." : "Save new password"}
-                </button>
-              </form>
-            </>
-          )}
+            {/* chunky teal button: locked while waiting, sinks when clicked */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-2xl border-b-4 border-teal-900 bg-primary px-5 py-3 font-extrabold text-on-primary hover:bg-primary-hover active:translate-y-1 active:border-b-0 disabled:opacity-50"
+            >
+              {loading ? "Sending..." : "Send reset link"}
+            </button>
+          </form>
         </section>
       </div>
     </main>

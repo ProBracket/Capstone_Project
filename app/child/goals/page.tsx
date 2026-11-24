@@ -5,7 +5,7 @@ export default function GoalsPage() {
     <>
       <ChildNavbar />
 
-      <main className="ml-72 min-h-screen bg-linear-to-br from-yellow-50 to-orange-50 pt-12 px-8 flex justify-center">
+      <main className="ml-72 min-h-screen bg-gradient-to-br from-yellow-50 to-orange-50 pt-12 px-8 flex justify-center">
         <div className="w-full max-w-5xl">
 
           <div className="bg-white rounded-3xl shadow-2xl p-12">

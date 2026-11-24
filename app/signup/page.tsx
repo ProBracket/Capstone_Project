@@ -4,7 +4,7 @@
  * - Supabase needs the email confirmed first → show a green
  *   "check your email" message.
  * - Something wrong (email used, short password) → show a red message.
- * Same look as the login page.
+ * Same look as the login page (chunky box, colour circles), but no stickers.
  */
 // "use client" = runs in the browser
 // (needed for useState and the form)
@@ -15,6 +15,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signUpWithEmail } from "@/lib/auth";
 import { Turnstile, type TurnstileInstance } from "@marsidev/react-turnstile";
+// line icons (same icon set as the rest of the app)
+import { ArrowLeft, Sprout } from "lucide-react";
 
 export default function SignUpPage() {
   // tool to go to another page in code
@@ -131,29 +133,47 @@ export default function SignUpPage() {
   // ----- WHAT THE USER SEES -----
   // same layout and colours as the login page
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-12">
-      <div className="mx-auto max-w-md">
-        {/* top title */}
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ThinkFirst
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Create a Parent Account
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
+      {/* soft coloured circles in the background (decoration only).
+          Different spots from the login page: blue top-right, pink left, yellow bottom-right */}
+      <div aria-hidden="true" className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-sky-200" />
+      <div aria-hidden="true" className="absolute -left-20 top-1/2 h-56 w-56 rounded-full bg-pink-200" />
+      <div aria-hidden="true" className="absolute -bottom-28 right-1/4 h-80 w-80 rounded-full bg-amber-200" />
+
+      {/* small "back" link in the top-left corner: goes back to the login page */}
+      <Link
+        href="/login"
+        className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-control bg-surface/80 px-3 py-2 text-sm font-semibold text-foreground hover:bg-surface"
+      >
+        <ArrowLeft aria-hidden="true" size={16} strokeWidth={2.25} />
+        Back to log in
+      </Link>
+
+      <div className="relative mx-auto max-w-md">
+        {/* logo (just a picture here, not a link) */}
+        <header className="mb-8 flex flex-col items-center text-center">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-control bg-primary text-on-primary">
+              <Sprout aria-hidden="true" size={22} strokeWidth={2.25} />
+            </span>
+            <span className="text-2xl font-semibold text-foreground">ThinkFirst</span>
+          </div>
+          {/* friendly greeting for new parents */}
+          <p className="mt-3 text-lg font-semibold text-foreground">Welcome to ThinkFirst!</p>
+          <p className="mt-1 text-muted">Create a parent account to start your child&apos;s learning.</p>
         </header>
 
-        {/* white card */}
-        <section className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
-          <h2 className="mb-6 text-2xl font-bold text-gray-900">
+        {/* Chunky game-style edge: thick border on the bottom (border-b-8) */}
+        <section className="rounded-3xl border-2 border-b-8 border-border bg-surface p-6 sm:p-8">
+          <h1 className="mb-6 text-2xl font-bold text-foreground">
             Create account
-          </h2>
+          </h1>
 
           {/* red box: only shows when there's an error */}
           {error && (
             <p
               role="alert"
-              className="mb-5 rounded-lg bg-red-50 p-3 text-red-700"
+              className="mb-5 rounded-control bg-danger-soft p-3 text-danger"
             >
               {error}
             </p>
@@ -163,7 +183,7 @@ export default function SignUpPage() {
           {message && (
             <p
               role="status"
-              className="mb-5 rounded-lg bg-green-50 p-3 text-green-700"
+              className="mb-5 rounded-control bg-success-soft p-3 text-success"
             >
               {message}
             </p>
@@ -175,7 +195,7 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="fullName"
-                className="mb-2 block font-semibold text-gray-800"
+                className="mb-2 block font-semibold text-foreground"
               >
                 Full Name
               </label>
@@ -186,7 +206,7 @@ export default function SignUpPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 maxLength={100}
-                className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
               />
             </div>
 
@@ -194,7 +214,7 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="email"
-                className="mb-2 block font-semibold text-gray-800"
+                className="mb-2 block font-semibold text-foreground"
               >
                 Email
               </label>
@@ -204,7 +224,7 @@ export default function SignUpPage() {
                 autoComplete="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
               />
             </div>
 
@@ -212,7 +232,7 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="password"
-                className="mb-2 block font-semibold text-gray-800"
+                className="mb-2 block font-semibold text-foreground"
               >
                 Password
               </label>
@@ -224,7 +244,7 @@ export default function SignUpPage() {
                 autoComplete="new-password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
               />
             </div>
 
@@ -232,7 +252,7 @@ export default function SignUpPage() {
             <div>
               <label
                 htmlFor="confirm"
-                className="mb-2 block font-semibold text-gray-800"
+                className="mb-2 block font-semibold text-foreground"
               >
                 Confirm Password
               </label>
@@ -242,7 +262,7 @@ export default function SignUpPage() {
                 autoComplete="new-password"
                 value={confirm}
                 onChange={(e) => setConfirm(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
               />
             </div>
 
@@ -254,22 +274,22 @@ export default function SignUpPage() {
               onError={() => setToken("")}
               />
 
-            {/* button: locked while waiting */}
+            {/* chunky teal button: locked while waiting, sinks when clicked */}
             <button
               type="submit"
               disabled={loading}
-              className="w-full rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
+              className="w-full rounded-2xl border-b-4 border-teal-900 bg-primary px-5 py-3 font-extrabold text-on-primary hover:bg-primary-hover active:translate-y-1 active:border-b-0 disabled:opacity-50"
             >
               {loading ? "Creating account..." : "Create account"}
             </button>
           </form>
 
           {/* link back to the login page */}
-          <p className="mt-6 text-center text-gray-600">
+          <p className="mt-6 text-center text-muted">
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-blue-700 hover:underline"
+              className="rounded-control font-semibold text-primary hover:underline"
             >
               Log in
             </Link>
