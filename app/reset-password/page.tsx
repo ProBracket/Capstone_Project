@@ -13,6 +13,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getCurrentUser, updatePassword } from "@/lib/auth";
+// line icons (same icon set as the rest of the app)
+import { Sprout } from "lucide-react";
 
 export default function ResetPasswordPage() {
   // tool to go to another page in code
@@ -90,39 +92,47 @@ export default function ResetPasswordPage() {
   }
 
   // ----- WHAT THE USER SEES -----
-  // same layout and colours as the login page
+  // same layout and colours as the login, sign up and forgot password pages
   return (
-    <main className="min-h-screen bg-gray-100 px-4 py-12">
-      <div className="mx-auto max-w-md">
-        {/* top title */}
-        <header className="mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900">
-            ThinkFirst
-          </h1>
-          <p className="mt-1 text-gray-600">
-            Choose a new password
-          </p>
+    <main className="relative min-h-screen overflow-hidden bg-background px-4 py-12">
+      {/* soft coloured circles in the background (decoration only).
+          Different spots from the other pages: pink top-left, yellow right, blue bottom */}
+      <div aria-hidden="true" className="absolute -left-24 -top-24 h-72 w-72 rounded-full bg-pink-200" />
+      <div aria-hidden="true" className="absolute -right-20 top-1/2 h-56 w-56 rounded-full bg-amber-200" />
+      <div aria-hidden="true" className="absolute -bottom-32 left-[55%] h-80 w-80 rounded-full bg-sky-200" />
+
+      <div className="relative mx-auto max-w-md">
+        {/* logo (just a picture here, not a link) */}
+        <header className="mb-8 flex flex-col items-center text-center">
+          <div className="flex items-center gap-2.5">
+            <span className="flex h-10 w-10 items-center justify-center rounded-control bg-primary text-on-primary">
+              <Sprout aria-hidden="true" size={22} strokeWidth={2.25} />
+            </span>
+            <span className="text-2xl font-semibold text-foreground">ThinkFirst</span>
+          </div>
+          <p className="mt-3 text-lg font-semibold text-foreground">Almost there!</p>
+          <p className="mt-1 text-muted">Choose a new password for your account.</p>
         </header>
 
-        {/* white card */}
-        <section className="rounded-2xl bg-white p-6 shadow-md sm:p-8">
+        {/* Chunky game-style edge: thick border on the bottom (border-b-8) */}
+        <section className="rounded-3xl border-2 border-b-8 border-border bg-surface p-6 sm:p-8">
           {/* still checking the link */}
           {linkStatus === "checking" && (
-            <p className="text-gray-600">Checking your reset link...</p>
+            <p className="text-muted">Checking your reset link...</p>
           )}
 
           {/* link missing or expired */}
           {linkStatus === "bad" && (
             <div className="space-y-4">
-              <h2 className="text-2xl font-bold text-gray-900">
+              <h1 className="text-2xl font-bold text-foreground">
                 Link expired
-              </h2>
-              <p className="text-gray-600">
+              </h1>
+              <p className="text-muted">
                 This reset link has expired or was already used. Please ask for a new one.
               </p>
               <Link
                 href="/forgot-password"
-                className="block w-full rounded-lg bg-blue-700 px-5 py-3 text-center font-medium text-white hover:bg-blue-800"
+                className="block w-full rounded-2xl border-b-4 border-teal-900 bg-primary px-5 py-3 font-extrabold text-on-primary hover:bg-primary-hover active:translate-y-1 active:border-b-0 text-center"
               >
                 Send a new link
               </Link>
@@ -132,15 +142,15 @@ export default function ResetPasswordPage() {
           {/* link worked → show the form */}
           {linkStatus === "ok" && (
             <>
-              <h2 className="mb-6 text-2xl font-bold text-gray-900">
+              <h1 className="mb-6 text-2xl font-bold text-foreground">
                 New password
-              </h2>
+              </h1>
 
               {/* red box: only shows when there's an error */}
               {error && (
                 <p
                   role="alert"
-                  className="mb-5 rounded-lg bg-red-50 p-3 text-red-700"
+                  className="mb-5 rounded-control bg-danger-soft p-3 text-danger"
                 >
                   {error}
                 </p>
@@ -152,7 +162,7 @@ export default function ResetPasswordPage() {
                 <div>
                   <label
                     htmlFor="password"
-                    className="mb-2 block font-semibold text-gray-800"
+                    className="mb-2 block font-semibold text-foreground"
                   >
                     New Password
                   </label>
@@ -162,7 +172,7 @@ export default function ResetPasswordPage() {
                     autoComplete="new-password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                    className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
                   />
                 </div>
 
@@ -170,7 +180,7 @@ export default function ResetPasswordPage() {
                 <div>
                   <label
                     htmlFor="confirm"
-                    className="mb-2 block font-semibold text-gray-800"
+                    className="mb-2 block font-semibold text-foreground"
                   >
                     Confirm New Password
                   </label>
@@ -180,15 +190,15 @@ export default function ResetPasswordPage() {
                     autoComplete="new-password"
                     value={confirm}
                     onChange={(e) => setConfirm(e.target.value)}
-                    className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:border-blue-600 focus:outline-none"
+                    className="w-full rounded-2xl border-2 border-border bg-surface p-3 text-foreground focus:border-primary focus:outline-none"
                   />
                 </div>
 
-                {/* button: locked while waiting */}
+                {/* chunky teal button: locked while waiting, sinks when clicked */}
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full rounded-lg bg-blue-700 px-5 py-3 font-medium text-white hover:bg-blue-800 disabled:opacity-50"
+                  className="w-full rounded-2xl border-b-4 border-teal-900 bg-primary px-5 py-3 font-extrabold text-on-primary hover:bg-primary-hover active:translate-y-1 active:border-b-0 disabled:opacity-50"
                 >
                   {loading ? "Saving..." : "Save new password"}
                 </button>
