@@ -87,7 +87,7 @@ export default function ChildProfiles({ profiles, onAdded, onBack }: Props) {
             >
               <p className="font-medium">{child.name}</p>
               <p className="text-sm text-slate-500">
-                Age {getAge(child.date_of_birth)} · {gradeLabel(child.grade)}
+                {gradeLabel(child.grade)}
               </p>
             </div>
           ))}

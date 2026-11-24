@@ -55,15 +55,20 @@ export async function addChild(
 /** Logs in with an email and password.
  * Returns { data: { user, session }, error }; error is set when the
  * account doesn't exist or the password is wrong.
+ * adding Captcha Turnstile in the LOgin page
  */
 export function signInWithEmail(
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signInWithPassword({
-    email: email.trim(),
-    password,
-  });
+  email: email.trim(),
+  password,
+  options: {
+    captchaToken,
+  },
+});
 }
 
 /** Creates a new account with a name, email and password.
@@ -74,13 +79,16 @@ export function signInWithEmail(
 export function signUpWithEmail(
   fullName: string,
   email: string,
-  password: string
+  password: string,
+  captchaToken: string
 ) {
   return supabase.auth.signUp({
     email: email.trim(),
     password,
     options: {
       data: { full_name: fullName.trim() },
+      // Token comes from Turnstile check on the signup page
+      captchaToken,
     },
   });
 }
@@ -94,4 +102,21 @@ export function signInWithGoogle() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}/parentview`}
     });
+} 
+/** Sends a "reset your password" email.
+ * The link in the email opens our /reset-password page.
+ * Returns { error }; error is null when the request was accepted.
+ */
+export function sendPasswordReset(email: string) {
+  return supabase.auth.resetPasswordForEmail(email.trim(), {
+    // where the link in the email takes the parent
+    // (works on localhost and on the Vercel site)
+    redirectTo: `${window.location.origin}/reset-password`,
+  });
+} 
+/** Saves a new password for the parent who opened the reset link.
+ * Returns { error }; error is null on success.
+ */
+export function updatePassword(newPassword: string) {
+  return supabase.auth.updateUser({ password: newPassword });
 }
