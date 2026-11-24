@@ -4,19 +4,17 @@ import { BUD_PROMPT } from "@/lib/prompts";
 
 export async function POST(request: Request) {
   try {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return Response.json(
-        { error: "Bud isn't set up yet (missing OpenAI key)." },
-        { status: 500 }
-      );
-    }
-    const openai = new OpenAI({ apiKey });
+    // Created here (when a message arrives) instead of when the file loads,
+    // so `npm run build` works on machines without an OpenAI key, like CI.
+    // With no key, this throws and the catch below returns an error reply.
+    const openai = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY,
+    });
 
     const {
-      message,
-      history = [],
-    } = await request.json();
+            message,
+            history = [],
+        } = await request.json();
     
     if (!isMessageAllowed(message)) {
   return Response.json({

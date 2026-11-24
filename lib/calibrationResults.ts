@@ -4,6 +4,7 @@
 // Keep the function names and return types the same so nothing else breaks.
 
 import { getChild } from "@/lib/children";
+import { createAIProfile } from "@/lib/ai-profiles";
 
 export const CALIBRATION_SUBJECTS = ["math", "science", "literature"] as const;
 
@@ -25,6 +26,18 @@ export async function saveCalibrationResults(
 ): Promise<{ error: string | null }> {
   try {
     localStorage.setItem(storageKey(childId), JSON.stringify(results));
+
+    // Also save the levels to the AI profile (lib/ai-profiles.ts).
+    const { data } = await getChild(childId);
+    if (data) {
+      await createAIProfile(
+        childId,
+        data.name,
+        results.math,
+        results.science,
+        results.literature
+      );
+    }
     return { error: null };
   } catch {
     return { error: "Could not save the calibration results." };
