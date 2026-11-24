@@ -71,7 +71,7 @@ export function signOut() {
 export function signInWithGoogle() {
     return supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/parentview`}
+      options: { redirectTo: `${window.location.origin}/auth/callback`}
     });
 } 
 /** Sends a "reset your password" email.
