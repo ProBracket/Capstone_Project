@@ -1,10 +1,10 @@
 import Image from "next/image";
 import ChildNavbar from "@/components/ChildNavbar";
-// line icons (same icon set as the navbar)
-import { Check, Target } from "lucide-react";
+// line icon (same icon set as the navbar)
+import { Check } from "lucide-react";
 
-// My Goals page (/child/goals)
-// Teal banner with the T-rex, then one chunky card per goal.
+// My Goals page (/child/goals) - a simple checklist
+// Soft green = done, yellow = in progress (plus the words, so it doesn't rely on colour)
 // Goals are placeholders for now (later they come from Supabase).
 
 // the goals (done: true = finished)
@@ -14,28 +14,11 @@ const goals = [
   { title: "Complete Human Body Module", done: false },
 ];
 
-// how a card looks when it's done vs still in progress
-// (colours from the home page: blue like the Science tile, yellow like the Math tile)
-const looks = {
-  done: {
-    card: "border-sky-300 bg-sky-100",
-    badge: "border-sky-400 text-sky-700",
-    Icon: Check,
-    label: "Done",
-    labelColour: "text-sky-700",
-  },
-  inProgress: {
-    card: "border-amber-300 bg-amber-100",
-    badge: "border-amber-400 text-amber-700",
-    Icon: Target,
-    label: "In progress",
-    labelColour: "text-amber-700",
-  },
-};
-
 export default function GoalsPage() {
   // how many goals are finished, e.g. 2
   const doneCount = goals.filter((goal) => goal.done).length;
+  // how full the green bar is, e.g. 2 of 3 = 67
+  const percent = Math.round((doneCount / goals.length) * 100);
 
   return (
     <>
@@ -58,33 +41,69 @@ export default function GoalsPage() {
             </span>
           </section>
 
-          {/* ----- GOAL CARDS ----- */}
-          <ul className="mt-8 flex flex-col gap-4">
-            {goals.map((goal) => {
-              // pick the right look for this goal
-              const look = goal.done ? looks.done : looks.inProgress;
+          {/* ----- CHECKLIST CARD ----- */}
+          <section className="mt-8 rounded-3xl border-2 border-b-8 border-border bg-surface px-8 py-7">
+            {/* title + "2 of 3" */}
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-extrabold text-foreground">My checklist</h2>
+              <span className="font-extrabold text-emerald-700">
+                {doneCount} of {goals.length}
+              </span>
+            </div>
 
-              return (
+            {/* green progress bar */}
+            <div
+              role="progressbar"
+              aria-label="Goals done"
+              aria-valuenow={percent}
+              aria-valuemin={0}
+              aria-valuemax={100}
+              className="mt-3 h-4 rounded-full bg-surface-muted"
+            >
+              <div className="h-4 rounded-full bg-emerald-400" style={{ width: `${percent}%` }} />
+            </div>
+
+            {/* the list: one row per goal, dashed line between rows */}
+            <ul className="mt-4">
+              {goals.map((goal) => (
                 <li
                   key={goal.title}
-                  className={`flex items-center gap-5 rounded-3xl border-2 border-b-8 p-5 ${look.card}`}
+                  className="flex items-center gap-4 border-t-2 border-dashed border-border py-4"
                 >
-                  {/* round badge: white circle, coloured outline + line icon
-                      (outline style so it doesn't look like an emoji) */}
-                  <span className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-b-4 bg-surface ${look.badge}`}>
-                    <look.Icon aria-hidden="true" size={24} strokeWidth={2.5} />
-                  </span>
+                  {/* checkbox: green with a tick if done, empty yellow box if not */}
+                  {goal.done ? (
+                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 border-b-4 border-emerald-500 bg-emerald-400 text-emerald-950">
+                      <Check aria-hidden="true" size={22} strokeWidth={3.5} />
+                    </span>
+                  ) : (
+                    <span className="h-9 w-9 shrink-0 rounded-xl border-2 border-b-4 border-amber-400 bg-surface" />
+                  )}
 
-                  <h2 className="flex-1 text-xl font-extrabold text-foreground">{goal.title}</h2>
+                  {/* goal name (greyed out once it's done) */}
+                  <span
+                    className={
+                      goal.done
+                        ? "flex-1 text-xl font-extrabold text-muted"
+                        : "flex-1 text-xl font-extrabold text-foreground"
+                    }
+                  >
+                    {goal.title}
+                  </span>
 
                   {/* the word too, so it doesn't rely on colour alone */}
-                  <span className={`rounded-full bg-surface px-3 py-1 text-sm font-bold ${look.labelColour}`}>
-                    {look.label}
-                  </span>
+                  {goal.done ? (
+                    <span className="rounded-full bg-emerald-200 px-3 py-1 text-sm font-bold text-emerald-800">
+                      Done
+                    </span>
+                  ) : (
+                    <span className="rounded-full bg-amber-100 px-3 py-1 text-sm font-bold text-amber-800">
+                      In progress
+                    </span>
+                  )}
                 </li>
-              );
-            })}
-          </ul>
+              ))}
+            </ul>
+          </section>
 
         </div>
       </main>
