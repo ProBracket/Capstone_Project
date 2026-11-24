@@ -13,33 +13,10 @@ export default function LiteraturePage() {
     <>
       <ChildNavbar />
 
-      {/* ml-sidebar = leave room for the sidebar (same on every child page) */}
-      <main className="ml-sidebar min-h-screen bg-background px-10 py-8">
-        <div className="mx-auto max-w-4xl">
-
-          {/* back to the "Choose a Subject" page */}
-          <Link
-            href="/child/learning"
-            className="inline-flex items-center gap-2 rounded-control font-semibold text-muted hover:text-foreground"
-          >
-            <ArrowLeft aria-hidden="true" size={18} strokeWidth={2.25} />
-            All subjects
-          </Link>
-
-          {/* ----- BIG SUBJECT BANNER ----- */}
-          <section className="mt-4 flex flex-wrap items-center gap-6 rounded-3xl border-b-8 border-pink-500 bg-pink-300 px-8 py-7 text-pink-950">
-            <span className="flex h-20 w-20 items-center justify-center rounded-2xl bg-white/50">
-              <BookOpen aria-hidden="true" size={44} strokeWidth={2.25} />
-            </span>
-
-            <div>
-              <h1 className="text-4xl font-extrabold">Literature</h1>
-              <p className="font-semibold opacity-80">Reading, grammar and stories</p>
-            </div>
-          </section>
-
-          {/* ----- LESSONS (coming soon) ----- */}
-          <h2 className="mt-8 text-2xl font-extrabold text-foreground">Lessons</h2>
+      <main className="ml-64 min-h-screen p-8 bg-purple-50">
+        <h1 className="text-4xl font-bold text-purple-700 mb-4">
+           Literature
+        </h1>
 
           <div className="mt-4 rounded-3xl border-2 border-dashed border-border bg-surface px-8 py-12 text-center">
             <p className="text-xl font-extrabold text-foreground">Lessons are coming soon</p>

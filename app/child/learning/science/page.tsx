@@ -1,4 +1,7 @@
-import Link from "next/link";
+"use client";
+
+import { useEffect, useState } from "react";
+
 import ChildNavbar from "@/components/ChildNavbar";
 // line icons (same icon set as the navbar)
 import { ArrowLeft, FlaskConical } from "lucide-react";
@@ -8,7 +11,97 @@ import { ArrowLeft, FlaskConical } from "lucide-react";
 // Lessons are not built yet, so the page shows a "coming soon" message.
 // When the team adds lessons, the lesson list goes where that message is.
 
+import { getActiveChildId } from "@/lib/activeChild";
+
+import { getTopicsForSubject, } from "@/lib/lessons";
+
+type Topic = {
+  topic: string;
+  outcomes: string[];
+  keywords: string[];
+};
+
 export default function SciencePage() {
+  const [childId, setChildId] = useState<string | null>(null);
+
+  const [topics, setTopics] = useState<Topic[]>([]);
+
+  const [frameworkGrade, setFrameworkGrade] =
+    useState<number | null>(null);
+
+  const [selectedTopic, setSelectedTopic] =
+    useState<Topic | null>(null);
+
+  const [lesson, setLesson] =
+    useState<string | null>(null);
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadTopics() {
+      const activeChild = getActiveChildId();
+
+      setChildId(activeChild);
+
+      if (!activeChild) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const result = await getTopicsForSubject(
+          activeChild,
+          "science"
+        );
+
+        setTopics(result.topics);
+        setFrameworkGrade(result.frameworkGrade);
+      } catch (error) {
+        console.error(error);
+      }
+
+      setLoading(false);
+    }
+
+    loadTopics();
+  }, []);
+
+  async function handleTopicClick(
+    topic: Topic
+  ) {
+    setSelectedTopic(topic);
+
+    if (frameworkGrade === null) {
+      return;
+    }
+
+    try {
+      const response = await fetch(
+  "/api/lesson",
+  {
+    method: "POST",
+    headers: {
+      "Content-Type":
+        "application/json",
+    },
+    body: JSON.stringify({
+      subject: "science",
+      frameworkGrade,
+      topic,
+    }),
+  }
+);
+
+const result = await response.json();
+
+setLesson(result.lesson);
+
+      setLesson(result.lesson);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <ChildNavbar />
@@ -41,22 +134,79 @@ export default function SciencePage() {
           {/* ----- LESSONS (coming soon) ----- */}
           <h2 className="mt-8 text-2xl font-extrabold text-foreground">Lessons</h2>
 
-          <div className="mt-4 rounded-3xl border-2 border-dashed border-border bg-surface px-8 py-12 text-center">
-            <p className="text-xl font-extrabold text-foreground">Lessons are coming soon</p>
-            <p className="mt-2 text-muted">
-              Want to learn about science now? Ask Bud a question.
-            </p>
+        {loading && (
+          <p>Loading topics...</p>
+        )}
 
-            {/* chunky teal button, floats on hover */}
-            <Link
-              href="/child/chat"
-              className="mt-6 inline-block rounded-2xl border-b-4 border-teal-900 bg-primary px-6 py-3 font-extrabold text-on-primary transition hover:-translate-y-1 hover:shadow-raised active:translate-y-1 active:border-b-0"
-            >
-              Ask Bud
-            </Link>
-          </div>
+        {!loading && !childId && (
+          <p>No active child selected.</p>
+        )}
 
-        </div>
+        {!loading && childId && (
+          <>
+            <h2 className="text-2xl font-semibold mb-4">
+              Choose a Topic
+            </h2>
+
+            <div className="grid gap-4">
+              {topics.map((topic) => (
+                <button
+                  key={topic.topic}
+                  onClick={() =>
+                    handleTopicClick(topic)
+                  }
+                  className="bg-white p-4 rounded-xl shadow text-left hover:bg-green-100"
+                >
+                  {topic.topic}
+                </button>
+              ))}
+            </div>
+
+            {selectedTopic && (
+              <div className="mt-8 bg-white p-6 rounded-xl shadow">
+                <h3 className="text-xl font-bold mb-2">
+                  {selectedTopic.topic}
+                </h3>
+
+                <p className="font-semibold mb-2">
+                  Learning Outcomes
+                </p>
+
+                <ul className="list-disc pl-6">
+                  {selectedTopic.outcomes.map(
+                    (outcome) => (
+                      <li key={outcome}>
+                        {outcome}
+                      </li>
+                    )
+                  )}
+                </ul>
+
+                <p className="font-semibold mt-4 mb-2">
+                  Keywords
+                </p>
+
+                <p>
+                  {selectedTopic.keywords.join(
+                    ", "
+                  )}
+                </p>
+              </div>
+            )}
+
+            {lesson && (
+              <div className="mt-8 bg-white p-6 rounded-xl shadow">
+                <h3 className="text-xl font-bold mb-4">
+                  Generated Lesson
+                </h3>
+
+                <div className="whitespace-pre-wrap">
+                  {lesson}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </main>
     </>
   );
