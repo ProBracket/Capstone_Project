@@ -1,5 +1,3 @@
-
-
 const blockedTopics = {
   santa: [
     "santa",
