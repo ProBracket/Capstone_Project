@@ -1,5 +1,8 @@
 import ChildNavbar from "@/components/ChildNavbar";
 
+import { getActiveChildId } from "@/lib/activeChild";
+import { getAIProfile } from "@/lib/ai-profiles";
+
 export default function MathPage() {
   return (
     <>
@@ -7,7 +10,7 @@ export default function MathPage() {
 
       <main className="ml-64 min-h-screen p-8 bg-blue-50">
         <h1 className="text-4xl font-bold text-blue-700 mb-4 flex items-center gap-3">
-          🧮 Math
+           Math
         </h1>
 
         <p className="mb-6">

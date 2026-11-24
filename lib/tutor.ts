@@ -134,16 +134,23 @@ export type TutorState = {
   // How each finished problem went, in order. One result is added each time
   // a problem ends, e.g. ["first-try", "with-hints"] after two problems.
   results: ProblemResult[];
+
+  // The wrong answers already given for THIS problem, in cleaned-up form
+  // (see cleanUp). Giving the same wrong answer again does not count as a
+  // new try, so repeating "54" four times can't unlock the explanation.
+  // Goes back to an empty list whenever we move on to the next problem.
+  triedAnswers: string[];
 };
 
 // The state at the start of every new conversation:
 // first problem (0), no wrong tries yet (0), not finished (false),
-// and no results yet (an empty list []).
+// and no results or tried answers yet (empty lists []).
 export const START_STATE: TutorState = {
   problemIndex: 0,
   wrongTries: 0,
   finished: false,
   results: [],
+  triedAnswers: [],
 };
 
 // ─────────────────────────────────────────────────────────────
@@ -212,6 +219,7 @@ export function isCorrect(problem: Problem, childAnswer: string): boolean {
 //   "explain"   = the 4th wrong try, so Bud explains the answer
 //   "encourage" = the child asked for the answer before trying
 //   "chit-chat" = a friendly message like "thanks" or "hi"
+//   "try-again" = not a real attempt (nonsense, or a wrong answer repeated)
 //   "done"      = the conversation is already over
 export type BudStepKind =
   | "opening"
@@ -220,6 +228,7 @@ export type BudStepKind =
   | "explain"
   | "encourage"
   | "chit-chat"
+  | "try-again"
   | "done";
 
 // Which step of the conversation a reply belongs to.
@@ -382,6 +391,95 @@ function isChitChat(childMessage: string): boolean {
 }
 
 // ─────────────────────────────────────────────────────────────
+// BLOCK 5b++: Spotting messages that are not a real try
+// Without this, a child could type "x", "x", "x", "x" (or keyboard mashing
+// like "jfkdla") to use up the 3 hints and get the explanation right away.
+// ─────────────────────────────────────────────────────────────
+
+// Number words, so "fifty six" counts as a number answer.
+const NUMBER_WORDS = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight",
+  "nine", "ten", "eleven", "twelve", "thirteen", "fourteen", "fifteen",
+  "sixteen", "seventeen", "eighteen", "nineteen", "twenty", "thirty",
+  "forty", "fifty", "sixty", "seventy", "eighty", "ninety", "hundred",
+  "thousand",
+];
+
+// What Bud says when the message is not a real try. Neither counts as a try.
+const NONSENSE_REPLY =
+  "Hmm, I couldn't understand that one 🤔 Give it a real try! That one doesn't count.";
+const NONSENSE_NUMBER_REPLY =
+  "Hmm, I couldn't understand that one 🤔 This one needs a number for an answer. Give it a real try!";
+const REPEAT_REPLY =
+  "You already tried that answer! Try something different 🤔 That one doesn't count.";
+
+/** Checks whether the correct answer to this problem is a number.
+ * True if any accepted answer contains a digit, e.g. "56".
+ */
+function expectsNumber(problem: Problem): boolean {
+  return problem.answers.some((answer) => /\d/.test(answer));
+}
+
+/** Checks whether one word looks like a real word rather than keyboard mashing.
+ * A real-looking word:
+ *   - has at least 2 letters
+ *   - has a vowel (a, e, i, o, u or y)
+ *   - does not have 5 consonants in a row ("jfkdl")
+ *   - does not repeat the same letter 3 times in a row ("aaa")
+ */
+function looksLikeAWord(word: string): boolean {
+  if (word.length < 2) {
+    return false;
+  }
+  if (!/[aeiouy]/.test(word)) {
+    return false;
+  }
+  // [^aeiouy\d-] = any character that is not a vowel, digit or hyphen.
+  // {5} = five of them in a row.
+  if (/[^aeiouy\d-]{5}/.test(word)) {
+    return false;
+  }
+  // (.)\1\1 = any character followed by the same character twice more.
+  if (/(.)\1\1/.test(word)) {
+    return false;
+  }
+  return true;
+}
+
+/** Checks whether the message is nonsense instead of a real try.
+ * Returns true for "x", "jfkdla;jfkl;", "???", or (for a number question)
+ * a message without any number in it.
+ */
+function isNonsense(problem: Problem, childMessage: string): boolean {
+  // Only punctuation or spaces (e.g. "???") leaves nothing after cleanUp.
+  const cleaned = cleanUp(childMessage);
+  if (cleaned === "") {
+    return true;
+  }
+
+  // The separate words, e.g. "fifty-six apples" → ["fifty", "six", "apples"].
+  const words = cleaned.split(/[\s-]+/);
+
+  // Number questions: a real try must contain a number,
+  // written with digits ("54") or in words ("fifty").
+  if (expectsNumber(problem)) {
+    const hasDigit = /\d/.test(cleaned);
+    const hasNumberWord = words.some((word) => NUMBER_WORDS.includes(word));
+    return !hasDigit && !hasNumberWord;
+  }
+
+  // Word questions: a real try must have at least one real-looking word.
+  return !words.some(looksLikeAWord);
+}
+
+/** Checks whether the child already gave this exact wrong answer to this problem.
+ * Compares cleaned-up forms, so "Rain!" and "rain" count as the same answer.
+ */
+function isRepeat(state: TutorState, childMessage: string): boolean {
+  return state.triedAnswers.includes(cleanUp(childMessage));
+}
+
+// ─────────────────────────────────────────────────────────────
 // BLOCK 5c: The main function, getBudReply
 // ─────────────────────────────────────────────────────────────
 
@@ -427,6 +525,7 @@ function moveToNextProblem(
         wrongTries: 0,
         finished: true, // the conversation is over
         results: newResults, // includes the last problem's result
+        triedAnswers: [],
       },
       step: step,
       nextLine: finishedLine,
@@ -441,6 +540,7 @@ function moveToNextProblem(
       wrongTries: 0, // new problem, so wrong tries start again from 0
       finished: false,
       results: newResults, // remember how the problem we just finished went
+      triedAnswers: [], // new problem, so no answers tried yet
     },
     step: step,
     nextLine: askProblem(nextIndex),
@@ -457,7 +557,8 @@ function moveToNextProblem(
  *   1. Correct answer?             → praise, then the next problem
  *   2. Asking for the answer?      → encourage a guess (not counted as a try)
  *   3. Chit-chat ("thanks", "hi")? → friendly reply (not counted as a try)
- *   4. Otherwise, a wrong try      → a hint, or the explanation once the hints run out
+ *   4. Nonsense or a repeat?       → ask for a real try (not counted as a try)
+ *   5. Otherwise, a wrong try      → a hint, or the explanation once the hints run out
  */
 export function getBudReply(state: TutorState, childMessage: string): BudReply {
   // Check 0: the conversation is already over.
@@ -516,12 +617,30 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     };
   }
 
+  // Check 4: not a real try (nonsense, or the same wrong answer again).
+  // Bud asks for a real try and repeats the problem. Like checks 2 and 3,
+  // the state stays the same, so no hint is used up.
+  if (isNonsense(problem, childMessage) || isRepeat(state, childMessage)) {
+    // Pick the message that explains what went wrong.
+    let tryAgainLine = REPEAT_REPLY;
+    if (isNonsense(problem, childMessage)) {
+      tryAgainLine = expectsNumber(problem) ? NONSENSE_NUMBER_REPLY : NONSENSE_REPLY;
+    }
+
+    return {
+      message: tryAgainLine + "\n\n" + askProblem(state.problemIndex),
+      state: state,
+      step: { kind: "try-again", problemIndex: state.problemIndex, hintNumber: 0 },
+      nextLine: askProblem(state.problemIndex),
+    };
+  }
+
   // ───────────────────────────────────────────────────────────
   // BLOCK 5d: Wrong answers (hints, then the explanation)
-  // This block is still inside getBudReply: it is check 4.
+  // This block is still inside getBudReply: it is check 5.
   // ───────────────────────────────────────────────────────────
 
-  // Check 4: a wrong try. (Every check above returned early, so if we
+  // Check 5: a wrong try. (Every check above returned early, so if we
   // reach this line the message was a real attempt that wasn't correct.)
 
   // Count this wrong try. We make a new number instead of changing state.
@@ -541,6 +660,8 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
         wrongTries: newWrongTries, // remember how many wrong tries so far
         finished: false,
         results: state.results, // no problem finished, so the results don't change
+        // Remember this wrong answer, so giving it again won't count (check 4).
+        triedAnswers: state.triedAnswers.concat(cleanUp(childMessage)),
       },
       step: {
         kind: "hint",
