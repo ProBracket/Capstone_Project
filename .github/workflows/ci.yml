@@ -28,9 +28,6 @@ jobs:
       NEXT_PUBLIC_SUPABASE_URL: https://placeholder.supabase.co
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: placeholder-key
 
-      NEXT_PUBLIC_SUPABASE_AI_URL: https://placeholder.supabase.co
-      NEXT_PUBLIC_SUPABASE_AI_PUBLISHABLE_KEY: placeholder-key
-
     steps:
       - name: Check out code
         uses: actions/checkout@v4
