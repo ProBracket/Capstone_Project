@@ -4,12 +4,9 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  ChartLine,
   House,
   MessageCircle,
   Sprout,
-  Target,
-  Trophy,
   Users,
 } from "lucide-react";
 
@@ -17,10 +14,7 @@ const LINKS = [
   { href: "/child", label: "My Home", Icon: House, exact: true },
   { href: "/child/chat", label: "Chat with Bud", Icon: MessageCircle },
   { href: "/child/learning", label: "Learning", Icon: BookOpen },
-  { href: "/child/progress", label: "Progress", Icon: ChartLine },
-  { href: "/child/goals", label: "Goals", Icon: Target },
-  { href: "/child/challenges", label: "Challenges", Icon: Trophy },
-];
+];  
 
 export default function ChildNavbar() {
   const pathname = usePathname();
