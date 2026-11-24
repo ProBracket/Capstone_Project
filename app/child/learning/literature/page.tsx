@@ -7,7 +7,7 @@ export default function LiteraturePage() {
 
       <main className="ml-64 min-h-screen p-8 bg-purple-50">
         <h1 className="text-4xl font-bold text-purple-700 mb-4">
-           Literature
+          📖 Literature
         </h1>
 
         <p className="mb-6">
