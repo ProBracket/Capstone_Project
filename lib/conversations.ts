@@ -1,14 +1,20 @@
 /** Saving and reading Bud conversations (TF-15: parents can see transcripts).
  *
- * Tables (in the AI Supabase project, lib/supabase-ai.ts, the same place the
- * chat has saved to since #28):
+ * Tables (in the MAIN Supabase project, lib/supabase.js):
  *   conversations          one row per chat (child, start, end, summary)
  *   conversation_messages  every message in a chat, in order
+ *
+ * Why the main project and not the AI project: a transcript is personal
+ * information (a child's own words, linked to that child). The main project
+ * knows which parent is logged in, so its row-level security only lets a
+ * parent read and add conversations for their OWN children
+ * (owns_child() in docs/supabase-child-plan.md). Logged-out visitors get
+ * nothing. The AI (OpenAI) never reads these tables.
  *
  * Messages are only ever added, never edited or deleted, so a transcript
  * can't be changed afterwards.
  */
-import { supabaseAI } from "@/lib/supabase-ai";
+import { supabase } from "@/lib/supabase";
 
 // Who wrote a message. Same words as the database: "assistant" = Bud.
 export type MessageRole = "child" | "assistant";
@@ -44,7 +50,7 @@ type ConversationRow = {
  * Returns { data: { id }, error }; the id is used to save each message.
  */
 export function startConversation(childId: string) {
-  return supabaseAI
+  return supabase
     .from("conversations")
     .insert({ child_id: childId })
     .select("id")
@@ -57,7 +63,7 @@ export function saveMessage(
   role: MessageRole,
   content: string
 ) {
-  return supabaseAI
+  return supabase
     .from("conversation_messages")
     .insert({ conversation_id: conversationId, role, content });
 }
@@ -67,7 +73,7 @@ export function saveMessage(
  * only logs an error; the messages themselves are already saved.
  */
 export function endConversation(conversationId: string, summary: string) {
-  return supabaseAI
+  return supabase
     .from("conversations")
     .update({ ended_at: new Date().toISOString(), summary })
     .eq("id", conversationId);
@@ -75,7 +81,7 @@ export function endConversation(conversationId: string, summary: string) {
 
 /** A child's conversations, newest first. Returns { data, error }. */
 export async function getConversations(childId: string) {
-  const { data, error } = await supabaseAI
+  const { data, error } = await supabase
     .from("conversations")
     .select("*")
     .eq("child_id", childId);
@@ -100,7 +106,7 @@ export async function getConversations(childId: string) {
  * Returns { data, error }.
  */
 export function getMessages(conversationId: string) {
-  return supabaseAI
+  return supabase
     .from("conversation_messages")
     .select("id, role, content, created_at")
     .eq("conversation_id", conversationId)
