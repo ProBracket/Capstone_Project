@@ -1567,52 +1567,52 @@ export default function ParentView() {
 
             <div className="space-y-4 leading-relaxed text-[#374151]">
               <p>
-                <strong>1. Parent Data.</strong>{" "}
-                Signup asks for parent name, email, and authentication
-                credentials.
-              </p>
+                <strong>1. Parent Account Data.</strong>{" "}
+ThinkFirst uses Supabase Authentication to manage
+parent names, email addresses and account credentials.
+</p>
 
-              <p>
-                <strong>2. Child Profiles.</strong>{" "}
-                The current database uses child nicknames, date of
-                birth, and grade. The team should minimize this
-                information where possible.
-              </p>
+<p>
+<strong>2. Child Profile Data.</strong>{" "}
+The main database stores child names, dates of birth,
+school grades and profile settings.
+</p>
 
-              <p>
-                <strong>3. Learning Data.</strong>{" "}
-                Responses, activities, and conversations may be
-                processed for tutoring and progress information.
-              </p>
+<p>
+<strong>3. Learning Data.</strong>{" "}
+The separate AI database stores calibrated learning
+levels for mathematics, science and literature
+to personalize learning activities.
+</p>
 
-              <p>
-                <strong>4. Microphone.</strong>{" "}
-                Voice features need separate guardian authorization
-                and browser microphone permission. Accepting this
-                form does not turn on microphone access.
-              </p>
+<p>
+<strong>4. AI Conversation Data.</strong>{" "}
+Bud is designed to store conversation records,
+messages and timestamps in the separate AI
+Supabase database.
+</p>
 
-              <p>
-                <strong>5. AI and Voice Providers.</strong>{" "}
-                The team must name any providers, disclose whether
-                transcripts or audio are stored, and define retention
-                and deletion timelines.
-              </p>
+<p>
+<strong>5. External AI Processing.</strong>{" "}
+ThinkFirst uses OpenAI to generate educational
+responses and lessons. Chat messages and conversation
+history may be sent to OpenAI for processing.
+Children should not enter sensitive personal information.
+</p>
 
-              <p>
-                <strong>6. Access Controls.</strong>{" "}
-                Child records must be isolated in Supabase with
-                verified RLS policies and authorized guardian
-                membership.
-              </p>
+<p>
+<strong>6. Privacy and Access.</strong>{" "}
+ThinkFirst is designed to restrict family information
+to authorized guardians. Database permissions and
+transcript access controls require verification.
+</p>
 
-              <p>
-                <strong>7. Parent Choices.</strong>{" "}
-                Parents need a means to review, withdraw consent,
-                and request access to or deletion of child
-                information.
-              </p>
-            </div>
+<p>
+<strong>7. Prototype Limitations.</strong>{" "}
+Data retention, deletion procedures and consent
+withdrawal processes have not been fully established.
+This application is an educational prototype.
+</p></div>
 
             <button
               type="button"
@@ -1631,4 +1631,5 @@ export default function ParentView() {
     </main>
   );
 }
+
 
