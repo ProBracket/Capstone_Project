@@ -300,7 +300,7 @@ const [completedSubjects, setCompletedSubjects] =
   }
 
   return (
-    <div>
+    <div className="min-h-screen bg-background text-foreground [&_h1]:text-primary [&_h2]:text-primary [&_button]:bg-primary [&_button]:text-on-primary [&_button:disabled]:bg-surface-muted [&_button:disabled]:text-muted [&_input]:accent-primary [&_input[type=text]]:bg-surface [&_a]:text-primary">
       <h1>Calibration</h1>
 
       <div
@@ -537,3 +537,4 @@ const [completedSubjects, setCompletedSubjects] =
     </div>
   );
 }
+

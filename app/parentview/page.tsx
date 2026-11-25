@@ -24,13 +24,16 @@ import ChildProfiles from "./ChildProfiles";
 import ChatHistory from "./ChatHistory";
 import ParentProfile from "./ParentProfile";
 
+const TERMS_VERSION = "draft-sprint3-v1";
+const CONSENT_VERSION = "draft-sprint3-v1";
+
 type Screen =
   | "home" // profile picker
   | "pin"
   | "dashboard"
   | "parent-profile"
   | "child-profiles"
-  | "transcripts";
+  | "transcripts" | "terms" | "consent";
 
 export default function ParentView() {
   // tool to go to another page in code
@@ -130,12 +133,12 @@ export default function ParentView() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-8 text-slate-900">
+    <main className="min-h-screen bg-[#F8F7F4] px-4 py-8 text-[#1F2937]">
       <div className="mx-auto max-w-3xl">
         {/* Header */}
         <header className="mb-6 flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-semibold">ThinkFirst</h1>
+            <h1 className="text-2xl font-bold text-[#0F766E]">ThinkFirst</h1>
           </div>
 
           {user &&
@@ -184,7 +187,7 @@ export default function ParentView() {
         {loading ? (
           <p className="text-slate-600">Loading...</p>
         ) : !user ? (
-          <section className="rounded-lg border border-slate-200 bg-white p-6 text-center">
+          <section className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm text-center">
             <p className="text-slate-700">
               Please log in to see your children&apos;s profiles.
             </p>
@@ -199,7 +202,7 @@ export default function ParentView() {
           <>
             {/* Profile picker */}
             {screen === "home" && (
-              <section className="rounded-lg border border-slate-200 bg-white p-6">
+              <section className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm">
                 <h2 className="text-center text-xl font-semibold">
                   Who&apos;s learning today?
                 </h2>
@@ -242,7 +245,7 @@ export default function ParentView() {
 
             {/* Parent Dashboard */}
             {screen === "dashboard" && (
-              <section className="rounded-lg border border-slate-200 bg-white p-6">
+              <section className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm">
                 <h2 className="text-xl font-semibold">Parent Dashboard</h2>
 
                 <p className="mt-1 mb-6 text-sm text-slate-500">
@@ -253,9 +256,9 @@ export default function ParentView() {
                   <button
                     type="button"
                     onClick={() => setScreen("parent-profile")}
-                    className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
+                    className="rounded-xl border border-[#E5E2DB] p-5 text-left bg-amber-100 hover:bg-amber-200"
                   >
-                    <h3 className="font-medium">Parent Profile</h3>
+                    <span aria-hidden="true" className="mb-3 block text-3xl">👤</span><h3 className="font-medium">Parent Profile</h3>
                     <p className="mt-1 text-sm text-slate-500">
                       View and edit your account information.
                     </p>
@@ -264,9 +267,9 @@ export default function ParentView() {
                   <button
                     type="button"
                     onClick={() => setScreen("child-profiles")}
-                    className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
+                    className="rounded-xl border border-[#E5E2DB] p-5 text-left bg-sky-100 hover:bg-sky-200"
                   >
-                    <h3 className="font-medium">Child Profiles</h3>
+                    <span aria-hidden="true" className="mb-3 block text-3xl">👨‍👩‍👧</span><h3 className="font-medium">Child Profiles</h3>
                     <p className="mt-1 text-sm text-slate-500">
                       View your children and add a new child.
                     </p>
@@ -275,9 +278,9 @@ export default function ParentView() {
                   <button
                      type="button"
                       onClick={() => setScreen("transcripts")}
-                     className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
+                     className="rounded-xl border border-[#E5E2DB] p-5 text-left bg-pink-100 hover:bg-pink-200"
                   >
-                    <h3 className="font-medium">Conversation Transcripts</h3>
+                    <span aria-hidden="true" className="mb-3 block text-3xl">💬</span><h3 className="font-medium">Conversation Transcripts</h3>
 
                     <p className="mt-1 text-sm text-slate-500">
                        View conversations between your children and Bud.
@@ -285,11 +288,28 @@ export default function ParentView() {
                   </button>
 
                   <button
+  type="button"
+  onClick={() => setScreen("consent")}
+  className="rounded-xl border border-teal-200 bg-teal-100 p-5 text-left hover:bg-teal-200"
+>
+  <span aria-hidden="true" className="mb-3 block text-3xl">🛡️</span><h3 className="font-semibold">Parental Consent &amp; Privacy</h3>
+  <p className="mt-1 text-sm">Review what data ThinkFirst stores.</p>
+</button>
+
+<button
+  type="button"
+  onClick={() => setScreen("terms")}
+  className="rounded-xl border border-teal-200 bg-teal-100 p-5 text-left hover:bg-teal-200"
+>
+  <span aria-hidden="true" className="mb-3 block text-3xl">📋</span><h3 className="font-semibold">Terms &amp; Conditions</h3>
+  <p className="mt-1 text-sm">Read the application terms.</p>
+</button>
+<button
                     type="button"
                     onClick={() => void handleSignOut()}
                     className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
                   >
-                    <h3 className="font-medium text-red-700">Log Out</h3>
+                    <span aria-hidden="true" className="mb-3 block text-3xl">🚪</span><h3 className="font-medium text-red-700">Log Out</h3>
                     <p className="mt-1 text-sm text-slate-500">
                       Sign out of your parent account.
                     </p>
@@ -306,7 +326,140 @@ export default function ParentView() {
               />
             )}
 
-            {/* Conversation Transcripts: the parent picks a child, then a
+            {/* TERMS & CONDITIONS */}
+        {screen === "terms" && (
+          <section className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm">
+            <h2 className="mb-2 text-2xl font-bold">
+              ThinkFirst Terms &amp; Conditions
+            </h2>
+
+            <p className="mb-6 text-sm text-amber-700">
+              Draft version {TERMS_VERSION} — team review required
+              before public use.
+            </p>
+
+            <div className="space-y-4 leading-relaxed text-[#374151]">
+              <p>
+                <strong>1. Educational Purpose.</strong>{" "}
+                ThinkFirst supports literacy, mathematics, science,
+                and critical thinking for children ages 8–14.
+              </p>
+
+              <p>
+                <strong>2. Parent Responsibility.</strong>{" "}
+                Parents or authorized guardians manage their accounts
+                and supervise children using the application.
+              </p>
+
+              <p>
+                <strong>3. AI Content.</strong>{" "}
+                AI-assisted educational responses may contain errors
+                and should be reviewed.
+              </p>
+
+              <p>
+                <strong>4. Appropriate Use.</strong>{" "}
+                Users should not submit unnecessary personal or
+                sensitive information or misuse the service.
+              </p>
+
+              <p>
+                <strong>5. Privacy.</strong>{" "}
+                Read the Parental Consent information for details
+                about child data, learning activities, and microphone
+                features.
+              </p>
+
+              <p>
+                <strong>6. Changes.</strong>{" "}
+                Terms must be reviewed, versioned, and communicated
+                before they take effect.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="mt-7 text-[#0F766E] underline"
+              onClick={() => setScreen("dashboard")}
+            >
+              Back
+            </button>
+          </section>
+        )}
+
+        {/* PARENTAL CONSENT */}
+        {screen === "consent" && (
+          <section className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm">
+            <h2 className="mb-2 text-2xl font-bold">
+              Parental Consent &amp; Privacy
+            </h2>
+
+            <p className="mb-6 text-sm text-amber-700">
+              Draft version {CONSENT_VERSION} — verify actual data
+              handling before release.
+            </p>
+
+            <div className="space-y-4 leading-relaxed text-[#374151]">
+              <p>
+                <strong>1. Parent Account Data.</strong>{" "}
+ThinkFirst uses Supabase Authentication to manage
+parent names, email addresses and account credentials.
+</p>
+
+<p>
+<strong>2. Child Profile Data.</strong>{" "}
+The main database stores child names, dates of birth,
+school grades and profile settings.
+</p>
+
+<p>
+<strong>3. Learning Data.</strong>{" "}
+The separate AI database stores calibrated learning
+levels for mathematics, science and literature
+to personalize learning activities.
+</p>
+
+<p>
+<strong>4. AI Conversation Data.</strong>{" "}
+Bud is designed to store conversation records,
+messages and timestamps in the separate AI
+Supabase database.
+</p>
+
+<p>
+<strong>5. External AI Processing.</strong>{" "}
+ThinkFirst uses OpenAI to generate educational
+responses and lessons. Chat messages and conversation
+history may be sent to OpenAI for processing.
+Children should not enter sensitive personal information.
+</p>
+
+<p>
+<strong>6. Privacy and Access.</strong>{" "}
+ThinkFirst is designed to restrict family information
+to authorized guardians. Database permissions and
+transcript access controls require verification.
+</p>
+
+<p>
+<strong>7. Prototype Limitations.</strong>{" "}
+Data retention, deletion procedures and consent
+withdrawal processes have not been fully established.
+This application is an educational prototype.
+</p></div>
+
+            <button
+              type="button"
+              className="mt-7 text-[#0F766E] underline"
+              onClick={() => setScreen("dashboard")}
+            >
+              Back
+            </button>
+          </section>
+        )}
+
+        
+{/* Conversation Transcripts: the parent picks a child, then a
                 conversation, and reads it (ChatHistory.tsx). */}
             {screen === "transcripts" && (
               <ChatHistory
@@ -339,3 +492,6 @@ export default function ParentView() {
     </main>
   );
 }
+
+
+
