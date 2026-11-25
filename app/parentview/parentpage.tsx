@@ -237,41 +237,50 @@ export default function ParentView() {
           return;
         }
 
-        const sessionsResult = await supabase
-          .from("conversations")
-          .select("id,child_id,started_at,ended_at,summary")
-          .eq("child_id", historyChildId)
-          .order("started_at", { ascending: false })
-          .limit(50);
+        const { data: { session } } = await supabase.auth.getSession();
 
-        if (!active) return;
-        if (sessionsResult.error) throw sessionsResult.error;
-
-        const sessions =
-          (sessionsResult.data ?? []) as Conversation[];
-
-        if (sessions.length === 0) {
-          setConversations([]);
-          return;
+        if (!session) {
+          throw new Error("Please log in again.");
         }
 
-        const messagesResult = await supabase
-          .from("conversation_messages")
-          .select("id,conversation_id,role,content,created_at")
-          .in(
-            "conversation_id",
-            sessions.map((session) => session.id)
-          )
-          .order("created_at", { ascending: true })
-          .limit(500);
+        const response = await fetch("/api/parent-transcripts", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session.access_token}`,
+          },
+          body: JSON.stringify({
+            childId: historyChildId,
+          }),
+        });
+
+        const result = await response.json();
 
         if (!active) return;
-        if (messagesResult.error) throw messagesResult.error;
 
-        setConversations(sessions);
-        setConversationMessages(
-          (messagesResult.data ?? []) as ConversationMessage[]
+        if (!response.ok) {
+          throw new Error(
+            result.error || "Unable to load transcripts."
+          );
+        }
+
+        setConversations(
+          (result.conversations ?? []).map(
+            (item: {
+              id: string;
+              child_id: string;
+              created_at: string;
+            }) => ({
+              id: item.id,
+              child_id: item.child_id,
+              started_at: item.created_at,
+              ended_at: null,
+              summary: null,
+            })
+          )
         );
+
+        setConversationMessages(result.messages ?? []);
       } catch (failure) {
         if (active) setHistoryError(errorText(failure));
       } finally {
@@ -1631,5 +1640,6 @@ This application is an educational prototype.
     </main>
   );
 }
+
 
 
