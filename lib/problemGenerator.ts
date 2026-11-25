@@ -53,7 +53,10 @@ export type Topic = {
 // word in the passage, or have more than one fair answer, so they fail the
 // checks. These question types have one clear, short answer instead.
 const SUBJECT_TIPS: Record<Problem["subject"], string> = {
-  math: "- Word problems and number patterns are good, as long as the answer is one whole number.\n",
+  math:
+    "- Word problems and number patterns are good, as long as the answer is one whole number.\n" +
+    "- If the topic is about decimals or money, still make the answer a whole number " +
+    '(for example ask "how many cents" or "how many tenths"). Double-check your arithmetic.\n',
   science:
     "- Ask about a science fact, process, part or vocabulary word that has one clear name.\n",
   // Replaced by a randomly chosen type from LITERATURE_TYPES (see literatureTip).
@@ -126,11 +129,37 @@ export function shuffledTopics(subject: Problem["subject"], grade: number): Topi
 // BLOCK C: Checking a written problem
 // ─────────────────────────────────────────────────────────────
 
+/** Is this accepted answer one that isCorrect can check reliably?
+ *   - at most 3 words: "56", "photosynthesis", "the protagonist"
+ *     (NOT "six thousand two hundred seventy-eight")
+ *   - no "/" or "." between digits: isCorrect removes punctuation, so "3/4"
+ *     would become "34" and "7.5" would become "75", and a child typing
+ *     "34" would be marked correct
+ */
+function isCheckableAnswer(answer: unknown): boolean {
+  if (typeof answer !== "string") {
+    return false;
+  }
+  const isShort = answer.trim().split(/\s+/).length <= 3;
+  // \d[/.]\d = a digit, then "/" or ".", then another digit (3/4, 7.5).
+  const hasFractionOrDecimal = /\d[/.]\d/.test(answer);
+  return isShort && !hasFractionOrDecimal;
+}
+
+/** Drops accepted answers that can't be checked reliably (see above), so one
+ * bad spelling doesn't throw away a good question. If none are left, the
+ * problem fails isValidProblem (it needs at least 1 answer).
+ */
+function keepCheckableAnswers(problem: Problem): Problem {
+  if (!Array.isArray(problem.answers)) {
+    return problem; // isValidProblem will reject it
+  }
+  return { ...problem, answers: problem.answers.filter(isCheckableAnswer) };
+}
+
 /** Returns true only if the problem is safe and usable:
- *   - it has the right shape and sizes (isValidProblem in lib/tutor.ts)
- *   - no answer is longer than 3 words (long answers can't be checked reliably)
- *   - no answer has "/" or "." between digits (isCorrect removes punctuation,
- *     so "3/4" would become "34" and "7.5" would become "75")
+ *   - it has the right shape and sizes (isValidProblem in lib/tutor.ts),
+ *     including at least 1 answer left after keepCheckableAnswers
  *   - a math problem's first answer is a plain whole number, like "56" or "1,200"
  *   - no text contains a blocked word (lib/moderation.ts)
  *   - the question and the hints do NOT already give away the answer
@@ -142,16 +171,6 @@ function isUsableProblem(problem: Problem): boolean {
     return false;
   }
 
-  // Short answers only: "56", "photosynthesis", "the protagonist".
-  const isShort = (answer: string) => answer.trim().split(/\s+/).length <= 3;
-  if (!problem.answers.every(isShort)) {
-    return false;
-  }
-
-  // \d[/.]\d = a digit, then "/" or ".", then another digit (3/4, 7.5).
-  if (problem.answers.some((answer) => /\d[/.]\d/.test(answer))) {
-    return false;
-  }
 
   // ^[\d,]+$ = only digits and commas from start to end ("56", "1,200").
   if (problem.subject === "math" && !/^[\d,]+$/.test(problem.answers[0].trim())) {
@@ -288,7 +307,8 @@ export async function generateProblem(
   topic: Topic
 ): Promise<Problem | null> {
   try {
-    const problem = await writeProblem(openai, subject, grade, topic);
+    const written = await writeProblem(openai, subject, grade, topic);
+    const problem = written === null ? null : keepCheckableAnswers(written);
     if (problem === null || !isUsableProblem(problem)) {
       console.warn("Generated problem rejected by checks:", subject);
       return null;
