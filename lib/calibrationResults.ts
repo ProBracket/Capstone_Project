@@ -5,7 +5,7 @@
 
 import { getChild } from "@/lib/children";
 
-import { createAIProfile } from "@/lib/ai-profiles";
+import { createAIProfile, getAIProfile } from "@/lib/ai-profiles";
 
 
 export const CALIBRATION_SUBJECTS = ["math", "science", "literature"] as const;
@@ -74,10 +74,16 @@ export async function getChildLevel(
 }
 
 // Used by CalibrationGate to send first-time kids to calibration.
-export async function hasCompletedCalibration(childId: string): Promise<boolean> {
+export async function hasCompletedCalibration(
+  childId: string
+): Promise<boolean> {
+
   try {
-    return localStorage.getItem(storageKey(childId)) !== null;
+    const { data } = await getAIProfile(childId);
+
+    return data !== null;
   } catch {
-    return true; // can't read storage, so don't block the kid
+    return false;
   }
+
 }
