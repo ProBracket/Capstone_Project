@@ -78,27 +78,70 @@ Requirements:
 
 Create the lesson in EXACTLY this structure:
 
-# Lesson Title
+Lesson Title
 
-## Concept 1
+Concept 1
+
 Explain the first concept clearly using age-appropriate language.
 
-### Practice Question 1
-Provide one short practice question related to Concept 1.
+Practice Question 1
 
-## Concept 2
+Create one multiple-choice question related to Concept 1.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Concept 2
+
 Explain the second concept clearly.
 
-### Practice Question 2
-Provide one short practice question related to Concept 2.
+Practice Question 2
 
-## Concept 3
+Create one multiple-choice question related to Concept 2.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Concept 3
+
 Explain the third concept clearly.
 
-### Practice Question 3
-Provide one short practice question related to Concept 3.
+Practice Question 3
 
-## Lesson Summary
+Create one multiple-choice question related to Concept 3.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Lesson Summary
+
 Briefly summarize the most important ideas learned.
 
 Additional Rules:

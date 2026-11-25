@@ -51,8 +51,17 @@ export async function getCalibrationResults(
   childId: string
 ): Promise<CalibrationResults | null> {
   try {
-    const saved = localStorage.getItem(storageKey(childId));
-    return saved === null ? null : (JSON.parse(saved) as CalibrationResults);
+    const { data } = await getAIProfile(childId);
+
+    if (!data) {
+      return null;
+    }
+
+    return {
+      math: data.math_level,
+      science: data.science_level,
+      literature: data.literature_level,
+    };
   } catch {
     return null;
   }
