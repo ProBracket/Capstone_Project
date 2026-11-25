@@ -275,7 +275,6 @@
   },
   "grade5": {
     "primary": [
-      [
   {
     "number": 1,
     "question": "Which state of matter has a definite shape and a definite volume?",
@@ -534,10 +533,8 @@
     },
     "answer": "c"
   }
-]
     ],
     "secondChance": [
-      [
   {
     "number": 25,
     "question": "Which state of matter has a fixed shape?",
@@ -571,7 +568,6 @@
     },
     "answer": "a"
   }
-]
     ]
   },
   "grade6": {
