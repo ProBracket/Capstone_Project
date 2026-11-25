@@ -1,4 +1,5 @@
 "use client";
+import { getActiveChildId } from "@/lib/activeChild";
 
 import ChildNavbar from "@/components/ChildNavbar";
 import { useState, useEffect, useRef, type SubmitEvent } from "react";
@@ -75,7 +76,7 @@ export default function ChatPage() {
     if(!message.trim() || isLoading) return;
 
     const userMessage = message.trim();
-    const childId = localStorage.getItem("selectedChildId");
+    const childId = getActiveChildId();
 
     setMessage("");
     setMessages((prev) => [...prev, {role: "user", text: userMessage }]);
@@ -227,3 +228,4 @@ export default function ChatPage() {
     </>  
   );
 }
+
