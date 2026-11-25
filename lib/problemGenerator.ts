@@ -42,7 +42,7 @@ const HIGHEST_GRADE = 9;
 const DEFAULT_GRADE = 5;
 
 // The shape of one curriculum topic in LESSON_FRAMEWORK.
-type Topic = {
+export type Topic = {
   topic: string;
   outcomes: string[];
   keywords: string[];
@@ -107,14 +107,19 @@ export function toCurriculumGrade(level: number | null): number {
   return Math.min(Math.max(level, LOWEST_GRADE), HIGHEST_GRADE);
 }
 
-/** Picks a random curriculum topic for this subject and grade, so each
- * conversation practises something different.
+/** This subject's curriculum topics for this grade, in a random order.
+ * The route hands them out one by one, so the questions in one round each
+ * practise a different topic, and each round is different from the last.
  */
-function pickTopic(subject: Problem["subject"], grade: number): Topic {
-  const topics: Topic[] = LESSON_FRAMEWORK[subject][grade as 4 | 5 | 6 | 7 | 8 | 9];
-  // Math.random() gives a number from 0 up to (not including) 1, so this
-  // gives a whole number from 0 to topics.length - 1.
-  return topics[Math.floor(Math.random() * topics.length)];
+export function shuffledTopics(subject: Problem["subject"], grade: number): Topic[] {
+  const topics: Topic[] = [...LESSON_FRAMEWORK[subject][grade as 4 | 5 | 6 | 7 | 8 | 9]];
+  // Shuffle (Fisher–Yates): go from the end of the list to the start, and
+  // swap each topic with a randomly chosen one at or before it.
+  for (let i = topics.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [topics[i], topics[j]] = [topics[j], topics[i]];
+  }
+  return topics;
 }
 
 // ─────────────────────────────────────────────────────────────
@@ -271,19 +276,18 @@ function answersAgree(problem: Problem, solvedAnswer: string): boolean {
 // BLOCK E: The function the route calls
 // ─────────────────────────────────────────────────────────────
 
-/** Writes one checked problem for this subject and level.
+/** Writes one checked problem for this subject, curriculum grade and topic.
+ * grade = toCurriculumGrade(child's level); topic = one from shuffledTopics.
  * Returns null if the AI fails or the problem fails any check; the caller
- * then uses a backup problem. Never throws.
+ * then tries another topic or uses a backup problem. Never throws.
  */
 export async function generateProblem(
   openai: OpenAI,
   subject: Problem["subject"],
-  level: number | null
+  grade: number,
+  topic: Topic
 ): Promise<Problem | null> {
   try {
-    const grade = toCurriculumGrade(level);
-    const topic = pickTopic(subject, grade);
-
     const problem = await writeProblem(openai, subject, grade, topic);
     if (problem === null || !isUsableProblem(problem)) {
       console.warn("Generated problem rejected by checks:", subject);

@@ -1,11 +1,13 @@
-/** Server address /api/bud/problems: the problems for one chat conversation.
+/** Server address /api/bud/problems: the problems for one round of chat.
  *
- * The chat page calls this once when it opens (and again on "Start over").
- * For each subject (math, science, literature) it asks lib/problemGenerator.ts
- * for a new AI-written problem at the child's level. If the AI can't make a
- * problem that passes every check, the backup problem for that subject from
- * PRACTICE_PROBLEMS (lib/tutor.ts) is used instead. The chat always gets
- * exactly one problem per subject.
+ * The chat page calls this when it opens, and again on "More questions".
+ * A round has QUESTIONS_PER_SUBJECT questions for each subject (lib/tutor.ts),
+ * asked in the order math, science, literature, math, science, literature.
+ * Each one is a new AI-written problem at the child's level
+ * (lib/problemGenerator.ts), on a different curriculum topic. If the AI can't
+ * make a problem that passes every check, a backup problem for that subject
+ * from PRACTICE_PROBLEMS (lib/tutor.ts) is used instead, so the round is
+ * always complete.
  *
  * The page sends:  { levels: { math, science, literature } }
  *   each level = the child's grade level for that subject (0–12), or null
@@ -17,11 +19,20 @@
  */
 
 import OpenAI from "openai";
-import { generateProblem } from "@/lib/problemGenerator";
-import { PRACTICE_PROBLEMS, SUBJECTS, type Problem } from "@/lib/tutor";
+import {
+  generateProblem,
+  shuffledTopics,
+  toCurriculumGrade,
+} from "@/lib/problemGenerator";
+import {
+  PRACTICE_PROBLEMS,
+  QUESTIONS_PER_SUBJECT,
+  SUBJECTS,
+  type Problem,
+} from "@/lib/tutor";
 
-// How many times to ask the AI per subject before using the backup problem.
-const ATTEMPTS_PER_SUBJECT = 3;
+// How many times to ask the AI for one question before using a backup.
+const ATTEMPTS_PER_QUESTION = 3;
 
 // The longest we wait for one AI call, in milliseconds (15 seconds).
 const AI_TIMEOUT_MS = 15000;
@@ -41,11 +52,31 @@ function readLevel(value: unknown): number | null {
   return null;
 }
 
-/** The backup problem for a subject (the first one in PRACTICE_PROBLEMS). */
-function backupProblem(subject: Problem["subject"]): Problem {
-  const backup = PRACTICE_PROBLEMS.find((problem) => problem.subject === subject);
-  // Every subject has a backup problem, so this is only a safety net.
-  return backup ?? PRACTICE_PROBLEMS[0];
+/** A backup problem for a subject. number = which question of this subject
+ * it is in the round (0 = first, 1 = second), so the two backups for one
+ * subject are different problems.
+ */
+function backupProblem(subject: Problem["subject"], number: number): Problem {
+  const backups = PRACTICE_PROBLEMS.filter((problem) => problem.subject === subject);
+  // % wraps around if there are fewer backups than questions.
+  return backups[number % backups.length];
+}
+
+// One question to fill in the round: which subject, and whether it is that
+// subject's 1st or 2nd question.
+type Slot = { subject: Problem["subject"]; number: number };
+
+/** The slots of a round, in the order Bud asks them.
+ * With 2 per subject: math 0, science 0, literature 0, math 1, science 1, literature 1.
+ */
+function roundSlots(): Slot[] {
+  const slots: Slot[] = [];
+  for (let number = 0; number < QUESTIONS_PER_SUBJECT; number++) {
+    for (const subject of SUBJECTS) {
+      slots.push({ subject, number });
+    }
+  }
+  return slots;
 }
 
 export async function POST(request: Request) {
@@ -61,28 +92,41 @@ export async function POST(request: Request) {
       ? (body as { levels: Record<string, unknown> }).levels ?? {}
       : {};
 
-  // 2. No API key set up → backup problems for every subject.
+  const slots = roundSlots();
+
+  // 2. No API key set up → backup problems for the whole round.
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return Response.json({
-      problems: SUBJECTS.map(backupProblem),
-      generated: SUBJECTS.map(() => false),
+      problems: slots.map((slot) => backupProblem(slot.subject, slot.number)),
+      generated: slots.map(() => false),
     });
   }
   const openai = new OpenAI({ apiKey, timeout: AI_TIMEOUT_MS, maxRetries: 1 });
 
-  // 3. Make all three subjects at the same time (Promise.all), so the child
-  //    waits for the slowest one instead of all three in a row.
+  // 3. Each subject's grade and topics in a random order, worked out once.
+  const plans = Object.fromEntries(
+    SUBJECTS.map((subject) => {
+      const grade = toCurriculumGrade(readLevel(levels?.[subject]));
+      return [subject, { grade, topics: shuffledTopics(subject, grade) }];
+    })
+  );
+
+  // 4. Make every question at the same time (Promise.all), so the child waits
+  //    for the slowest one instead of all of them in a row.
+  //    Topics are handed out so no two questions in a subject share one:
+  //    question 0 tries topics 0, 2, 4...; question 1 tries topics 1, 3, 5...
   const results = await Promise.all(
-    SUBJECTS.map(async (subject) => {
-      const level = readLevel(levels?.[subject]);
-      for (let attempt = 1; attempt <= ATTEMPTS_PER_SUBJECT; attempt++) {
-        const problem = await generateProblem(openai, subject, level);
+    slots.map(async ({ subject, number }) => {
+      const { grade, topics } = plans[subject];
+      for (let attempt = 0; attempt < ATTEMPTS_PER_QUESTION; attempt++) {
+        const topicIndex = (number + attempt * QUESTIONS_PER_SUBJECT) % topics.length;
+        const problem = await generateProblem(openai, subject, grade, topics[topicIndex]);
         if (problem !== null) {
           return { problem, generated: true };
         }
       }
-      return { problem: backupProblem(subject), generated: false };
+      return { problem: backupProblem(subject, number), generated: false };
     })
   );
 

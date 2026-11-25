@@ -29,6 +29,7 @@ import {
   getSummary,
   isValidProblem,
   PRACTICE_PROBLEMS,
+  QUESTIONS_PER_SUBJECT,
   SUBJECTS,
   TUTOR_NAME,
   type BudReply,
@@ -48,8 +49,8 @@ type ChatMessage = {
   text: string;
 };
 
-/** Gets new problems for a conversation from /api/bud/problems, one per
- * subject, at the child's level for each subject.
+/** Gets new problems for a conversation from /api/bud/problems, QUESTIONS_PER_SUBJECT
+ * per subject (lib/tutor.ts), at the child's level for each subject.
  * Never throws: if anything fails (offline, server error, a broken reply),
  * it returns the backup PRACTICE_PROBLEMS so the chat still works.
  */
@@ -66,10 +67,10 @@ async function fetchProblems(
       return PRACTICE_PROBLEMS;
     }
     const data = await response.json();
-    // Only use the reply if it is a list of valid problems, one per subject.
+    // Only use the reply if it is a list of valid problems, a full round.
     if (
       Array.isArray(data.problems) &&
-      data.problems.length === SUBJECTS.length &&
+      data.problems.length === SUBJECTS.length * QUESTIONS_PER_SUBJECT &&
       data.problems.every(isValidProblem)
     ) {
       return data.problems;
@@ -320,7 +321,7 @@ export default function ChatPage() {
   }
 
   // ─────────────────────────────────────────────────────────────
-  // PIECE C3: Auto-scroll and "Start over"
+  // PIECE C3: Auto-scroll and "More questions"
   // ─────────────────────────────────────────────────────────────
 
   // useRef: a reference to a real element on the screen. It's attached
@@ -361,7 +362,7 @@ export default function ChatPage() {
     setLoadingProblems(false);
   }
 
-  /** Gets new problems, then shows the opening. Used on "Start over". */
+  /** Gets new problems, then shows the opening. Used on "More questions". */
   function loadProblems() {
     prepareOpening().then(showOpening);
   }
@@ -376,7 +377,7 @@ export default function ChatPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /** Runs when the child clicks "Start over" after finishing.
+  /** Runs when the child clicks "More questions" after finishing a round.
    * Clears the chat and gets brand-new problems.
    */
   function handleStartOver() {
@@ -464,7 +465,7 @@ export default function ChatPage() {
                 onClick={handleStartOver}
                 className="self-center rounded-full border border-primary px-6 py-2 font-semibold text-primary transition hover:bg-primary-soft"
               >
-                Start over 🔄
+                More questions 🔄
               </button>
             )}
 
@@ -484,7 +485,7 @@ export default function ChatPage() {
               value={draft}
               onChange={(event) => setDraft(event.target.value)}
               placeholder={
-                tutorState.finished ? "All done for today! 🌟" : "Type your answer..."
+                tutorState.finished ? "Round finished! Click More questions for more 🌟" : "Type your answer..."
               }
               // No more typing once all the problems are finished.
               disabled={tutorState.finished}

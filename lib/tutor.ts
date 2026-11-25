@@ -102,10 +102,60 @@ export const PRACTICE_PROBLEMS: Problem[] = [
     explanation:
       "The main character is called the protagonist. It's the character the story follows, like the hero of a fairy tale.",
   },
+
+  // Problems 4 to 6: a second backup for each subject, so a round of
+  // 6 questions never repeats a question even if the AI fails.
+
+  // Problem 4: math
+  {
+    subject: "math",
+    question: "A box holds 6 eggs. How many eggs are in 9 boxes?",
+    answers: ["54", "fifty-four", "fifty four"],
+    hints: [
+      "Each box has the same number of eggs, so you can multiply.",
+      "You need 9 groups of 6.",
+      "6 × 10 = 60. Take away one box of 6.",
+    ],
+    explanation:
+      "9 boxes of 6 eggs is 6 × 9 = 54. A trick: 6 × 10 = 60, then take away one box: 60 − 6 = 54.",
+  },
+
+  // Problem 5: science
+  {
+    subject: "science",
+    question: "What is the name for water falling from clouds as rain or snow?",
+    answers: ["precipitation"],
+    hints: [
+      "It's one of the steps of the water cycle.",
+      "It comes after water vapour forms clouds.",
+      'It starts with "pre", like "precip..."',
+    ],
+    explanation:
+      "It's called precipitation. Water evaporates, forms clouds, then falls back down as rain, snow, sleet or hail.",
+  },
+
+  // Problem 6: literature
+  {
+    subject: "literature",
+    question:
+      'In the sentence "The wind whispered through the trees", the wind does something only people can do. What is this literary device called?',
+    answers: ["personification"],
+    hints: [
+      "Can wind really whisper? Only people whisper.",
+      "The device gives human actions to something that isn't a person.",
+      'It has the word "person" inside it.',
+    ],
+    explanation:
+      "It's personification: giving human actions or feelings to something that isn't human, like wind that whispers.",
+  },
 ];
 
 // The subjects Bud asks about, in the order he asks them.
 export const SUBJECTS: Problem["subject"][] = ["math", "science", "literature"];
+
+// How many questions per subject in one round. 2 × 3 subjects = 6 questions,
+// asked in the order math, science, literature, math, science, literature.
+export const QUESTIONS_PER_SUBJECT = 2;
 
 // Size limits for one problem. A problem that breaks them is rejected.
 // Answers are kept short (a number or a few words) so isCorrect can check
@@ -333,9 +383,11 @@ function askProblem(problems: Problem[], problemIndex: number): string {
  * (before the child has typed anything).
  *
  * problems = the problems for this conversation. If none are given (the
- * homepage demo), the backup PRACTICE_PROBLEMS are used.
+ * homepage demo), the first 3 backup PRACTICE_PROBLEMS are used.
  */
-export function getOpeningReply(problems: Problem[] = PRACTICE_PROBLEMS): BudReply {
+export function getOpeningReply(
+  problems: Problem[] = PRACTICE_PROBLEMS.slice(0, 3)
+): BudReply {
   return {
     // "\n\n" means "start a new line, with a blank line in between".
     message:
