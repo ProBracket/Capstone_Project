@@ -5,8 +5,7 @@ import { useEffect, useState } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
 
 import { getActiveChildId } from "@/lib/activeChild";
-
-import { getTopicsForSubject, } from "@/lib/lessons";
+import { getTopicsForSubject } from "@/lib/lessons";
 
 type Topic = {
   topic: string;
@@ -18,7 +17,6 @@ export default function SciencePage() {
   const [childId, setChildId] = useState<string | null>(null);
 
   const [topics, setTopics] = useState<Topic[]>([]);
-
   const [frameworkGrade, setFrameworkGrade] =
     useState<number | null>(null);
 
@@ -29,6 +27,9 @@ export default function SciencePage() {
     useState<string | null>(null);
 
   const [loading, setLoading] = useState(true);
+
+  const [generatingLesson, setGeneratingLesson] =
+    useState(false);
 
   useEffect(() => {
     async function loadTopics() {
@@ -59,39 +60,45 @@ export default function SciencePage() {
     loadTopics();
   }, []);
 
-  async function handleTopicClick(
-    topic: Topic
-  ) {
+  async function handleTopicClick(topic: Topic) {
     setSelectedTopic(topic);
+
+    // Clear any previous lesson
+    setLesson(null);
 
     if (frameworkGrade === null) {
       return;
     }
 
+    setGeneratingLesson(true);
+
     try {
-      const response = await fetch(
-  "/api/lesson",
-  {
-    method: "POST",
-    headers: {
-      "Content-Type":
-        "application/json",
-    },
-    body: JSON.stringify({
-      subject: "science",
-      frameworkGrade,
-      topic,
-    }),
-  }
-);
+      const response = await fetch("/api/lesson", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          subject: "science",
+          frameworkGrade,
+          topic,
+        }),
+      });
 
-const result = await response.json();
+      const result = await response.json();
 
-setLesson(result.lesson);
-
-      setLesson(result.lesson);
+      setLesson(
+        result.lesson ??
+          "No lesson content was returned."
+      );
     } catch (error) {
       console.error(error);
+
+      setLesson(
+        "Sorry, something went wrong while generating this lesson."
+      );
+    } finally {
+      setGeneratingLesson(false);
     }
   }
 
@@ -99,8 +106,8 @@ setLesson(result.lesson);
     <>
       <ChildNavbar />
 
-      <main className="ml-64 min-h-screen p-8 bg-green-50">
-        <h1 className="text-4xl font-bold text-green-700 mb-4">
+      <main className="ml-64 min-h-screen bg-green-50 p-8">
+        <h1 className="mb-6 text-4xl font-bold text-green-700">
           🔬 Science
         </h1>
 
@@ -114,7 +121,7 @@ setLesson(result.lesson);
 
         {!loading && childId && (
           <>
-            <h2 className="text-2xl font-semibold mb-4">
+            <h2 className="mb-4 text-2xl font-semibold">
               Choose a Topic
             </h2>
 
@@ -125,7 +132,7 @@ setLesson(result.lesson);
                   onClick={() =>
                     handleTopicClick(topic)
                   }
-                  className="bg-white p-4 rounded-xl shadow text-left hover:bg-green-100"
+                  className="rounded-xl bg-white p-4 text-left shadow hover:bg-green-100"
                 >
                   {topic.topic}
                 </button>
@@ -133,44 +140,30 @@ setLesson(result.lesson);
             </div>
 
             {selectedTopic && (
-              <div className="mt-8 bg-white p-6 rounded-xl shadow">
-                <h3 className="text-xl font-bold mb-2">
+              <div className="mt-8 rounded-xl bg-white p-6 shadow">
+                <h2 className="text-2xl font-bold text-green-700">
                   {selectedTopic.topic}
-                </h3>
+                </h2>
 
-                <p className="font-semibold mb-2">
-                  Learning Outcomes
-                </p>
-
-                <ul className="list-disc pl-6">
-                  {selectedTopic.outcomes.map(
-                    (outcome) => (
-                      <li key={outcome}>
-                        {outcome}
-                      </li>
-                    )
-                  )}
-                </ul>
-
-                <p className="font-semibold mt-4 mb-2">
-                  Keywords
-                </p>
-
-                <p>
-                  {selectedTopic.keywords.join(
-                    ", "
-                  )}
-                </p>
+                {generatingLesson ? (
+                  <p className="mt-2 text-gray-600">
+                    Generating lesson...
+                  </p>
+                ) : (
+                  <p className="mt-2 text-gray-600">
+                    Lesson ready.
+                  </p>
+                )}
               </div>
             )}
 
             {lesson && (
-              <div className="mt-8 bg-white p-6 rounded-xl shadow">
-                <h3 className="text-xl font-bold mb-4">
-                  Generated Lesson
-                </h3>
+              <div className="mt-8 rounded-xl bg-white p-8 shadow">
+                <h2 className="mb-6 text-3xl font-bold text-green-700">
+                  {selectedTopic?.topic}
+                </h2>
 
-                <div className="whitespace-pre-wrap">
+                <div className="whitespace-pre-wrap text-lg leading-8 text-gray-800">
                   {lesson}
                 </div>
               </div>
