@@ -2,7 +2,7 @@
 
 import ChildNavbar from "@/components/ChildNavbar";
 import { useState, useEffect, useRef, type SubmitEvent } from "react";
-import { supabase } from "@/lib/supabase";
+import { supabaseAI } from "@/lib/supabase-ai";
 
 type ChatMessage = {
   role: "user" | "bud";
@@ -39,7 +39,7 @@ export default function ChatPage() {
   async function getConversationId(childId: string) {
     if (conversationIdRef.current) return conversationIdRef.current;
 
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAI
     .from("conversations")
     .insert({ child_id: childId })
     .select("id")
@@ -62,7 +62,7 @@ export default function ChatPage() {
   ) {
     if (!conversationId) return;
 
-    const { error } = await supabase.from("conversation_messages").insert({
+    const { error } = await supabaseAI.from("conversation_messages").insert({
       conversation_id: conversationId,
       role,
       content,

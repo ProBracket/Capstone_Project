@@ -76,23 +76,93 @@ ${topic.keywords.join(", ")}
 
 Requirements:
 
+Create the lesson in EXACTLY this structure:
+
+Lesson Title
+
+Concept 1
+
+Explain the first concept clearly using age-appropriate language.
+
+Practice Question 1
+
+Create one multiple-choice question related to Concept 1.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Concept 2
+
+Explain the second concept clearly.
+
+Practice Question 2
+
+Create one multiple-choice question related to Concept 2.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Concept 3
+
+Explain the third concept clearly.
+
+Practice Question 3
+
+Create one multiple-choice question related to Concept 3.
+
+Format it EXACTLY like this:
+
+Question:
+<question text>
+
+A. <choice>
+B. <choice>
+C. <choice>
+D. <choice>
+
+Do not reveal which answer is correct.
+
+Lesson Summary
+
+Briefly summarize the most important ideas learned.
+
+Additional Rules:
+
 Use grade-appropriate language.
 
-Explain the concept clearly.
+Keep explanations short and easy to understand.
 
-Include worked examples.
+Use real-world examples where appropriate.
 
-Include exactly 5 practice questions.
-
-Do not provide the answers.
+Do not provide answers.
 
 Do not provide answer keys.
 
-Wait until the student submits a response before evaluating it.
+Do not evaluate student responses.
 
-Keep the lesson under 1000 words.
+Keep the lesson between 500 and 800 words.
 
 Be friendly and encouraging.
+
+Return the lesson in Markdown format.
 `;
 
   const openai = new OpenAI({
