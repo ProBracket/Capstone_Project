@@ -22,13 +22,15 @@ import { lockParentArea } from "@/lib/pin";
 import PinScreen from "./PinScreen";
 import ChildProfiles from "./ChildProfiles";
 import ParentProfile from "./ParentProfile";
+import Transcripts from "./Transcripts";
 
 type Screen =
   | "home" // profile picker
   | "pin"
   | "dashboard"
   | "parent-profile"
-  | "child-profiles";
+  | "child-profiles"
+  | "transcripts";
 
 export default function ParentView() {
   // tool to go to another page in code
@@ -271,6 +273,18 @@ export default function ParentView() {
                   </button>
 
                   <button
+                     type="button"
+                      onClick={() => setScreen("transcripts")}
+                     className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
+                  >
+                    <h3 className="font-medium">Conversation Transcripts</h3>
+
+                    <p className="mt-1 text-sm text-slate-500">
+                       View conversations between your children and Bud.
+                    </p>
+                  </button>
+
+                  <button
                     type="button"
                     onClick={() => void handleSignOut()}
                     className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
@@ -290,6 +304,10 @@ export default function ParentView() {
                 onUserUpdated={setUser}
                 onBack={() => setScreen("dashboard")}
               />
+            )}
+
+            {screen === "transcripts" && (
+              <Transcripts />
             )}
 
             {screen === "child-profiles" && (
