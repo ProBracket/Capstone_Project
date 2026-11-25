@@ -2,7 +2,7 @@
  * 1. Profile picker: "Who's learning today?" with the parent's children.
  *    Picking a child goes to the child experience at /child/welcome?childId=<id>.
  * 2. Gear button → PIN screen.
- * 3. Parent Dashboard → Parent Profile and Child Profiles.
+ * 3. Parent Dashboard → Parent Profile, Child Profiles and Conversation Transcripts.
  *
  * The PIN switch is turned OFF every time the picker shows or Settings opens,
  * so a child picking their profile can't get back into the dashboard
@@ -21,8 +21,8 @@ import { getChildren, gradeLabel, type Child } from "@/lib/children";
 import { lockParentArea } from "@/lib/pin";
 import PinScreen from "./PinScreen";
 import ChildProfiles from "./ChildProfiles";
+import ChatHistory from "./ChatHistory";
 import ParentProfile from "./ParentProfile";
-import Transcripts from "./Transcripts";
 
 type Screen =
   | "home" // profile picker
@@ -306,14 +306,26 @@ export default function ParentView() {
               />
             )}
 
+            {/* Conversation Transcripts: the parent picks a child, then a
+                conversation, and reads it (ChatHistory.tsx). */}
             {screen === "transcripts" && (
-              <Transcripts />
+              <ChatHistory
+                profiles={profiles}
+                onBack={() => setScreen("dashboard")}
+              />
             )}
 
             {screen === "child-profiles" && (
               <ChildProfiles
                 profiles={profiles}
                 onAdded={(child) => setProfiles((prev) => [...prev, child])}
+                // A child was changed (e.g. microphone switched): go through the list
+                // and swap in the new version where the id matches; keep everyone else as-is.
+                onUpdated={(updated) =>
+                  setProfiles((prev) =>
+                    prev.map((child) => (child.id === updated.id ? updated : child))
+                  )
+                }
                 onBack={() => setScreen("dashboard")}
               />
             )}
