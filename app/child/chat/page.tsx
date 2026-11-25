@@ -2,7 +2,9 @@
  *
  * This file only handles the SCREEN: showing messages, the typing box,
  * and (later) the microphone and Bud's voice.
- * What Bud says is decided in lib/tutor.ts. The page then asks the AI
+ * When the chat opens, the AI writes this conversation's problems at the
+ * child's level (app/api/bud/problems/route.ts), with backup problems if it
+ * can't. What Bud says is decided in lib/tutor.ts. The page then asks the AI
  * (app/api/bud/route.ts) to word that reply more naturally, and falls back to
  * the rule-based message if the AI is unavailable.
  */
@@ -25,8 +27,11 @@ import {
   getBudReply,
   getOpeningReply,
   getSummary,
+  isValidProblem,
   PRACTICE_PROBLEMS,
+  SUBJECTS,
   TUTOR_NAME,
+  type BudReply,
   type BudStep,
   type Problem,
   type TutorState,
@@ -43,9 +48,37 @@ type ChatMessage = {
   text: string;
 };
 
-// Bud's first message and starting state. Calculated once, when the file
-// loads, because every conversation starts the same way.
-const OPENING = getOpeningReply();
+/** Gets new problems for a conversation from /api/bud/problems, one per
+ * subject, at the child's level for each subject.
+ * Never throws: if anything fails (offline, server error, a broken reply),
+ * it returns the backup PRACTICE_PROBLEMS so the chat still works.
+ */
+async function fetchProblems(
+  levels: Record<Problem["subject"], number | null>
+): Promise<Problem[]> {
+  try {
+    const response = await fetch("/api/bud/problems", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ levels }),
+    });
+    if (!response.ok) {
+      return PRACTICE_PROBLEMS;
+    }
+    const data = await response.json();
+    // Only use the reply if it is a list of valid problems, one per subject.
+    if (
+      Array.isArray(data.problems) &&
+      data.problems.length === SUBJECTS.length &&
+      data.problems.every(isValidProblem)
+    ) {
+      return data.problems;
+    }
+    return PRACTICE_PROBLEMS;
+  } catch {
+    return PRACTICE_PROBLEMS;
+  }
+}
 
 // ─────────────────────────────────────────────────────────────
 // PIECE C2b: Asking the AI to word Bud's reply
@@ -59,21 +92,23 @@ type BudAIResult = {
   blocked: boolean;
 };
 
-/** Sends the child's message, the current step and the child's grade level
- * to /api/bud. level null = unknown (the AI then uses its default wording).
+/** Sends the child's message, the current step, the problem being worked on
+ * and the child's grade level to /api/bud.
+ * level null = unknown (the AI then uses its default wording).
  * Never throws: if anything fails (offline, server error), it returns
  * reply: null so the page simply shows the rule-based message.
  */
 async function askBudAI(
   childMessage: string,
   step: BudStep,
+  problem: Problem,
   level: number | null
 ): Promise<BudAIResult> {
   try {
     const response = await fetch("/api/bud", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ childMessage, step, level }),
+      body: JSON.stringify({ childMessage, step, problem, level }),
     });
     if (!response.ok) {
       return { reply: null, blocked: false };
@@ -85,13 +120,20 @@ async function askBudAI(
 }
 
 export default function ChatPage() {
-  // The list of messages on screen. Starts with Bud's opening message.
+  // The list of messages on screen. Empty until the problems are ready,
+  // then it starts with Bud's opening message.
   // useState gives back two things:
   //   messages    = the current list (read it to draw the screen)
   //   setMessages = the only way to change it (React then redraws the page)
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: "assistant", text: OPENING.message },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+
+  // true while the problems for this conversation are being written.
+  // The child can't send anything until they're ready.
+  const [loadingProblems, setLoadingProblems] = useState(true);
+
+  // Bud's opening message for this conversation. Saved as the first message
+  // of the conversation in the parent's chat history.
+  const openingMessage = useRef("");
 
   // ─────────────────────────────────────────────────────────────
   // PIECE C2: The typing box and sending a message
@@ -99,7 +141,11 @@ export default function ChatPage() {
 
   // Bud's memory (which problem, how many wrong tries, finished, results).
   // Passed to getBudReply with every message, then replaced with the new one.
-  const [tutorState, setTutorState] = useState<TutorState>(OPENING.state);
+  // Starts with the backup problems; replaced as soon as the new problems
+  // arrive (see loadProblems below).
+  const [tutorState, setTutorState] = useState<TutorState>(
+    () => getOpeningReply().state
+  );
 
   // What the child has typed in the box so far (empty to start).
   const [draft, setDraft] = useState("");
@@ -164,7 +210,7 @@ export default function ChatPage() {
           console.error("Could not start the conversation:", error);
           return null;
         }
-        await saveMessage(data.id, "assistant", OPENING.message);
+        await saveMessage(data.id, "assistant", openingMessage.current);
         return data.id;
       })();
     }
@@ -208,7 +254,7 @@ export default function ChatPage() {
     // Remove spaces at the start and end. Ignore empty messages,
     // and ignore new messages while Bud is still answering the last one.
     const text = draft.trim();
-    if (text === "" || thinking) {
+    if (text === "" || thinking || loadingProblems) {
       return;
     }
 
@@ -236,9 +282,9 @@ export default function ChatPage() {
       setThinking(true);
       // The child's level for this problem's subject, so the AI can use
       // words that fit their grade (TF-11).
-      const subject = PRACTICE_PROBLEMS[reply.step.problemIndex].subject;
-      const level = await getLevel(subject);
-      const ai = await askBudAI(text, reply.step, level);
+      const problem = tutorState.problems[reply.step.problemIndex];
+      const level = await getLevel(problem.subject);
+      const ai = await askBudAI(text, reply.step, problem, level);
       setThinking(false);
 
       if (ai.blocked && ai.reply !== null) {
@@ -293,15 +339,53 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest" });
   }, [messages, thinking]);
 
+  // ─────────────────────────────────────────────────────────────
+  // PIECE C7: New problems for every conversation
+  // ─────────────────────────────────────────────────────────────
+
+  /** Gets new problems at the child's level and builds Bud's opening reply
+   * for them. Changes nothing on screen (showOpening does that).
+   */
+  async function prepareOpening(): Promise<BudReply> {
+    // The child's level for each subject, looked up at the same time.
+    const [math, science, literature] = await Promise.all(SUBJECTS.map(getLevel));
+    const problems = await fetchProblems({ math, science, literature });
+    return getOpeningReply(problems);
+  }
+
+  /** Starts the conversation on screen with Bud's opening message. */
+  function showOpening(opening: BudReply) {
+    openingMessage.current = opening.message;
+    setTutorState(opening.state);
+    setMessages([{ role: "assistant", text: opening.message }]);
+    setLoadingProblems(false);
+  }
+
+  /** Gets new problems, then shows the opening. Used on "Start over". */
+  function loadProblems() {
+    prepareOpening().then(showOpening);
+  }
+
+  // Load the first problems once, when the page opens.
+  // The empty list [] at the end means "only run this once".
+  // The screen only changes inside .then(), after the problems arrive.
+  useEffect(() => {
+    prepareOpening().then(showOpening);
+    // These functions only use refs and state setters, which never change,
+    // so it is safe to leave them out of the list.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   /** Runs when the child clicks "Start over" after finishing.
-   * Puts all three pieces of state back to how they were at the start.
+   * Clears the chat and gets brand-new problems.
    */
   function handleStartOver() {
-    setMessages([{ role: "assistant", text: OPENING.message }]);
-    setTutorState(OPENING.state);
+    setMessages([]);
     setDraft("");
+    setLoadingProblems(true);
     // The next message starts a new conversation in the parent's history.
     conversation.current = null;
+    loadProblems();
   }
 
   // Design from the chat redesign (#21, #22): Bud's header, bubbles with his
@@ -352,8 +436,15 @@ export default function ChatPage() {
               )
             )}
 
+            {/* While the problems are being written. */}
+            {loadingProblems && (
+              <p className="self-center text-muted">
+                {TUTOR_NAME} is getting your questions ready...
+              </p>
+            )}
+
             {/* Typing dots while Bud is thinking (waiting for the AI). */}
-            {thinking && (
+            {(thinking || loadingProblems) && (
               <div className="flex items-end gap-2 self-start">
                 <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-base">
                   🌱
@@ -403,7 +494,9 @@ export default function ChatPage() {
             <button
               type="submit"
               // Greyed out while Bud is thinking or when the box is empty.
-              disabled={tutorState.finished || thinking || draft.trim() === ""}
+              disabled={
+                tutorState.finished || thinking || loadingProblems || draft.trim() === ""
+              }
               className="rounded-full bg-primary px-6 py-3 font-semibold text-on-primary transition hover:bg-primary-hover disabled:opacity-50"
             >
               Send

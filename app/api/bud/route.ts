@@ -17,7 +17,10 @@
  * 5. If anything goes wrong (no key, network error), we send back reply: null
  *    and the page shows the rule-based message. Bud keeps working without the AI.
  *
- * The page sends:  { childMessage, step: { kind, problemIndex, hintNumber }, level }
+ * The page sends:  { childMessage, step: { kind, problemIndex, hintNumber }, problem, level }
+ *   problem = the problem the child is working on (written by the AI when
+ *           the chat opened, see /api/bud/problems, or a backup problem).
+ *           It comes from the browser, so it is checked like everything else.
  *   level = the child's grade level (0 = Kindergarten, 1–12), or null if
  *           unknown. Only this number is shared with the AI (TF-11), never
  *           the child's name or id.
@@ -32,7 +35,7 @@ import { isMessageAllowed } from "@/lib/moderation";
 import { BUD_PROMPT } from "@/lib/prompts";
 import {
   isCorrect,
-  PRACTICE_PROBLEMS,
+  isValidProblem,
   type BudStep,
   type BudStepKind,
   type Problem,
@@ -94,6 +97,11 @@ type BudRequest = {
   level: number | null; // the child's grade level, or null if unknown
 };
 
+/** Removes < and > from text that goes into the AI's instructions. */
+function removeTags(text: string): string {
+  return text.replace(/[<>]/g, "");
+}
+
 /** Checks the request body and returns it in a safe shape, or null if
  * anything is missing or wrong. Never trust data from the browser: anyone
  * can send anything to this address.
@@ -105,9 +113,10 @@ function readRequest(body: unknown): BudRequest | null {
   }
 
   // Describe the shape we hope for. Every part is "unknown" until checked.
-  const { childMessage, step, level } = body as {
+  const { childMessage, step, problem, level } = body as {
     childMessage?: unknown;
     step?: { kind?: unknown; problemIndex?: unknown; hintNumber?: unknown };
+    problem?: unknown;
     level?: unknown;
   };
 
@@ -126,14 +135,29 @@ function readRequest(body: unknown): BudRequest | null {
   }
   const kind = step.kind as BudStepKind;
 
-  // The problem number must be a whole number that exists in the list.
+  // The problem number must be a small whole number (0, 1, 2...).
   const problemIndex = step.problemIndex;
   if (
     typeof problemIndex !== "number" ||
     !Number.isInteger(problemIndex) ||
     problemIndex < 0 ||
-    problemIndex >= PRACTICE_PROBLEMS.length
+    problemIndex > 20
   ) {
+    return null;
+  }
+
+  // The problem must have the right shape and sizes (isValidProblem in
+  // lib/tutor.ts), and none of its text may contain a blocked word.
+  if (!isValidProblem(problem)) {
+    return null;
+  }
+  const problemText = [
+    problem.question,
+    ...problem.answers,
+    ...problem.hints,
+    problem.explanation,
+  ];
+  if (!problemText.every((text) => isMessageAllowed(text))) {
     return null;
   }
 
@@ -166,9 +190,19 @@ function readRequest(body: unknown): BudRequest | null {
     // pretend to be giving instructions outside them.
     childMessage: message.replace(/[<>]/g, ""),
     step: { kind, problemIndex, hintNumber },
-    // The problem is looked up HERE on the server, from our own list.
-    // The page never sends the question, hint or answer.
-    problem: PRACTICE_PROBLEMS[problemIndex],
+    // Only the problem's own fields are kept, with < and > removed for the
+    // same reason as the child's message.
+    problem: {
+      subject: problem.subject,
+      question: removeTags(problem.question),
+      answers: problem.answers.map(removeTags),
+      hints: [
+        removeTags(problem.hints[0]),
+        removeTags(problem.hints[1]),
+        removeTags(problem.hints[2]),
+      ],
+      explanation: removeTags(problem.explanation),
+    },
     level: gradeLevel,
   };
 }
