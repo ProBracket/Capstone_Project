@@ -1,30 +1,88 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root {/* Surfaces */
+--background: #f8f7f4; /* page background */
+--surface: #ffffff; /*cards, inputs, navbar*/
+--surface-muted: #f1efea; /*subtle panels, hover rows*/
+
+/* Text */
+--foreground: #1f2937; /*main text*/
+--muted: #6b7280; /*secondary text, labels */
+
+/* Lines */
+--border: #e5e2db;
+
+/* Brand */
+--primary: #0f766e; /*buttons, links, active nav */
+--primary-hover: #115e59;
+--primary-soft: #ccfbf1; /*light tint for badges/highlights */
+--on-primary: #ffffff;
+
+/* feedback */
+--danger: #b91c1c;
+--danger-soft: #fee2e2;
+--success: #15803d;
+--success-soft: #dcfce7;
+--warning: #b45309;
+--warning-soft: #fef3c7;
 }
 
 @theme inline {
+  /* Colors -> bg-primary, text-muted, border-border, etc. */
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-on-primary: var(--on-primary);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+
+  /* Fonts (loaded in app/layout.tsx) */
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@theme {
+  /* Corners -> rounded control, rounded cards */
+  --radius-control: 0.625rem; /* button, inputs */
+  --radius-card: 1rem; /* cards, panels */
+
+  /* Shadows -> shadow cards, shadow raised */
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 1px 3px rgb(0 0 0 /0.06);
+  --shadow-raised: 0 4px 12px rgb(0 0 0 / 0.08);
+
+  /* Layout -> w-sidebar, ml-sidebar */
+  --spacing-sidebar: 16rem;
+}
+
+@layer base {
+  html {
+    color-scheme:light;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
+  }
+
+  h1, h2, h3 {
+    letter-spacing: -0.01em;
+  }
+  
+  :focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
   }
 }
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 /* ThinkFirst practice quiz */
 .practice-quiz {
   background-color: #f8f7f4;

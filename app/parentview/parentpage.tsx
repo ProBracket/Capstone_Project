@@ -623,7 +623,7 @@ export default function ParentView() {
       setPassword("");
       setAcceptedTerms(false);
       setAcceptedConsent(false);
-      changeAuthScreen("login");
+      window.location.replace("/");
     } catch (e) {
       setError(errorText(e));
     } finally {
@@ -1631,3 +1631,4 @@ export default function ParentView() {
     </main>
   );
 }
+

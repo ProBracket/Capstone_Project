@@ -1,179 +1,540 @@
 
 "use client";
 
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 import Link from "next/link";
+import { getChild } from "@/lib/children";
+import {
+  CALIBRATION_SUBJECTS,
+  saveCalibrationResults,
+} from "@/lib/calibrationResults";
 
-const tips = [
-  {
-    icon: "✏️",
-    title: "Try your best",
-    description: "Give each question an honest attempt.",
-  },
-  {
-    icon: "💡",
-    title: "Think it through",
-    description: "Take your time and use what you know.",
-  },
-  {
-    icon: "🌟",
-    title: "Keep learning",
-    description: "It's okay not to know every answer.",
-  },
-];
+import {
+  calculateScore,
+  climbLadder,
+  determineFinalLevel,
+  determineResult,
+  gradeLevelLabel,
+  LOWEST_GRADE,
+  shuffleQuestions,
+  startingGrade,
+  type GradeQuestions,
+  type LadderMemory,
+} from "@/lib/calibration";
 
-export default function CalibrationPage() {
-  const [grade, setGrade] = useState("");
+import mathQuestions from "@/lib/calibration/math.json";
+import scienceQuestions from "@/lib/calibration/science.json";
+import literatureQuestions from "@/lib/calibration/literature.json";
+
+import type { Question } from "@/lib/calibration";
+
+import { supabase } from "@/lib/supabase";
+
+/** Gets one list of questions from the JSON files, in their original order.
+ * phase "primary" = the main questions, "secondChance" = the short retry.
+ * Returns an empty list if that grade has no questions of that kind.
+ */
+function getQuestionList(
+  subjectName: string,
+  grade: number,
+  phase: "primary" | "secondChance"
+): Question[] {
+  const questionData =
+    subjectName === "math"
+      ? mathQuestions
+      : subjectName === "science"
+      ? scienceQuestions
+      : literatureQuestions;
+
+  const gradeQuestions = questionData[
+    `grade${grade}` as keyof typeof questionData
+  ] as GradeQuestions;
+
+  return (gradeQuestions[phase] ?? []) as Question[];
+}
+
+export default function CalibrationPage({
+  searchParams,
+}: {
+  // The part of the address after "?", e.g. /calibration?childId=abc.
+  // Next.js passes it as a Promise; use() below waits for it.
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  // Which child is taking the test, from /calibration?childId=<id>.
+  // null if the page was opened without one (e.g. for testing).
+  const childIdParam = use(searchParams).childId;
+  const childId = typeof childIdParam === "string" ? childIdParam : null;
+
+  // The child's school grade (from their profile), or null if unknown.
+  const [schoolGrade, setSchoolGrade] = useState<number | null>(null);
+
+  // true while the child's profile is loading. The subject buttons wait for
+  // it, so the test doesn't start at the wrong grade.
+  const [childLoading, setChildLoading] = useState(childId !== null);
+
+  // Load the child's profile once, to find their school grade.
+  useEffect(() => {
+    if (childId === null) {
+      return;
+    }
+    getChild(childId).then(({ data }) => {
+      // data is null if the child wasn't found; the test then starts at Grade 4.
+      if (data) {
+        setSchoolGrade(data.grade);
+      }
+      setChildLoading(false);
+    });
+  }, [childId]);
+
+  // The grade every subject starts at: the child's school grade, kept
+  // within Grades 4 to 9. Grade 4 if the school grade is unknown.
+  const firstGrade =
+    schoolGrade === null ? LOWEST_GRADE : startingGrade(schoolGrade);
+
+  // null until the child picks a subject. The questions are shuffled when a
+  // subject is picked (a click only happens in the browser), so the server
+  // and the browser never draw the page with two different question orders.
+  const [subject, setSubject] = useState<string | null>(null);
+  const [currentGrade, setCurrentGrade] =
+    useState(LOWEST_GRADE);
+
+  // What the grade ladder remembers for this subject (see climbLadder in
+  // lib/calibration.ts): the highest grade passed and the lowest grade failed.
+  const [ladder, setLadder] = useState<LadderMemory>({
+    highestPassed: null,
+    lowestFailed: null,
+  });
+
+  // Which set of questions the child is answering for this grade:
+  // "primary" = the main questions, "secondChance" = the short retry
+  // given when the main score is between 60% and 69%.
+  const [phase, setPhase] = useState<"primary" | "secondChance">("primary");
+
+  // The main-question score for this grade, kept so the second-chance
+  // result can be combined with it (determineFinalLevel).
+  const [primaryPercentage, setPrimaryPercentage] = useState(0);
+
+  // true once this subject's level has been found. Hides the questions.
+  const [finished, setFinished] = useState(false);
+
+  const [currentQuestion, setCurrentQuestion] =
+    useState(0);
+
+  const [studentAnswer, setStudentAnswer] =
+    useState("");
+
+  const [answers, setAnswers] = useState<
+    Record<number, string>
+  >({});
+
+  const [score, setScore] = useState<{
+    correct: number;
+    total: number;
+    percentage: number;
+  } | null>(null);
+
+  const [results, setResults] = useState({
+  math: null as number | null,
+  science: null as number | null,
+  literature: null as number | null,
+});
+
+const [completedSubjects, setCompletedSubjects] =
+  useState<string[]>([]);
+
+  // The list being answered right now (main or second chance), already
+  // shuffled. Kept in state so the order stays the same while the child
+  // answers, instead of changing every time the page redraws.
+  const [questions, setQuestions] = useState<Question[]>([]);
+
+  const question = questions[currentQuestion];
+
+  /** Gets the page ready for a new list of questions, in a random order. */
+  function startQuestions(
+    subjectName: string,
+    grade: number,
+    newPhase: "primary" | "secondChance"
+  ) {
+    setQuestions(shuffleQuestions(getQuestionList(subjectName, grade, newPhase)));
+    setCurrentGrade(grade);
+    setPhase(newPhase);
+    setCurrentQuestion(0);
+    setAnswers({});
+    setStudentAnswer("");
+  }
+
+  function changeSubject(
+    newSubject: string
+  ) {
+    // Wait for the child's profile, so the test starts at the right grade.
+    if (childLoading) {
+      return;
+    }
+
+    setSubject(newSubject);
+
+    // A new subject starts at the child's grade with no ladder memory.
+    // newSubject is passed in because `subject` only updates on the next redraw.
+    startQuestions(newSubject, firstGrade, "primary");
+    setLadder({ highestPassed: null, lowestFailed: null });
+    setFinished(false);
+    setScore(null);
+  }
+
+  /** Runs once the child has passed or failed the current grade.
+   * climbLadder decides whether to move to another grade or stop.
+   */
+  function finishGrade(passed: boolean) {
+    // Can't happen (questions only show after a subject is picked),
+    // but TypeScript needs to know subject isn't null below.
+    if (subject === null) {
+      return;
+    }
+
+    const step = climbLadder(currentGrade, passed, ladder);
+
+    setLadder({
+      highestPassed: step.highestPassed,
+      lowestFailed: step.lowestFailed,
+    });
+
+    if (!step.done) {
+      startQuestions(subject, step.nextGrade, "primary");
+      return;
+    }
+
+    // The level is found: save it for the summary and end this subject.
+    setFinished(true);
+
+    // The new results and finished subjects, worked out here (instead of
+    // inside the set functions) so they can also be saved just below.
+    const newResults = { ...results, [subject]: step.finalGrade };
+    const newCompleted = completedSubjects.includes(subject)
+      ? completedSubjects
+      : [...completedSubjects, subject];
+
+    setResults(newResults);
+    setCompletedSubjects(newCompleted);
+
+    // Every subject done → save the results for this child, so they aren't
+    // sent to calibration again next time (lib/calibrationResults.ts).
+    const allDone = CALIBRATION_SUBJECTS.every((name) =>
+      newCompleted.includes(name)
+    );
+    if (
+      allDone &&
+      childId !== null &&
+      newResults.math !== null &&
+      newResults.science !== null &&
+      newResults.literature !== null
+    ) {
+      void saveCalibrationResults(childId, {
+        math: newResults.math,
+        science: newResults.science,
+        literature: newResults.literature,
+      });
+    }
+  }
+
+  function nextQuestion() {
+    // Nothing to answer before a subject is picked.
+    if (subject === null || !question) {
+      return;
+    }
+
+    const updatedAnswers = {
+      ...answers,
+      [question.number]:
+        studentAnswer,
+    };
+
+    setAnswers(updatedAnswers);
+
+    if (
+      currentQuestion <
+      questions.length - 1
+    ) {
+      setCurrentQuestion(
+        currentQuestion + 1
+      );
+
+      setStudentAnswer("");
+      return;
+    }
+
+    // The last question of the list was answered: score the list.
+    const result = calculateScore(
+      questions,
+      updatedAnswers
+    );
+    setScore(result);
+
+    // Second chance finished: passed if determineFinalLevel says "advance"
+    // (main score 60%+ and second-chance score 67%+).
+    if (phase === "secondChance") {
+      finishGrade(
+        determineFinalLevel(primaryPercentage, result.percentage) === "advance"
+      );
+      return;
+    }
+
+    // Main questions finished. determineResult gives:
+    //   "advance"      = 70% or more → passed
+    //   "secondChance" = 60% to 69%  → try the second-chance questions
+    //   "stay"         = below 60%   → failed
+    const outcome = determineResult(result.percentage);
+
+    if (outcome === "secondChance") {
+      const retryQuestions = getQuestionList(subject, currentGrade, "secondChance");
+
+      // Some grades have no second-chance questions yet.
+      // Then a score of 60% to 69% counts as not passed.
+      if (retryQuestions.length > 0) {
+        setPrimaryPercentage(result.percentage);
+        startQuestions(subject, currentGrade, "secondChance");
+        return;
+      }
+    }
+
+    finishGrade(outcome === "advance");
+  }
 
   return (
-    <main className="min-h-screen bg-[#F8F7F4] px-4 py-10 text-[#1F2937]">
-      <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-background text-foreground [&_h1]:text-primary [&_h2]:text-primary [&_button]:bg-primary [&_button]:text-on-primary [&_button:disabled]:bg-surface-muted [&_button:disabled]:text-muted [&_input]:accent-primary [&_input[type=text]]:bg-surface [&_a]:text-primary">
+      <h1>Calibration</h1>
 
-        {/* Header */}
-        <header className="mb-10 flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-2xl font-bold text-[#0F766E]">
-              ThinkFirst
-            </p>
+      <div
+        style={{
+          marginBottom: "20px",
+        }}
+      >
+        <button
+          onClick={() =>
+            changeSubject("math")
+          }
+        >
+          Math
+        </button>
 
-            <p className="mt-1 text-sm text-[#6B7280]">
-              Learning starts with thinking.
-            </p>
-          </div>
+        <button
+          onClick={() =>
+            changeSubject(
+              "science"
+            )
+          }
+          style={{
+            marginLeft: "10px",
+          }}
+        >
+          Science
+        </button>
 
-          <Link
-            href="/child/dashboard"
-            className="rounded-lg border border-[#E5E2DB] bg-white px-4 py-2.5 font-medium hover:bg-[#F1EFEA]"
-          >
-            Back to Dashboard
-          </Link>
-        </header>
-
-        {/* Introduction */}
-        <section className="mb-8 text-center">
-          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-2xl bg-[#CCFBF1] text-5xl">
-            🧠
-          </div>
-
-          <p className="text-sm font-bold uppercase tracking-widest text-[#0F766E]">
-            Your learning journey
-          </p>
-
-          <h1 className="mt-3 text-4xl font-bold sm:text-5xl">
-            Let&apos;s find your starting point!
-          </h1>
-
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-[#6B7280]">
-            Everyone learns differently. This quick check-in
-            will help ThinkFirst understand what you&apos;re ready
-            to learn next.
-          </p>
-        </section>
-
-        {/* Main card */}
-        <section className="overflow-hidden rounded-2xl border border-[#E5E2DB] bg-white shadow-sm">
-
-          <div className="border-b border-[#E5E2DB] bg-[#CCFBF1] px-6 py-5 sm:px-8">
-            <p className="text-xs font-bold uppercase tracking-wide text-[#0F766E]">
-              Getting started
-            </p>
-
-            <h2 className="mt-2 text-2xl font-bold">
-              Your Learning Check-In
-            </h2>
-
-            <p className="mt-2 text-sm text-[#374151]">
-              A few questions to help personalize your learning.
-            </p>
-          </div>
-
-          <div className="p-6 sm:p-8">
-            <label
-              htmlFor="grade"
-              className="block text-base font-semibold"
-            >
-              What grade are you in?
-            </label>
-
-            <p className="mt-2 text-sm text-[#6B7280]">
-              Your grade helps us prepare questions that
-              match your learning level.
-            </p>
-
-            <select
-              id="grade"
-              value={grade}
-              onChange={(event) => setGrade(event.target.value)}
-              className="mt-4 w-full rounded-lg border border-[#E5E2DB] bg-white px-4 py-3 outline-none focus:border-[#0F766E] focus:ring-2 focus:ring-[#CCFBF1]"
-            >
-              <option value="">Select your grade</option>
-
-              {Array.from({ length: 12 }, (_, i) => (
-                <option key={i + 1} value={i + 1}>
-                  Grade {i + 1}
-                </option>
-              ))}
-            </select>
-
-            {grade && (
-              <div className="mt-5 rounded-xl bg-[#F1EFEA] p-5">
-                <p className="font-semibold text-[#0F766E]">
-                  Grade {grade} selected!
-                </p>
-
-                <p className="mt-2 text-sm text-[#6B7280]">
-                  Your grade-level assessment will appear
-                  here once the calibration questions
-                  are connected.
-                </p>
-              </div>
-            )}
-
-            <div className="mt-8 rounded-xl border border-[#E5E2DB] bg-[#F8F7F4] p-5">
-              <h3 className="font-semibold">
-                What happens next?
-              </h3>
-
-              <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
-                You&apos;ll answer questions designed for your
-                grade. ThinkFirst will use your results
-                to guide your learning activities.
-              </p>
-            </div>
-
-            <div className="mt-8 rounded-lg bg-[#0F766E] px-5 py-4 text-center text-sm font-medium text-white">
-              Assessment questions are being connected
-              by the ThinkFirst team.
-            </div>
-          </div>
-        </section>
-
-        {/* Helpful tips */}
-        <section className="mt-8 grid gap-4 sm:grid-cols-3">
-          {tips.map((tip) => (
-            <article
-              key={tip.title}
-              className="rounded-2xl border border-[#E5E2DB] bg-white p-6 shadow-sm"
-            >
-              <div className="text-4xl">
-                {tip.icon}
-              </div>
-
-              <h3 className="mt-4 font-bold">
-                {tip.title}
-              </h3>
-
-              <p className="mt-2 text-sm leading-relaxed text-[#6B7280]">
-                {tip.description}
-              </p>
-            </article>
-          ))}
-        </section>
-
-        <footer className="mt-10 text-center text-sm text-[#6B7280]">
-          ThinkFirst — Don&apos;t answer first. Think first.
-        </footer>
+        <button
+          onClick={() =>
+            changeSubject(
+              "literature"
+            )
+          }
+          style={{
+            marginLeft: "10px",
+          }}
+        >
+          Literature
+        </button>
       </div>
-    </main>
+
+      {/* Before a subject is picked, only ask the child to pick one. */}
+      {subject === null && (
+        <p>
+          {childLoading
+            ? "Loading your profile…"
+            : `Choose a subject to start. Each subject starts at ${gradeLevelLabel(firstGrade)}.`}
+        </p>
+      )}
+
+      {subject !== null && (
+        <>
+          <h2
+            style={{
+              textTransform:
+                "capitalize",
+            }}
+          >
+            {subject} Calibration
+          </h2>
+
+          <p>
+            Current Grade: Grade{" "}
+            {currentGrade}
+          </p>
+          <p>
+            Highest Passed Grade: {ladder.highestPassed ?? "none yet"}
+          </p>
+        </>
+      )}
+
+      {/* The questions are hidden once this subject's level is found. */}
+      {!finished && question && (
+        <>
+          {phase === "secondChance" && (
+            <p>
+              <strong>Second chance:</strong> a few more questions for this grade.
+            </p>
+          )}
+
+          <p>
+            Question{" "}
+            {currentQuestion + 1} of{" "}
+            {questions.length}
+          </p>
+
+          <h2
+            style={{
+              marginBottom: "20px",
+            }}
+          >
+            {question.question}
+          </h2>
+
+          {question.type ===
+          "multiple_choice" ? (
+            <div>
+              {Object.entries(
+                question.choices ?? {}
+              ).map(
+                ([key, value]) => (
+                  <label
+                    key={key}
+                    style={{
+                      display: "block",
+                      marginBottom:
+                        "10px",
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name={`question-${question.number}`}
+                      value={key}
+                      checked={
+                        studentAnswer ===
+                        key
+                      }
+                      onChange={() =>
+                        setStudentAnswer(
+                          key
+                        )
+                      }
+                      style={{
+                        marginRight:
+                          "8px",
+                      }}
+                    />
+                    {key.toUpperCase()}){" "}
+                    {value}
+                  </label>
+                )
+              )}
+            </div>
+          ) : (
+            <input
+              type="text"
+              value={studentAnswer}
+              onChange={(e) =>
+                setStudentAnswer(
+                  e.target.value
+                )
+              }
+              placeholder="Enter your answer"
+              style={{
+                width: "500px",
+                height: "40px",
+                fontSize: "18px",
+                padding: "8px",
+              }}
+            />
+          )}
+
+          <br />
+
+          <button
+            onClick={nextQuestion}
+            style={{
+              marginTop: "20px",
+              padding:
+                "10px 20px",
+              fontSize: "16px",
+            }}
+            disabled={
+              !studentAnswer.trim()
+            }
+          >
+            Next Question
+          </button>
+        </>
+      )}
+
+      {/* The result for this subject, shown once its level is found. */}
+      {finished && score && (
+        <div>
+          <h2>Results</h2>
+
+          <p>
+            Correct: {score.correct}
+          </p>
+
+          <p>
+            Total: {score.total}
+          </p>
+
+          <p>
+            Percentage:{" "}
+            {score.percentage.toFixed(
+              1
+            )}
+            %
+          </p>
+
+          <p>
+            Outcome:{" "}
+            {determineResult(
+              score.percentage
+            )}
+          </p>
+
+          <p>
+            Final Grade:{" "}
+            {gradeLevelLabel(
+              results[subject as keyof typeof results] ?? LOWEST_GRADE
+            )}
+          </p>
+        </div>
+      )}
+      {completedSubjects.length > 0 && (
+  <>
+    <h2>Completed Subject Levels</h2>
+
+    {/* null = this subject hasn't been done yet, so show "-". */}
+    <p>
+      Math: {results.math === null ? "-" : gradeLevelLabel(results.math)}
+    </p>
+
+    <p>
+      Science: {results.science === null ? "-" : gradeLevelLabel(results.science)}
+    </p>
+
+    <p>
+      Literature: {results.literature === null ? "-" : gradeLevelLabel(results.literature)}
+    </p>
+
+    {/* All subjects done: the child can go on to the rest of the app. */}
+    {completedSubjects.length === CALIBRATION_SUBJECTS.length && childId !== null && (
+      <Link href={`/child/welcome?childId=${childId}`}>
+        All done! Continue to ThinkFirst →
+      </Link>
+    )}
+  </>
+)}
+    </div>
   );
 }
+
