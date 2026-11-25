@@ -1313,7 +1313,7 @@ export default function ParentView() {
                                         : item.role}
                                   </p>
 
-                                  <p className="whitespace-pre-wrap break-words text-sm text-[#1F2937]">
+                                  <p className="whitespace-pre-wrap wrap-break-word text-sm text-[#1F2937]">
                                     {item.content}
                                   </p>
 
