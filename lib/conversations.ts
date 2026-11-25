@@ -1,15 +1,14 @@
 /** Saving and reading Bud conversations (TF-15: parents can see transcripts).
  *
- * Uses Gael's tables:
+ * Tables (in the AI Supabase project, lib/supabase-ai.ts, the same place the
+ * chat has saved to since #28):
  *   conversations          one row per chat (child, start, end, summary)
  *   conversation_messages  every message in a chat, in order
  *
- * Supabase only lets a parent read or add rows for their OWN children
- * (row-level security), so these functions never pass a parent id.
- * Messages can only be added, never edited or deleted, so a transcript
+ * Messages are only ever added, never edited or deleted, so a transcript
  * can't be changed afterwards.
  */
-import { supabase } from "@/lib/supabase";
+import { supabaseAI } from "@/lib/supabase-ai";
 
 // Who wrote a message. Same words as the database: "assistant" = Bud.
 export type MessageRole = "child" | "assistant";
@@ -24,17 +23,28 @@ export type Conversation = {
 
 /** One message in a transcript. */
 export type ConversationMessage = {
-  id: number;
+  id: number | string;
   role: MessageRole;
   content: string;
   created_at: string;
+};
+
+// A row as it comes back from the database. Reading "*" (every column) and
+// picking fields here keeps this working whether the table names its start
+// time "started_at" or "created_at".
+type ConversationRow = {
+  id: string;
+  started_at?: string | null;
+  created_at?: string | null;
+  ended_at?: string | null;
+  summary?: string | null;
 };
 
 /** Starts a new conversation for a child.
  * Returns { data: { id }, error }; the id is used to save each message.
  */
 export function startConversation(childId: string) {
-  return supabase
+  return supabaseAI
     .from("conversations")
     .insert({ child_id: childId })
     .select("id")
@@ -47,39 +57,55 @@ export function saveMessage(
   role: MessageRole,
   content: string
 ) {
-  return supabase
+  return supabaseAI
     .from("conversation_messages")
     .insert({ conversation_id: conversationId, role, content });
 }
 
 /** Marks a conversation as finished and saves its summary for parents.
- * Returns { error }.
+ * Returns { error }. If the table has no ended_at or summary column, this
+ * only logs an error; the messages themselves are already saved.
  */
 export function endConversation(conversationId: string, summary: string) {
-  return supabase
+  return supabaseAI
     .from("conversations")
     .update({ ended_at: new Date().toISOString(), summary })
     .eq("id", conversationId);
 }
 
 /** A child's conversations, newest first. Returns { data, error }. */
-export function getConversations(childId: string) {
-  return supabase
+export async function getConversations(childId: string) {
+  const { data, error } = await supabaseAI
     .from("conversations")
-    .select("id, started_at, ended_at, summary")
-    .eq("child_id", childId)
-    .order("started_at", { ascending: false })
-    .overrideTypes<Conversation[], { merge: false }>(); // tells TypeScript the shape of each row
+    .select("*")
+    .eq("child_id", childId);
+
+  if (error || !data) {
+    return { data: null, error };
+  }
+
+  const conversations: Conversation[] = (data as ConversationRow[]).map((row) => ({
+    id: row.id,
+    started_at: row.started_at ?? row.created_at ?? "",
+    ended_at: row.ended_at ?? null,
+    summary: row.summary ?? null,
+  }));
+
+  // Newest first. ISO dates sort correctly as text.
+  conversations.sort((a, b) => b.started_at.localeCompare(a.started_at));
+  return { data: conversations, error: null };
 }
 
 /** Every message in one conversation, in the order they were sent.
  * Returns { data, error }.
  */
 export function getMessages(conversationId: string) {
-  return supabase
+  return supabaseAI
     .from("conversation_messages")
     .select("id, role, content, created_at")
     .eq("conversation_id", conversationId)
-    .order("id", { ascending: true }) // id goes up with every message, so it keeps the order
+    // Messages are saved one after another (the chat's save queue), so
+    // their creation times keep them in order.
+    .order("created_at", { ascending: true })
     .overrideTypes<ConversationMessage[], { merge: false }>(); // tells TypeScript the shape of each row
 }

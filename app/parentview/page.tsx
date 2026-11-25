@@ -2,7 +2,7 @@
  * 1. Profile picker: "Who's learning today?" with the parent's children.
  *    Picking a child goes to the child experience at /child/welcome?childId=<id>.
  * 2. Gear button → PIN screen.
- * 3. Parent Dashboard → Parent Profile, Child Profiles and Chat History.
+ * 3. Parent Dashboard → Parent Profile, Child Profiles and Conversation Transcripts.
  *
  * The PIN switch is turned OFF every time the picker shows or Settings opens,
  * so a child picking their profile can't get back into the dashboard
@@ -30,7 +30,7 @@ type Screen =
   | "dashboard"
   | "parent-profile"
   | "child-profiles"
-  | "chat-history";
+  | "transcripts";
 
 export default function ParentView() {
   // tool to go to another page in code
@@ -273,13 +273,14 @@ export default function ParentView() {
                   </button>
 
                   <button
-                    type="button"
-                    onClick={() => setScreen("chat-history")}
-                    className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
+                     type="button"
+                      onClick={() => setScreen("transcripts")}
+                     className="rounded-md border border-slate-200 p-4 text-left hover:bg-slate-50"
                   >
-                    <h3 className="font-medium">Chat History</h3>
+                    <h3 className="font-medium">Conversation Transcripts</h3>
+
                     <p className="mt-1 text-sm text-slate-500">
-                      Read your children&apos;s conversations with Bud.
+                       View conversations between your children and Bud.
                     </p>
                   </button>
 
@@ -305,6 +306,15 @@ export default function ParentView() {
               />
             )}
 
+            {/* Conversation Transcripts: the parent picks a child, then a
+                conversation, and reads it (ChatHistory.tsx). */}
+            {screen === "transcripts" && (
+              <ChatHistory
+                profiles={profiles}
+                onBack={() => setScreen("dashboard")}
+              />
+            )}
+
             {screen === "child-profiles" && (
               <ChildProfiles
                 profiles={profiles}
@@ -316,13 +326,6 @@ export default function ParentView() {
                     prev.map((child) => (child.id === updated.id ? updated : child))
                   )
                 }
-                onBack={() => setScreen("dashboard")}
-              />
-            )}
-
-            {screen === "chat-history" && (
-              <ChatHistory
-                profiles={profiles}
                 onBack={() => setScreen("dashboard")}
               />
             )}

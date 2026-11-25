@@ -4,7 +4,9 @@
 // Keep the function names and return types the same so nothing else breaks.
 
 import { getChild } from "@/lib/children";
-import { createAIProfile } from "@/lib/ai-profiles";
+
+import { createAIProfile, getAIProfile } from "@/lib/ai-profiles";
+
 
 export const CALIBRATION_SUBJECTS = ["math", "science", "literature"] as const;
 
@@ -27,17 +29,17 @@ export async function saveCalibrationResults(
   try {
     localStorage.setItem(storageKey(childId), JSON.stringify(results));
 
-    // Also save the levels to the AI profile (lib/ai-profiles.ts).
     const { data } = await getChild(childId);
-    if (data) {
-      await createAIProfile(
-        childId,
-        data.name,
-        results.math,
-        results.science,
-        results.literature
-      );
-    }
+
+if (data) {
+  await createAIProfile(
+    childId,
+    data.name,
+    results.math,
+    results.science,
+    results.literature
+  );
+}
     return { error: null };
   } catch {
     return { error: "Could not save the calibration results." };
@@ -49,8 +51,17 @@ export async function getCalibrationResults(
   childId: string
 ): Promise<CalibrationResults | null> {
   try {
-    const saved = localStorage.getItem(storageKey(childId));
-    return saved === null ? null : (JSON.parse(saved) as CalibrationResults);
+    const { data } = await getAIProfile(childId);
+
+    if (!data) {
+      return null;
+    }
+
+    return {
+      math: data.math_level,
+      science: data.science_level,
+      literature: data.literature_level,
+    };
   } catch {
     return null;
   }
@@ -72,10 +83,16 @@ export async function getChildLevel(
 }
 
 // Used by CalibrationGate to send first-time kids to calibration.
-export async function hasCompletedCalibration(childId: string): Promise<boolean> {
+export async function hasCompletedCalibration(
+  childId: string
+): Promise<boolean> {
+
   try {
-    return localStorage.getItem(storageKey(childId)) !== null;
+    const { data } = await getAIProfile(childId);
+
+    return data !== null;
   } catch {
-    return true; // can't read storage, so don't block the kid
+    return false;
   }
+
 }
