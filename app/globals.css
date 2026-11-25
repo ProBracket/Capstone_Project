@@ -83,3 +83,60 @@
     outline-offset: 2px;
   }
 }
+/* ThinkFirst practice quiz */
+.practice-quiz {
+  background-color: #f8f7f4;
+  color: #173533;
+  color-scheme: light;
+}
+
+.practice-quiz section,
+.practice-quiz input {
+  background-color: #ffffff;
+  border-color: #b8d5cf;
+}
+
+.practice-quiz .text-foreground {
+  color: #173533;
+}
+
+.practice-quiz .text-primary {
+  color: #0f766e;
+}
+
+.practice-quiz .text-muted {
+  color: #49615c;
+}
+
+.practice-quiz .bg-primary {
+  background-color: #0f766e;
+  color: #ffffff;
+}
+
+.practice-quiz .bg-primary:hover:enabled {
+  background-color: #115e59;
+}
+
+.practice-quiz .bg-primary:disabled {
+  background-color: #ceddd9;
+  color: #425650;
+  opacity: 1;
+}
+
+.practice-quiz .bg-primary-soft {
+  background-color: #ccfbf1;
+}
+
+.practice-quiz .bg-success-soft {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.practice-quiz .bg-surface-muted {
+  background-color: #fff4cc;
+  border-color: #e6c968;
+}
+
+.practice-quiz :focus-visible {
+  outline-color: #0f766e;
+}
