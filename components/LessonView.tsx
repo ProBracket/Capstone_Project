@@ -41,6 +41,9 @@ export default function LessonView({ subject, title, emoji, colours }: LessonVie
   // The curriculum grade (4 to 9) the topics belong to.
   const [grade, setGrade] = useState<number | null>(null);
   const [loadingTopics, setLoadingTopics] = useState(true);
+  // true if the child's level couldn't be read (no AI profile yet, which
+  // means calibration isn't finished, or the database couldn't be reached).
+  const [topicsFailed, setTopicsFailed] = useState(false);
 
   // The topic that was clicked, and its lesson once written.
   const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -62,7 +65,8 @@ export default function LessonView({ subject, title, emoji, colours }: LessonVie
         setTopics(result.topics);
         setGrade(result.frameworkGrade);
       } catch (loadError) {
-        console.error(loadError);
+        console.error("Could not load lesson topics:", loadError);
+        setTopicsFailed(true);
       }
       setLoadingTopics(false);
     }
@@ -128,9 +132,10 @@ export default function LessonView({ subject, title, emoji, colours }: LessonVie
           {!loadingTopics && childId && selectedTopic === null && (
             <>
               <h2 className="mb-4 text-2xl font-semibold text-gray-800">Choose a topic</h2>
-              {topics.length === 0 && (
+              {topicsFailed && (
                 <p className="text-gray-700">
-                  No topics yet. Finish the calibration test first.
+                  We couldn&apos;t find this learner&apos;s level. If they haven&apos;t taken the
+                  calibration test yet, do that first. Otherwise, please refresh the page.
                 </p>
               )}
               <div className="grid gap-4">
