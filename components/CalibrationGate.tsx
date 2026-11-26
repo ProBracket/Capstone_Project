@@ -1,35 +1,25 @@
 /** Sends a child to the calibration test the first time they use the app.
  *
- * Placed on the child's welcome page. It shows nothing on screen. It:
- * 1. remembers which child is using the app in this tab (lib/activeChild.ts),
- *    so pages like the chat know who is there, and
- * 2. checks whether this child has finished calibration and, if not, moves
- *    them to /calibration?childId=<id>, which starts at their school grade.
+ * Placed on the child's welcome page. It shows nothing on screen. It checks
+ * whether this child has finished calibration and, if not, moves them to
+ * /calibration?childId=<id>, which starts at their school grade.
+ *
+ * Which child it is comes from app/child/layout.tsx, which asks Supabase who
+ * is playing on this device (and saves it for lib/activeChild.ts). It used to
+ * come from the URL, but then any child could type a sibling's id there.
  */
 "use client";
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { setActiveChildId } from "@/lib/activeChild";
+import { useActiveChildId } from "@/app/child/ActiveChildProvider";
 import { hasCompletedCalibration } from "@/lib/calibrationResults";
 
-type Props = {
-  // The child using the app, or null if the page was opened without one.
-  childId: string | null;
-};
-
-export default function CalibrationGate({ childId }: Props) {
+export default function CalibrationGate() {
   const router = useRouter();
+  const childId = useActiveChildId();
 
   useEffect(() => {
-    // No child chosen: nothing to check.
-    if (childId === null) {
-      return;
-    }
-
-    // Remember this child for the other pages in this tab (e.g. the chat).
-    setActiveChildId(childId);
-
     // If the child leaves this page before the check finishes, ignore the
     // result instead of moving them to calibration from another page.
     let stillHere = true;

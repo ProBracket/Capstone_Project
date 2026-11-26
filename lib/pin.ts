@@ -28,7 +28,9 @@ export function verifyParentPin(pin: string) {
 
 /** Turns the switch OFF. Call whenever the parent leaves Settings/Dashboard,
  * so a child can't get back in without the PIN.
+ * async + await on purpose: Supabase only sends a request once something
+ * awaits it, so this way `void lockParentArea()` still sends it.
  */
-export function lockParentArea() {
-  return supabase.rpc("lock_parent_area");
+export async function lockParentArea() {
+  return await supabase.rpc("lock_parent_area");
 }

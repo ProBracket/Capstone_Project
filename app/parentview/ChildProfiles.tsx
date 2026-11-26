@@ -5,7 +5,7 @@
  */
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   addChild,
   getAge,
@@ -13,6 +13,9 @@ import {
   setVoiceEnabled,
   type Child,
 } from "@/lib/children";
+import { getChildrenWithPin, removeChildPin, setChildPin } from "@/lib/childPin";
+import { pictureById } from "@/lib/pinPictures";
+import PicturePinSetup from "./PicturePinSetup";
 
 // 0 = Kindergarten, then grades 1–12
 const GRADES = Array.from({ length: 13 }, (_, grade) => grade);
@@ -49,6 +52,59 @@ export default function ChildProfiles({
 
   // Today as "YYYY-MM-DD" so the date picker can't choose a future birthday
   const today = new Date().toLocaleDateString("en-CA");
+
+  // --- Picture locks ---
+  const [lockedIds, setLockedIds] = useState<string[]>([]); // children who have a lock
+  const [pinChild, setPinChild] = useState<Child | null>(null); // whose setup is open
+  const [pinSaving, setPinSaving] = useState(false);
+  const [lockError, setLockError] = useState("");
+  const [lockMessage, setLockMessage] = useState("");
+
+  useEffect(() => {
+    getChildrenWithPin().then(({ data, error }) => {
+      if (error) setLockError("Couldn't load picture locks.");
+      else setLockedIds(data);
+    });
+  }, []);
+
+  function openPinSetup(child: Child) {
+    setLockError("");
+    setLockMessage("");
+    setPinChild(child);
+  }
+
+  async function handlePinDone(picks: string[]) {
+    if (!pinChild) return;
+    const child = pinChild;
+
+    setPinSaving(true);
+    const { error } = await setChildPin(child.id, picks);
+    setPinSaving(false);
+    setPinChild(null);
+
+    if (error) {
+      setLockError(error.message);
+      return;
+    }
+
+    setLockedIds((ids) => (ids.includes(child.id) ? ids : [...ids, child.id]));
+    const emojis = picks.map((id) => pictureById(id)?.emoji).join(" ");
+    setLockMessage(`Picture lock is on for ${child.name}: ${emojis}`);
+  }
+
+  async function handleRemovePin(child: Child) {
+    setLockError("");
+    setLockMessage("");
+
+    const { error } = await removeChildPin(child.id);
+    if (error) {
+      setLockError(error.message);
+      return;
+    }
+
+    setLockedIds((ids) => ids.filter((id) => id !== child.id));
+    setLockMessage(`Picture lock is off for ${child.name}.`);
+  }
 
   async function handleAdd(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -141,36 +197,85 @@ export default function ChildProfiles({
             </p>
           )}
 
-          {profiles.map((child) => (
-            <div
-              key={child.id}
-              // flex + justify-between: child's info on the left, mic switch on the right
-              className="flex items-center justify-between gap-4 rounded-md border border-slate-200 px-4 py-3"
-            >
-              <div>
-                <p className="font-medium">{child.name}</p>
-                <p className="text-sm text-slate-500">
-                  Age {getAge(child.date_of_birth)} · {gradeLabel(child.grade)}
-                </p>
-              </div>
+          {/* Picture lock banners */}
+          {lockError && (
+            <p role="alert" className="rounded-md bg-red-50 p-3 text-sm text-red-700">
+              {lockError}
+            </p>
+          )}
+          {lockMessage && (
+            <p role="status" className="rounded-md bg-green-50 p-3 text-sm text-green-700">
+              {lockMessage}
+            </p>
+          )}
 
-              {/* Microphone switch. Wrapping the checkbox in a <label> makes the
-                  text clickable too, and lets screen readers announce what it's for. */}
-              <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
-                <input
-                  type="checkbox"
-                  // Shows the value saved in the database (ticked = mic allowed)
-                  checked={child.voice_enabled}
-                  // Clicking saves the opposite value (see handleVoiceToggle above)
-                  onChange={() => handleVoiceToggle(child)}
-                  // Can't be clicked again while this child's switch is saving
-                  disabled={voiceSavingId === child.id}
-                  className="h-4 w-4"
-                />
-                🎤 Microphone
-              </label>
-            </div>
-          ))}
+          {profiles.map((child) => {
+            const locked = lockedIds.includes(child.id);
+            return (
+              <div key={child.id} className="rounded-md border border-slate-200 px-4 py-3">
+                {/* flex + justify-between: child's info on the left, controls on the right */}
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="font-medium">
+                      {child.name} {locked && <span aria-label="Picture lock on">🔒</span>}
+                    </p>
+                    <p className="text-sm text-slate-500">
+                      Age {getAge(child.date_of_birth)} · {gradeLabel(child.grade)}
+                    </p>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    {/* Microphone switch. Wrapping the checkbox in a <label> makes the
+                        text clickable too, and lets screen readers announce what it's for. */}
+                    <label className="flex shrink-0 cursor-pointer items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        // Shows the value saved in the database (ticked = mic allowed)
+                        checked={child.voice_enabled}
+                        // Clicking saves the opposite value (see handleVoiceToggle above)
+                        onChange={() => handleVoiceToggle(child)}
+                        // Can't be clicked again while this child's switch is saving
+                        disabled={voiceSavingId === child.id}
+                        className="h-4 w-4"
+                      />
+                      🎤 Microphone
+                    </label>
+
+                    {/* Picture lock buttons (hidden while this child's setup is open) */}
+                    {pinChild?.id !== child.id && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => openPinSetup(child)}
+                          className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50"
+                        >
+                          {locked ? "Change pictures" : "Add picture lock"}
+                        </button>
+                        {locked && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemovePin(child)}
+                            className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50"
+                          >
+                            Turn off lock
+                          </button>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {pinChild?.id === child.id && (
+                  <PicturePinSetup
+                    childName={child.name}
+                    saving={pinSaving}
+                    onDone={handlePinDone}
+                    onCancel={() => setPinChild(null)}
+                  />
+                )}
+              </div>
+            );
+          })}
 
           {/* Explains to the parent what the switch does (informed consent) */}
           <p className="text-xs text-slate-500">

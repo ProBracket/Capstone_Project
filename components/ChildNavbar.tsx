@@ -12,6 +12,7 @@ import {
   Trophy,
   Users,
 } from "lucide-react";
+import { clearActiveChild } from "@/lib/childPin";
 
 // The child area's pages. "exact" means the link is only highlighted on that
 // exact page (so "My Home" isn't highlighted on every /child/... page).
@@ -32,9 +33,12 @@ export default function ChildNavbar() {
     return exact ? pathname === href : pathname.startsWith(href);
   }
 
-  // Forget which child was picked, so the next child's chats
-  // aren't saved under this child's profile.
+  // Tell Supabase nobody is playing on this device, so the next child
+  // has to pick their profile (and enter their pictures) again.
+  // The picker also clears it when it loads, as a second safety check.
+  // Also forgets the saved id that lib/activeChild.ts reads.
   function switchLearner() {
+    void clearActiveChild();
     localStorage.removeItem("selectedChildId");
   }
 
