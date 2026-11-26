@@ -16,6 +16,7 @@
 import { useEffect, useRef, useState } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
 import { getActiveChildId } from "@/lib/activeChild";
+import { authHeaders } from "@/lib/authHeaders";
 import { getChildLevel } from "@/lib/calibrationResults";
 import {
   endConversation,
@@ -60,7 +61,7 @@ async function fetchProblems(
   try {
     const response = await fetch("/api/bud/problems", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(), // includes the login token (lib/authHeaders.ts)
       body: JSON.stringify({ levels }),
     });
     if (!response.ok) {
@@ -108,7 +109,7 @@ async function askBudAI(
   try {
     const response = await fetch("/api/bud", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: await authHeaders(), // includes the login token (lib/authHeaders.ts)
       body: JSON.stringify({ childMessage, step, problem, level }),
     });
     if (!response.ok) {

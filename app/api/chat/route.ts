@@ -1,8 +1,15 @@
 import OpenAI from "openai";
+import { getSignedInUser, notSignedInResponse } from "@/lib/serverAuth";
 import { isMessageAllowed } from "@/lib/moderation";
 import { BUD_PROMPT } from "@/lib/prompts";
 
 export async function POST(request: Request) {
+  // 0. Only a signed-in parent may make the server call the AI
+  //    (lib/serverAuth.ts). Checked first, before anything else is read.
+  if (!(await getSignedInUser(request))) {
+    return notSignedInResponse();
+  }
+
   try {
     const apiKey = process.env.OPENAI_API_KEY;
     if (!apiKey) {

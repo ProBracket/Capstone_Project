@@ -19,6 +19,7 @@
  */
 
 import OpenAI from "openai";
+import { getSignedInUser, notSignedInResponse } from "@/lib/serverAuth";
 import {
   generateProblem,
   shuffledTopics,
@@ -80,6 +81,12 @@ function roundSlots(): Slot[] {
 }
 
 export async function POST(request: Request) {
+  // 0. Only a signed-in parent may make the server call the AI
+  //    (lib/serverAuth.ts). Checked first, before anything else is read.
+  if (!(await getSignedInUser(request))) {
+    return notSignedInResponse();
+  }
+
   // 1. Read the levels. A missing or broken body just means "levels unknown".
   let body: unknown = null;
   try {
