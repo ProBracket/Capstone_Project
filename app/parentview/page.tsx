@@ -1,6 +1,8 @@
 /** Parent view (/parentview) — where parents land after logging in.
  * 1. Profile picker: "Who's learning today?" with the parent's children.
- *    Picking a child goes to the child experience at /child/welcome?childId=<id>.
+ *    Picking a child goes to the child experience at /child/welcome. A child
+ *    with a picture lock enters their pictures first. Supabase remembers
+ *    which child is playing on this device (active_child), not the URL.
  * 2. Gear button → PIN screen.
  * 3. Parent Dashboard → Parent Profile, Child Profiles and Conversation Transcripts.
  *
@@ -19,7 +21,9 @@ import type { User } from "@supabase/supabase-js";
 import { getCurrentUser, onSignInOrOut, signOut } from "@/lib/auth";
 import { getChildren, gradeLabel, type Child } from "@/lib/children";
 import { lockParentArea } from "@/lib/pin";
+import { clearActiveChild, getChildrenWithPin, selectChild } from "@/lib/childPin";
 import PinScreen from "./PinScreen";
+import ChildPinScreen from "./ChildPinScreen";
 import ChildProfiles from "./ChildProfiles";
 import ChatHistory from "./ChatHistory";
 import ParentProfile from "./ParentProfile";
@@ -33,7 +37,8 @@ type Screen =
   | "dashboard"
   | "parent-profile"
   | "child-profiles"
-  | "transcripts" | "terms" | "consent";
+  | "transcripts" | "terms" | "consent"
+  | "child-pin"; // a child's picture PIN
 
 export default function ParentView() {
   // tool to go to another page in code
@@ -45,6 +50,16 @@ export default function ParentView() {
   const [screen, setScreen] = useState<Screen>("home");
   // Who's loaded right now, so a repeat sign-in event for the same parent is ignored
   const userIdRef = useRef<string | null>(null);
+  const [lockedIds, setLockedIds] = useState<string[]>([]); // children with a picture lock
+  const [pinChild, setPinChild] = useState<Child | null>(null); // who is typing their pictures
+
+  // Which profiles show 🔒. Reloaded whenever the picker shows, since the
+  // parent may have just changed a lock in Child Profiles.
+  // Declared above the useEffect below, because that effect calls it.
+  async function refreshLocks() {
+    const { data } = await getChildrenWithPin();
+    setLockedIds(data);
+  }
 
   // Runs once when the page opens: load the user and their children,
   // then reload whenever they sign in or out
@@ -77,7 +92,10 @@ export default function ParentView() {
       }
 
       // The picker is showing, so make sure the parent area is locked
+      // and no child is marked as playing on this device
       void lockParentArea();
+      void clearActiveChild();
+      void refreshLocks();
 
       const { data: children, error: childrenError } = await getChildren();
 
@@ -107,7 +125,28 @@ export default function ParentView() {
   // Back to the picker: lock the parent area so a child can't get back in
   function goHome() {
     void lockParentArea();
+    void clearActiveChild();
+    void refreshLocks();
     setScreen("home");
+  }
+
+  // Tapping a profile on the picker: locked profiles ask for their pictures,
+  // the others are marked as playing in Supabase and go straight in
+  async function pickChild(child: Child) {
+    setError("");
+
+    if (lockedIds.includes(child.id)) {
+      setPinChild(child);
+      setScreen("child-pin");
+      return;
+    }
+
+    const { error } = await selectChild(child.id);
+    if (error) {
+      setError(error.message);
+      return;
+    }
+    router.push("/child/welcome");
   }
 
   // Gear button: lock first, then ask for the PIN.
@@ -215,9 +254,10 @@ export default function ParentView() {
 
                 <div className="flex flex-wrap justify-center gap-4">
                   {profiles.map((child) => (
-                    <Link
+                    <button
                       key={child.id}
-                      href={`/child/welcome?childId=${child.id}`}
+                      type="button"
+                      onClick={() => pickChild(child)}
                       className="flex w-32 flex-col items-center rounded-md border border-slate-200 p-4 hover:bg-slate-50"
                     >
                       {/* First letter of the name as a simple avatar */}
@@ -233,7 +273,11 @@ export default function ParentView() {
                       <p className="text-sm text-slate-500">
                         {gradeLabel(child.grade)}
                       </p>
-                    </Link>
+
+                      {lockedIds.includes(child.id) && (
+                        <span className="mt-1 text-xs text-slate-500">🔒 Locked</span>
+                      )}
+                    </button>
                   ))}
                 </div>
               </section>
@@ -241,6 +285,15 @@ export default function ParentView() {
 
             {screen === "pin" && (
               <PinScreen onUnlocked={() => setScreen("dashboard")} />
+            )}
+
+            {screen === "child-pin" && pinChild && (
+              <ChildPinScreen
+                child={pinChild}
+                onUnlocked={() => router.push("/child/welcome")}
+                onAskGrownUp={openSettings}
+                onBack={goHome}
+              />
             )}
 
             {/* Parent Dashboard */}

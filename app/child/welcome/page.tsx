@@ -2,24 +2,12 @@ import Link from "next/link";
 import ChildNavbar from "@/components/ChildNavbar";
 import CalibrationGate from "@/components/CalibrationGate";
 
-export default async function WelcomePage({
-  searchParams,
-}: {
-  searchParams: Promise<{
-    [key: string]: string | string[] | undefined;
-  }>;
-}) {
-  const { childId } = await searchParams;
-
+// Which child is playing comes from app/child/layout.tsx (asked from Supabase),
+// not from ?childId= in the URL, so it can't be swapped for a sibling's id.
+export default function WelcomePage() {
   return (
     <>
-      <CalibrationGate
-        childId={
-          typeof childId === "string"
-            ? childId
-            : null
-        }
-      />
+      <CalibrationGate />
 
       <ChildNavbar />
 
