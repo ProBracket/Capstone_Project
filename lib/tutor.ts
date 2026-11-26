@@ -53,9 +53,10 @@ export type Problem = {
 // BLOCK 2: Practice problems
 // ─────────────────────────────────────────────────────────────
 
-// PLACEHOLDERS: a few sample problems so we can build and test the
-// conversation now. Later they'll come from the team's real question bank
-// (or the AI). Only this list changes then; the rules below stay the same.
+// BACKUP PROBLEMS: Bud's questions are normally written by the AI for each
+// conversation (lib/problemGenerator.ts). This list is used instead whenever
+// the AI is unavailable or a generated problem fails the safety checks, and
+// by the homepage demo. The rules below work the same for both.
 //
 // Problem[] means "a list of problems". Each { ... } is one problem, and
 // TypeScript checks that every one fills in all 5 parts from the form above.
@@ -101,7 +102,104 @@ export const PRACTICE_PROBLEMS: Problem[] = [
     explanation:
       "The main character is called the protagonist. It's the character the story follows, like the hero of a fairy tale.",
   },
+
+  // Problems 4 to 6: a second backup for each subject, so a round of
+  // 6 questions never repeats a question even if the AI fails.
+
+  // Problem 4: math
+  {
+    subject: "math",
+    question: "A box holds 6 eggs. How many eggs are in 9 boxes?",
+    answers: ["54", "fifty-four", "fifty four"],
+    hints: [
+      "Each box has the same number of eggs, so you can multiply.",
+      "You need 9 groups of 6.",
+      "6 × 10 = 60. Take away one box of 6.",
+    ],
+    explanation:
+      "9 boxes of 6 eggs is 6 × 9 = 54. A trick: 6 × 10 = 60, then take away one box: 60 − 6 = 54.",
+  },
+
+  // Problem 5: science
+  {
+    subject: "science",
+    question: "What is the name for water falling from clouds as rain or snow?",
+    answers: ["precipitation"],
+    hints: [
+      "It's one of the steps of the water cycle.",
+      "It comes after water vapour forms clouds.",
+      'It starts with "pre", like "precip..."',
+    ],
+    explanation:
+      "It's called precipitation. Water evaporates, forms clouds, then falls back down as rain, snow, sleet or hail.",
+  },
+
+  // Problem 6: literature
+  {
+    subject: "literature",
+    question:
+      'In the sentence "The wind whispered through the trees", the wind does something only people can do. What is this literary device called?',
+    answers: ["personification"],
+    hints: [
+      "Can wind really whisper? Only people whisper.",
+      "The device gives human actions to something that isn't a person.",
+      'It has the word "person" inside it.',
+    ],
+    explanation:
+      "It's personification: giving human actions or feelings to something that isn't human, like wind that whispers.",
+  },
 ];
+
+// The subjects Bud asks about, in the order he asks them.
+export const SUBJECTS: Problem["subject"][] = ["math", "science", "literature"];
+
+// How many questions per subject in one round. 2 × 3 subjects = 6 questions,
+// asked in the order math, science, literature, math, science, literature.
+export const QUESTIONS_PER_SUBJECT = 2;
+
+// Size limits for one problem. A problem that breaks them is rejected.
+// Answers are kept short (a number or a few words) so isCorrect can check
+// them reliably inside a child's sentence.
+const MAX_QUESTION_LENGTH = 500;
+const MAX_ANSWER_LENGTH = 40;
+const MAX_ANSWERS = 6;
+const MAX_HINT_LENGTH = 300;
+const MAX_EXPLANATION_LENGTH = 600;
+
+/** Checks that a value really is a Problem: the right subject, a question,
+ * 1 to 6 short answers, exactly 3 hints and an explanation, all within the
+ * size limits above.
+ *
+ * Used for problems that come from outside this file: problems written by
+ * the AI, and problems the chat page sends to the server. Both could be
+ * missing parts or be far too long, so neither is trusted until checked.
+ *
+ * "value is Problem" tells TypeScript: if this returns true, treat the value
+ * as a Problem from here on.
+ */
+export function isValidProblem(value: unknown): value is Problem {
+  if (typeof value !== "object" || value === null) {
+    return false;
+  }
+  const p = value as Record<string, unknown>;
+
+  // Helper: is this text, not empty, and no longer than the limit?
+  const isText = (text: unknown, maxLength: number) =>
+    typeof text === "string" && text.trim() !== "" && text.length <= maxLength;
+
+  return (
+    SUBJECTS.includes(p.subject as Problem["subject"]) &&
+    isText(p.question, MAX_QUESTION_LENGTH) &&
+    Array.isArray(p.answers) &&
+    p.answers.length >= 1 &&
+    p.answers.length <= MAX_ANSWERS &&
+    p.answers.every((answer) => isText(answer, MAX_ANSWER_LENGTH)) &&
+    Array.isArray(p.hints) &&
+    p.hints.length === 3 &&
+    p.hints.every((hint) => isText(hint, MAX_HINT_LENGTH)) &&
+    isText(p.explanation, MAX_EXPLANATION_LENGTH)
+  );
+}
 
 // ─────────────────────────────────────────────────────────────
 // BLOCK 3: What Bud remembers (the "state")
@@ -119,7 +217,12 @@ export type ProblemResult = "first-try" | "with-hints" | "explained";
 // returns a NEW updated copy. The old state is never changed directly; this
 // makes bugs easier to trace and is how React expects data to change.
 export type TutorState = {
-  // Which problem we're on, as a position in PRACTICE_PROBLEMS.
+  // The problems for this conversation, in the order Bud asks them.
+  // Usually written by the AI when the chat opens; PRACTICE_PROBLEMS if not.
+  // They never change during a conversation.
+  problems: Problem[];
+
+  // Which problem we're on, as a position in the problems list above.
   // Counts from 0 like every list: 0 = first problem, 1 = second, 2 = third.
   problemIndex: number;
 
@@ -142,16 +245,20 @@ export type TutorState = {
   triedAnswers: string[];
 };
 
-// The state at the start of every new conversation:
-// first problem (0), no wrong tries yet (0), not finished (false),
-// and no results or tried answers yet (empty lists []).
-export const START_STATE: TutorState = {
-  problemIndex: 0,
-  wrongTries: 0,
-  finished: false,
-  results: [],
-  triedAnswers: [],
-};
+/** The state at the start of every new conversation: this conversation's
+ * problems, first problem (0), no wrong tries yet (0), not finished (false),
+ * and no results or tried answers yet (empty lists []).
+ */
+function getStartState(problems: Problem[]): TutorState {
+  return {
+    problems: problems,
+    problemIndex: 0,
+    wrongTries: 0,
+    finished: false,
+    results: [],
+    triedAnswers: [],
+  };
+}
 
 // ─────────────────────────────────────────────────────────────
 // BLOCK 4: Checking an answer
@@ -258,35 +365,40 @@ export type BudReply = {
 };
 
 /** Builds the text Bud uses to ask a problem.
- * Example: askProblem(0) → "Problem 1 of 3: What is 7 × 8?"
+ * Example: askProblem(problems, 0) → "Problem 1 of 3: What is 7 × 8?"
  *
  * Not exported: only used inside this file.
  */
-function askProblem(problemIndex: number): string {
+function askProblem(problems: Problem[], problemIndex: number): string {
   // Look up the problem at this position in the list.
-  const problem = PRACTICE_PROBLEMS[problemIndex];
+  const problem = problems[problemIndex];
 
   // Text inside backticks (`) can include values using ${ }.
   // problemIndex + 1 because people count from 1, while lists count from 0.
-  // PRACTICE_PROBLEMS.length is how many problems are in the list (3).
-  return `Problem ${problemIndex + 1} of ${PRACTICE_PROBLEMS.length}: ${problem.question}`;
+  // problems.length is how many problems this conversation has.
+  return `Problem ${problemIndex + 1} of ${problems.length}: ${problem.question}`;
 }
 
 /** Bud's first message, shown when a conversation starts
  * (before the child has typed anything).
+ *
+ * problems = the problems for this conversation. If none are given (the
+ * homepage demo), the first 3 backup PRACTICE_PROBLEMS are used.
  */
-export function getOpeningReply(): BudReply {
+export function getOpeningReply(
+  problems: Problem[] = PRACTICE_PROBLEMS.slice(0, 3)
+): BudReply {
   return {
     // "\n\n" means "start a new line, with a blank line in between".
     message:
       `Hi! I'm ${TUTOR_NAME} 🌱 Let's think together. ` +
       `Try each problem yourself first, and I'll give you hints if you need them.\n\n` +
-      askProblem(0),
+      askProblem(problems, 0),
     // A brand-new conversation always starts from the starting state.
-    state: START_STATE,
+    state: getStartState(problems),
     // The opening is always the rule-based text; it is not sent to the AI.
     step: { kind: "opening", problemIndex: 0, hintNumber: 0 },
-    nextLine: askProblem(0),
+    nextLine: askProblem(problems, 0),
   };
 }
 
@@ -516,11 +628,12 @@ function moveToNextProblem(
 
   // No problems left? (With 3 problems, positions are 0, 1, 2, so
   // nextIndex 3 means we've run out.)
-  if (nextIndex >= PRACTICE_PROBLEMS.length) {
+  if (nextIndex >= state.problems.length) {
     const finishedLine = "🌟 You finished all the problems! Great thinking today.";
     return {
       message: firstLine + "\n\n" + finishedLine,
       state: {
+        problems: state.problems, // same problems for the whole conversation
         problemIndex: state.problemIndex, // stay on the last problem (there is no next one)
         wrongTries: 0,
         finished: true, // the conversation is over
@@ -534,8 +647,9 @@ function moveToNextProblem(
 
   // Otherwise, ask the next problem with a fresh count of wrong tries.
   return {
-    message: firstLine + "\n\n" + askProblem(nextIndex),
+    message: firstLine + "\n\n" + askProblem(state.problems, nextIndex),
     state: {
+      problems: state.problems,
       problemIndex: nextIndex, // move to the next problem
       wrongTries: 0, // new problem, so wrong tries start again from 0
       finished: false,
@@ -543,7 +657,7 @@ function moveToNextProblem(
       triedAnswers: [], // new problem, so no answers tried yet
     },
     step: step,
-    nextLine: askProblem(nextIndex),
+    nextLine: askProblem(state.problems, nextIndex),
   };
 }
 
@@ -573,7 +687,11 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   }
 
   // Look up the problem the child is currently working on.
-  const problem = PRACTICE_PROBLEMS[state.problemIndex];
+  const problem = state.problems[state.problemIndex];
+
+  // The current problem, as Bud asks it. Repeated after replies that don't
+  // move on (checks 2, 3 and 4 below).
+  const currentQuestion = askProblem(state.problems, state.problemIndex);
 
   // Check 1: correct answer. This is checked FIRST, so a message like
   // "thanks, it's 56" counts as correct even though it also has "thanks".
@@ -599,10 +717,10 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   // because asking is not an attempt.
   if (isAskingForAnswer(childMessage)) {
     return {
-      message: ENCOURAGE_TO_TRY + "\n\n" + askProblem(state.problemIndex),
+      message: ENCOURAGE_TO_TRY + "\n\n" + currentQuestion,
       state: state,
       step: { kind: "encourage", problemIndex: state.problemIndex, hintNumber: 0 },
-      nextLine: askProblem(state.problemIndex),
+      nextLine: currentQuestion,
     };
   }
 
@@ -610,10 +728,10 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
   // and don't count it as a try.
   if (isChitChat(childMessage)) {
     return {
-      message: CHIT_CHAT_REPLY + "\n\n" + askProblem(state.problemIndex),
+      message: CHIT_CHAT_REPLY + "\n\n" + currentQuestion,
       state: state,
       step: { kind: "chit-chat", problemIndex: state.problemIndex, hintNumber: 0 },
-      nextLine: askProblem(state.problemIndex),
+      nextLine: currentQuestion,
     };
   }
 
@@ -628,10 +746,10 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     }
 
     return {
-      message: tryAgainLine + "\n\n" + askProblem(state.problemIndex),
+      message: tryAgainLine + "\n\n" + currentQuestion,
       state: state,
       step: { kind: "try-again", problemIndex: state.problemIndex, hintNumber: 0 },
-      nextLine: askProblem(state.problemIndex),
+      nextLine: currentQuestion,
     };
   }
 
@@ -656,6 +774,7 @@ export function getBudReply(state: TutorState, childMessage: string): BudReply {
     return {
       message: "Not quite, but good try! 💡 Hint: " + hint,
       state: {
+        problems: state.problems,
         problemIndex: state.problemIndex, // same problem: the child tries again
         wrongTries: newWrongTries, // remember how many wrong tries so far
         finished: false,
