@@ -265,7 +265,12 @@ function getStartState(problems: Problem[]): TutorState {
 // ─────────────────────────────────────────────────────────────
 
 /** Tidies up text so two answers can be compared fairly.
- * Example: "  Fifty-Six! " → "fifty-six"
+ * Examples: "  Fifty-Six! " → "fifty-six"
+ *           "It's 3 / 4."   → "its 3/4"
+ *           "8,795"         → "8795"
+ *
+ * Fractions and decimals keep their "/" and "." (3/4, 0.75), so "3/4" is
+ * never confused with "34". All other punctuation is removed.
  *
  * Not exported: only isCorrect (below) needs it.
  */
@@ -274,13 +279,21 @@ function cleanUp(text: string): string {
     text
       // 1. Make everything lowercase: "Fifty-Six!" → "fifty-six!"
       .toLowerCase()
-      // 2. Remove punctuation. The pattern means "any character that is NOT
-      //    a letter (a-z), a number (0-9), a space (\s) or a hyphen (-)".
-      //    Each one found is replaced with "" (nothing): "fifty-six!" → "fifty-six"
-      .replace(/[^a-z0-9\s-]/g, "")
-      // 3. Turn any run of spaces into a single space: "fifty   six" → "fifty six"
+      // 2. Join fractions written with spaces: "3 / 4" → "3/4".
+      //    (\d) = a digit; $1 and $2 put the two digits back.
+      .replace(/(\d)\s*\/\s*(\d)/g, "$1/$2")
+      // 3. Remove punctuation. The pattern means "any character that is NOT
+      //    a letter, a number, a space, a hyphen, a dot or a slash".
+      //    "fifty-six!" → "fifty-six", "8,795" → "8795"
+      .replace(/[^a-z0-9\s\-./]/g, "")
+      // 4. Remove dots and slashes that are NOT between two digits, so a
+      //    full stop or a stray slash disappears but 3/4 and 0.75 stay.
+      //    (?<!\d) = "not after a digit", (?!\d) = "not before a digit".
+      //    "56." → "56", "and/or" → "andor", "0.75" stays "0.75"
+      .replace(/(?<!\d)[./]|[./](?!\d)/g, "")
+      // 5. Turn any run of spaces into a single space: "fifty   six" → "fifty six"
       .replace(/\s+/g, " ")
-      // 4. Remove spaces at the start and end: "  fifty-six " → "fifty-six"
+      // 6. Remove spaces at the start and end: "  fifty-six " → "fifty-six"
       .trim()
   );
 }
