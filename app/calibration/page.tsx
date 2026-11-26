@@ -29,6 +29,8 @@ import literatureQuestions from "@/lib/calibration/literature.json";
 import type { Question } from "@/lib/calibration";
 
 import { supabase } from "@/lib/supabase";
+// line icons (same icon set as the rest of the app)
+import { ArrowRight, BookOpen, Calculator, FlaskConical, Sprout } from "lucide-react";
 
 /** Gets one list of questions from the JSON files, in their original order.
  * phase "primary" = the main questions, "secondChance" = the short retry.
@@ -299,242 +301,262 @@ const [completedSubjects, setCompletedSubjects] =
     finishGrade(outcome === "advance");
   }
 
+    // ----- WHAT THE CHILD SEES -----
+  // Same chunky style as the child pages. Only the look changed:
+  // every button still calls the same function as before.
   return (
-    <div className="min-h-screen bg-background text-foreground [&_h1]:text-primary [&_h2]:text-primary [&_button]:bg-primary [&_button]:text-on-primary [&_button:disabled]:bg-surface-muted [&_button:disabled]:text-muted [&_input]:accent-primary [&_input[type=text]]:bg-surface [&_a]:text-primary">
-      <h1>Calibration</h1>
+    <main className="min-h-screen bg-background px-6 py-10 text-foreground">
+      <div className="mx-auto max-w-3xl">
 
-      <div
-        style={{
-          marginBottom: "20px",
-        }}
-      >
-        <button
-          onClick={() =>
-            changeSubject("math")
-          }
-        >
-          Math
-        </button>
-
-        <button
-          onClick={() =>
-            changeSubject(
-              "science"
-            )
-          }
-          style={{
-            marginLeft: "10px",
-          }}
-        >
-          Science
-        </button>
-
-        <button
-          onClick={() =>
-            changeSubject(
-              "literature"
-            )
-          }
-          style={{
-            marginLeft: "10px",
-          }}
-        >
-          Literature
-        </button>
-      </div>
-
-      {/* Before a subject is picked, only ask the child to pick one. */}
-      {subject === null && (
-        <p>
-          {childLoading
-            ? "Loading your profile…"
-            : `Choose a subject to start. Each subject starts at ${gradeLevelLabel(firstGrade)}.`}
-        </p>
-      )}
-
-      {subject !== null && (
-        <>
-          <h2
-            style={{
-              textTransform:
-                "capitalize",
-            }}
-          >
-            {subject} Calibration
-          </h2>
-
-          <p>
-            Current Grade: Grade{" "}
-            {currentGrade}
-          </p>
-          <p>
-            Highest Passed Grade: {ladder.highestPassed ?? "none yet"}
-          </p>
-        </>
-      )}
-
-      {/* The questions are hidden once this subject's level is found. */}
-      {!finished && question && (
-        <>
-          {phase === "secondChance" && (
-            <p>
-              <strong>Second chance:</strong> a few more questions for this grade.
+        {/* ----- TEAL BANNER ----- */}
+        <section className="flex items-center gap-5 rounded-3xl border-b-8 border-teal-900 bg-primary px-8 py-6 text-white">
+          <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-white text-primary">
+            <Sprout aria-hidden="true" size={30} strokeWidth={2.25} />
+          </span>
+          <div>
+            <h1 className="text-3xl font-extrabold">Let&apos;s find your level!</h1>
+            <p className="mt-1 font-semibold text-teal-100">
+              Answer a few questions in each subject. No pressure, just do your best.
             </p>
-          )}
+          </div>
+        </section>
 
-          <p>
-            Question{" "}
-            {currentQuestion + 1} of{" "}
-            {questions.length}
-          </p>
-
-          <h2
-            style={{
-              marginBottom: "20px",
-            }}
+        {/* ----- SUBJECT BUTTONS (same colours as the home page tiles) ----- */}
+        {/* The picked subject stays bright, the others fade a little.
+            A small "Done" tag shows once a subject's level is found. */}
+        <div className="mt-6 grid grid-cols-3 gap-4">
+          <button
+            type="button"
+            onClick={() => changeSubject("math")}
+            className={`flex items-center gap-3 rounded-2xl border-b-[6px] border-amber-500 bg-amber-300 p-4 text-lg font-extrabold text-amber-950 transition hover:-translate-y-1 ${
+              subject !== null && subject !== "math" ? "opacity-60" : ""
+            }`}
           >
-            {question.question}
-          </h2>
+            <Calculator aria-hidden="true" size={26} strokeWidth={2.25} />
+            Math
+            {results.math !== null && (
+              <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs">Done</span>
+            )}
+          </button>
 
-          {question.type ===
-          "multiple_choice" ? (
-            <div>
-              {Object.entries(
-                question.choices ?? {}
-              ).map(
-                ([key, value]) => (
+          <button
+            type="button"
+            onClick={() => changeSubject("science")}
+            className={`flex items-center gap-3 rounded-2xl border-b-[6px] border-sky-500 bg-sky-300 p-4 text-lg font-extrabold text-sky-950 transition hover:-translate-y-1 ${
+              subject !== null && subject !== "science" ? "opacity-60" : ""
+            }`}
+          >
+            <FlaskConical aria-hidden="true" size={26} strokeWidth={2.25} />
+            Science
+            {results.science !== null && (
+              <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs">Done</span>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => changeSubject("literature")}
+            className={`flex items-center gap-3 rounded-2xl border-b-[6px] border-pink-500 bg-pink-300 p-4 text-lg font-extrabold text-pink-950 transition hover:-translate-y-1 ${
+              subject !== null && subject !== "literature" ? "opacity-60" : ""
+            }`}
+          >
+            <BookOpen aria-hidden="true" size={26} strokeWidth={2.25} />
+            Literature
+            {results.literature !== null && (
+              <span className="ml-auto rounded-full bg-white px-2 py-0.5 text-xs">Done</span>
+            )}
+          </button>
+        </div>
+
+        {/* Before a subject is picked, only ask the child to pick one. */}
+        {subject === null && (
+          <section className="mt-6 rounded-3xl border-2 border-b-8 border-border bg-surface p-8">
+            <h2 className="text-2xl font-extrabold">Pick a subject to start</h2>
+            <p className="mt-2 text-lg text-muted">
+              {childLoading
+                ? "Loading your profile…"
+                : `Each subject starts at ${gradeLevelLabel(firstGrade)}. You can do them in any order.`}
+            </p>
+          </section>
+        )}
+
+        {/* ----- QUESTION CARD ----- */}
+        {/* The questions are hidden once this subject's level is found. */}
+        {!finished && question && (
+          <section className="mt-6 rounded-3xl border-2 border-b-8 border-border bg-surface p-8">
+            {/* grade + question number, and the subject on the right */}
+            <div className="flex flex-wrap justify-between gap-2 font-bold text-muted">
+              <span>
+                Grade {currentGrade} · Question {currentQuestion + 1} of {questions.length}
+              </span>
+              <span className="capitalize">{subject}</span>
+            </div>
+
+            {/* progress through this set of questions */}
+            <div
+              role="progressbar"
+              aria-label="Questions answered"
+              aria-valuenow={currentQuestion + 1}
+              aria-valuemin={1}
+              aria-valuemax={questions.length}
+              className="mt-3 h-3 rounded-full bg-surface-muted"
+            >
+              <div
+                className="h-3 rounded-full bg-amber-400"
+                style={{ width: `${((currentQuestion + 1) / questions.length) * 100}%` }}
+              />
+            </div>
+
+            <p className="mt-3 text-sm text-muted">
+              Highest passed grade: {ladder.highestPassed ?? "none yet"}
+            </p>
+
+            {phase === "secondChance" && (
+              <p className="mt-4 rounded-2xl bg-amber-100 p-3 text-amber-900">
+                <strong>Second chance:</strong> a few more questions for this grade.
+              </p>
+            )}
+
+            {/* the question */}
+            <h2 className="mt-6 text-2xl font-extrabold">{question.question}</h2>
+
+            {question.type === "multiple_choice" ? (
+              // big answer tiles. Each is still a real radio button
+              // (hidden with sr-only), so keyboards and screen readers work.
+              <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                {Object.entries(question.choices ?? {}).map(([key, value]) => (
                   <label
                     key={key}
-                    style={{
-                      display: "block",
-                      marginBottom:
-                        "10px",
-                    }}
+                    className={`flex cursor-pointer items-center gap-3 rounded-2xl border-2 border-b-[5px] p-4 text-lg font-bold transition focus-within:ring-4 focus-within:ring-primary/30 ${
+                      studentAnswer === key
+                        ? "border-primary bg-primary-soft"
+                        : "border-border bg-surface hover:bg-surface-muted"
+                    }`}
                   >
                     <input
                       type="radio"
                       name={`question-${question.number}`}
                       value={key}
-                      checked={
-                        studentAnswer ===
-                        key
-                      }
-                      onChange={() =>
-                        setStudentAnswer(
-                          key
-                        )
-                      }
-                      style={{
-                        marginRight:
-                          "8px",
-                      }}
+                      checked={studentAnswer === key}
+                      onChange={() => setStudentAnswer(key)}
+                      className="sr-only"
                     />
-                    {key.toUpperCase()}){" "}
+                    {/* the letter box: turns teal when picked */}
+                    <span
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border-2 text-sm font-extrabold ${
+                        studentAnswer === key
+                          ? "border-primary bg-primary text-on-primary"
+                          : "border-border"
+                      }`}
+                    >
+                      {key.toUpperCase()}
+                    </span>
                     {value}
                   </label>
-                )
-              )}
+                ))}
+              </div>
+            ) : (
+              // typed answer
+              <input
+                type="text"
+                value={studentAnswer}
+                onChange={(e) => setStudentAnswer(e.target.value)}
+                placeholder="Enter your answer"
+                aria-label="Your answer"
+                className="mt-5 w-full rounded-2xl border-2 border-border bg-surface p-4 text-lg focus:border-primary focus:outline-none"
+              />
+            )}
+
+            {/* chunky teal button: locked until an answer is picked */}
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={nextQuestion}
+                disabled={!studentAnswer.trim()}
+                className="inline-flex items-center gap-2 rounded-2xl border-b-4 border-teal-900 bg-primary px-7 py-3 text-lg font-extrabold text-on-primary transition hover:bg-primary-hover active:translate-y-1 active:border-b-0 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                Next question
+                <ArrowRight aria-hidden="true" size={20} strokeWidth={2.5} />
+              </button>
             </div>
-          ) : (
-            <input
-              type="text"
-              value={studentAnswer}
-              onChange={(e) =>
-                setStudentAnswer(
-                  e.target.value
-                )
-              }
-              placeholder="Enter your answer"
-              style={{
-                width: "500px",
-                height: "40px",
-                fontSize: "18px",
-                padding: "8px",
-              }}
-            />
-          )}
+          </section>
+        )}
 
-          <br />
+        {/* ----- RESULT CARD ----- */}
+        {/* The result for this subject, shown once its level is found. */}
+        {finished && score && (
+          <section className="mt-6 rounded-3xl border-2 border-b-8 border-border bg-surface p-8 text-center">
+            <p className="font-bold capitalize text-muted">{subject} result</p>
+            <p className="text-6xl font-extrabold text-primary">
+              {score.percentage.toFixed(1)}%
+            </p>
+            <span className="mt-3 inline-block rounded-full bg-amber-100 px-5 py-2 text-lg font-extrabold text-amber-900">
+              Your level:{" "}
+              {gradeLevelLabel(
+                results[subject as keyof typeof results] ?? LOWEST_GRADE
+              )}
+            </span>
 
-          <button
-            onClick={nextQuestion}
-            style={{
-              marginTop: "20px",
-              padding:
-                "10px 20px",
-              fontSize: "16px",
-            }}
-            disabled={
-              !studentAnswer.trim()
-            }
-          >
-            Next Question
-          </button>
-        </>
-      )}
+            <div className="mt-6 flex justify-center gap-10 font-bold text-muted">
+              <p>
+                <span className="block text-2xl text-foreground">{score.correct}</span>
+                correct
+              </p>
+              <p>
+                <span className="block text-2xl text-foreground">{score.total}</span>
+                questions
+              </p>
+              <p>
+                <span className="block text-2xl capitalize text-foreground">
+                  {determineResult(score.percentage)}
+                </span>
+                outcome
+              </p>
+            </div>
+          </section>
+        )}
 
-      {/* The result for this subject, shown once its level is found. */}
-      {finished && score && (
-        <div>
-          <h2>Results</h2>
+        {/* ----- LEVELS SO FAR ----- */}
+        {completedSubjects.length > 0 && (
+          <section className="mt-6 rounded-3xl border-2 border-b-8 border-border bg-surface p-8">
+            <h2 className="text-2xl font-extrabold">Your levels so far</h2>
 
-          <p>
-            Correct: {score.correct}
-          </p>
+            {/* null = this subject hasn't been done yet, so show "-". */}
+            <div className="mt-4 grid grid-cols-3 gap-3 text-center font-extrabold">
+              <p className="rounded-2xl border-b-[5px] border-amber-500 bg-amber-300 p-3 text-amber-950">
+                Math
+                <span className="block font-semibold">
+                  {results.math === null ? "-" : gradeLevelLabel(results.math)}
+                </span>
+              </p>
+              <p className="rounded-2xl border-b-[5px] border-sky-500 bg-sky-300 p-3 text-sky-950">
+                Science
+                <span className="block font-semibold">
+                  {results.science === null ? "-" : gradeLevelLabel(results.science)}
+                </span>
+              </p>
+              <p className="rounded-2xl border-b-[5px] border-pink-500 bg-pink-300 p-3 text-pink-950">
+                Literature
+                <span className="block font-semibold">
+                  {results.literature === null ? "-" : gradeLevelLabel(results.literature)}
+                </span>
+              </p>
+            </div>
 
-          <p>
-            Total: {score.total}
-          </p>
-
-          <p>
-            Percentage:{" "}
-            {score.percentage.toFixed(
-              1
+            {/* All subjects done: the child can go on to the rest of the app. */}
+            {completedSubjects.length === CALIBRATION_SUBJECTS.length && childId !== null && (
+              <Link
+                href={`/child/welcome?childId=${childId}`}
+                className="mt-6 inline-flex items-center gap-2 rounded-2xl border-b-4 border-teal-900 bg-primary px-7 py-3 text-lg font-extrabold text-on-primary transition hover:bg-primary-hover active:translate-y-1 active:border-b-0"
+              >
+                All done! Continue to ThinkFirst
+                <ArrowRight aria-hidden="true" size={20} strokeWidth={2.5} />
+              </Link>
             )}
-            %
-          </p>
+          </section>
+        )}
 
-          <p>
-            Outcome:{" "}
-            {determineResult(
-              score.percentage
-            )}
-          </p>
-
-          <p>
-            Final Grade:{" "}
-            {gradeLevelLabel(
-              results[subject as keyof typeof results] ?? LOWEST_GRADE
-            )}
-          </p>
-        </div>
-      )}
-      {completedSubjects.length > 0 && (
-  <>
-    <h2>Completed Subject Levels</h2>
-
-    {/* null = this subject hasn't been done yet, so show "-". */}
-    <p>
-      Math: {results.math === null ? "-" : gradeLevelLabel(results.math)}
-    </p>
-
-    <p>
-      Science: {results.science === null ? "-" : gradeLevelLabel(results.science)}
-    </p>
-
-    <p>
-      Literature: {results.literature === null ? "-" : gradeLevelLabel(results.literature)}
-    </p>
-
-    {/* All subjects done: the child can go on to the rest of the app. */}
-    {completedSubjects.length === CALIBRATION_SUBJECTS.length && childId !== null && (
-      <Link href={`/child/welcome?childId=${childId}`}>
-        All done! Continue to ThinkFirst →
-      </Link>
-    )}
-  </>
-)}
-    </div>
+      </div>
+    </main>
   );
 }
-
