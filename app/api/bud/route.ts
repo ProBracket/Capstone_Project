@@ -5,6 +5,8 @@
  * (Laura's /api/chat is a separate, free-form chat and is not changed.)
  *
  * Safety rules built into this file:
+ * 0. Login required: only a signed-in parent can make this route call the AI
+ *    (lib/serverAuth.ts), so strangers can't spend the OpenAI credit.
  * 1. Minimum information: the AI only gets what it needs for this one reply
  *    (the question, the child's message, and the hint or explanation for this
  *    step). No database access, no names, no chat history.
@@ -31,6 +33,7 @@
  */
 
 import OpenAI from "openai";
+import { getSignedInUser, notSignedInResponse } from "@/lib/serverAuth";
 import { isMessageAllowed } from "@/lib/moderation";
 import { BUD_PROMPT } from "@/lib/prompts";
 import {
@@ -320,6 +323,12 @@ function isSafeReply(reply: string, step: BudStep, problem: Problem): boolean {
 // ─────────────────────────────────────────────────────────────
 
 export async function POST(request: Request) {
+  // 0. Only a signed-in parent may make the server call the AI
+  //    (lib/serverAuth.ts). Checked first, before anything else is read.
+  if (!(await getSignedInUser(request))) {
+    return notSignedInResponse();
+  }
+
   // 1. Read and check what the page sent. request.json() throws if the body
   //    isn't valid JSON, so treat that the same as a bad request.
   let body: unknown = null;

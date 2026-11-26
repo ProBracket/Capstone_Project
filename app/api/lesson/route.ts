@@ -14,6 +14,7 @@
  */
 
 import OpenAI from "openai";
+import { getSignedInUser, notSignedInResponse } from "@/lib/serverAuth";
 import { LESSON_FRAMEWORK } from "@/lib/learning_framework";
 import { generateLesson } from "@/lib/lessonGenerator";
 import type { Topic } from "@/lib/problemGenerator";
@@ -54,6 +55,12 @@ function readRequest(
 }
 
 export async function POST(request: Request) {
+  // 0. Only a signed-in parent may make the server call the AI
+  //    (lib/serverAuth.ts). Checked first, before anything else is read.
+  if (!(await getSignedInUser(request))) {
+    return notSignedInResponse();
+  }
+
   // 1. Read and check the request.
   let body: unknown = null;
   try {

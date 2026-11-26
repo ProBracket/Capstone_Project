@@ -13,6 +13,7 @@
 import { useEffect, useState } from "react";
 import ChildNavbar from "@/components/ChildNavbar";
 import LessonPractice from "@/components/LessonPractice";
+import { authHeaders } from "@/lib/authHeaders";
 import { getActiveChildId } from "@/lib/activeChild";
 import type { Lesson } from "@/lib/lessonGenerator";
 import { getTopicsForSubject } from "@/lib/lessons";
@@ -86,7 +87,7 @@ export default function LessonView({ subject, title, emoji, colours }: LessonVie
     try {
       const response = await fetch("/api/lesson", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: await authHeaders(), // includes the login token (lib/authHeaders.ts)
         // Only the topic's NAME is sent; the server looks the topic up itself.
         body: JSON.stringify({ subject, grade, topicName: topic.topic }),
       });

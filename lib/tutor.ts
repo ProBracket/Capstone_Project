@@ -265,7 +265,12 @@ function getStartState(problems: Problem[]): TutorState {
 // ─────────────────────────────────────────────────────────────
 
 /** Tidies up text so two answers can be compared fairly.
- * Example: "  Fifty-Six! " → "fifty-six"
+ * Examples: "  Fifty-Six! " → "fifty-six"
+ *           "It's 3 / 4."   → "its 3/4"
+ *           "8,795"         → "8795"
+ *
+ * Fractions and decimals keep their "/" and "." (3/4, 0.75), so "3/4" is
+ * never confused with "34". All other punctuation is removed.
  *
  * Not exported: only isCorrect (below) needs it.
  */
@@ -274,15 +279,127 @@ function cleanUp(text: string): string {
     text
       // 1. Make everything lowercase: "Fifty-Six!" → "fifty-six!"
       .toLowerCase()
-      // 2. Remove punctuation. The pattern means "any character that is NOT
-      //    a letter (a-z), a number (0-9), a space (\s) or a hyphen (-)".
-      //    Each one found is replaced with "" (nothing): "fifty-six!" → "fifty-six"
-      .replace(/[^a-z0-9\s-]/g, "")
-      // 3. Turn any run of spaces into a single space: "fifty   six" → "fifty six"
+      // 2. Join fractions written with spaces: "3 / 4" → "3/4".
+      //    (\d) = a digit; $1 and $2 put the two digits back.
+      .replace(/(\d)\s*\/\s*(\d)/g, "$1/$2")
+      // 3. Remove punctuation. The pattern means "any character that is NOT
+      //    a letter, a number, a space, a hyphen, a dot or a slash".
+      //    "fifty-six!" → "fifty-six", "8,795" → "8795"
+      .replace(/[^a-z0-9\s\-./]/g, "")
+      // 4. Remove dots and slashes that are NOT between two digits, so a
+      //    full stop or a stray slash disappears but 3/4 and 0.75 stay.
+      //    (?<!\d) = "not after a digit", (?!\d) = "not before a digit".
+      //    "56." → "56", "and/or" → "andor", "0.75" stays "0.75"
+      .replace(/(?<!\d)[./]|[./](?!\d)/g, "")
+      // 5. Turn any run of spaces into a single space: "fifty   six" → "fifty six"
       .replace(/\s+/g, " ")
-      // 4. Remove spaces at the start and end: "  fifty-six " → "fifty-six"
+      // 6. Remove spaces at the start and end: "  fifty-six " → "fifty-six"
       .trim()
   );
+}
+
+// Number words up to twelve, for writing fractions in words ("three fourths").
+const SMALL_NUMBERS = [
+  "zero", "one", "two", "three", "four", "five", "six",
+  "seven", "eight", "nine", "ten", "eleven", "twelve",
+];
+
+// The names of fraction parts, as [one, many]: 1/4 = "one fourth",
+// 3/4 = "three fourths". 4 has two names, so 1/4 is also "a quarter".
+const FRACTION_NAMES: Record<number, [string, string][]> = {
+  2: [["half", "halves"]],
+  3: [["third", "thirds"]],
+  4: [["fourth", "fourths"], ["quarter", "quarters"]],
+  5: [["fifth", "fifths"]],
+  6: [["sixth", "sixths"]],
+  7: [["seventh", "sevenths"]],
+  8: [["eighth", "eighths"]],
+  9: [["ninth", "ninths"]],
+  10: [["tenth", "tenths"]],
+  12: [["twelfth", "twelfths"]],
+  100: [["hundredth", "hundredths"]],
+};
+
+// Every fraction-part word, e.g. "half", "quarters", "eighth". Used by
+// isNonsense, so "a quarter" counts as a real try on a number question.
+const FRACTION_WORDS = Object.values(FRACTION_NAMES).flat(2);
+
+/** The accepted answers, plus the word forms of any fraction among them.
+ * Example: ["1/4"] → ["1/4", "one fourth", "one-fourth", "a fourth",
+ *                    "one quarter", "one-quarter", "a quarter"]
+ * So the child can write a fraction in words even if the problem's list
+ * forgot that spelling.
+ */
+function withFractionWords(answers: string[]): string[] {
+  const all = [...answers];
+  for (const answer of answers) {
+    // Only plain fractions like "3/4": (\d+) = the top number, (\d+) = the bottom.
+    const fraction = cleanUp(answer).match(/^(\d+)\/(\d+)$/);
+    if (!fraction) {
+      continue;
+    }
+    const top = Number(fraction[1]);
+    const bottom = Number(fraction[2]);
+    const names = FRACTION_NAMES[bottom];
+    if (!names || top < 1 || top > 12) {
+      continue; // no word form we know, e.g. 3/17
+    }
+    for (const [one, many] of names) {
+      const name = top === 1 ? one : many; // "one fourth" but "three fourths"
+      all.push(`${SMALL_NUMBERS[top]} ${name}`, `${SMALL_NUMBERS[top]}-${name}`);
+      if (top === 1) {
+        all.push(`a ${one}`); // "a fourth", "a quarter", "a half"
+      }
+    }
+    if (top === 1 && bottom === 2) {
+      all.push("half");
+    }
+  }
+  return all;
+}
+
+/** The value of a number written as "3/4", "0.75" or "56", or null if the
+ * text isn't one of those (or is a fraction with 0 at the bottom).
+ */
+function numberValue(text: string): number | null {
+  const fraction = text.match(/^(\d+)\/(\d+)$/);
+  if (fraction) {
+    const bottom = Number(fraction[2]);
+    return bottom === 0 ? null : Number(fraction[1]) / bottom;
+  }
+  if (/^\d+(\.\d+)?$/.test(text)) {
+    return Number(text);
+  }
+  return null;
+}
+
+/** True if the child's message contains a fraction or decimal with the SAME
+ * VALUE as an accepted fraction or decimal answer.
+ * Example: answers ["1/4"], child "is it 2/8?" → true (2/8 = 1/4 = 0.25).
+ * Whole-number answers are left to the normal check in isCorrect.
+ *
+ * cleanedChild = the child's message after cleanUp.
+ */
+function sameNumber(answers: string[], cleanedChild: string): boolean {
+  // The values of the accepted answers that are fractions or decimals.
+  const targets = answers
+    .map((answer) => cleanUp(answer))
+    .filter((answer) => answer.includes("/") || answer.includes("."))
+    .map(numberValue)
+    .filter((value): value is number => value !== null);
+  if (targets.length === 0) {
+    return false;
+  }
+
+  // Every number in the child's message: fractions first, then decimals or
+  // whole numbers. "i think 2/8 or 0.3" → ["2/8", "0.3"]
+  const childNumbers = cleanedChild.match(/\d+\/\d+|\d+(\.\d+)?/g) ?? [];
+  return childNumbers.some((text) => {
+    const value = numberValue(text);
+    // Compare with a tiny tolerance, because computers store 1/3 and
+    // 0.333... slightly differently.
+    return value !== null && targets.some((target) => Math.abs(target - value) < 1e-9);
+  });
 }
 
 /** Checks whether the child's answer is correct for this problem.
@@ -297,8 +414,15 @@ export function isCorrect(problem: Problem, childAnswer: string): boolean {
   // The extra spaces let us search for whole words (see below).
   const paddedAnswer = " " + cleanUp(childAnswer) + " ";
 
-  // Go through the accepted answers one at a time, e.g. "56", then "fifty-six"...
-  for (const accepted of problem.answers) {
+  // Fractions and decimals: a number of EQUAL value also counts, so for
+  // 1/4 the child may write 1/4, 2/8 or 0.25 (see sameNumber below).
+  if (sameNumber(problem.answers, cleanUp(childAnswer))) {
+    return true;
+  }
+
+  // Go through the accepted answers one at a time, e.g. "56", then "fifty-six",
+  // plus the word forms of any fraction answer ("one fourth", "a quarter"...).
+  for (const accepted of withFractionWords(problem.answers)) {
     // Clean up the accepted answer too, and add spaces around it: " 56 "
     const paddedAccepted = " " + cleanUp(accepted) + " ";
 
@@ -576,7 +700,10 @@ function isNonsense(problem: Problem, childMessage: string): boolean {
   // written with digits ("54") or in words ("fifty").
   if (expectsNumber(problem)) {
     const hasDigit = /\d/.test(cleaned);
-    const hasNumberWord = words.some((word) => NUMBER_WORDS.includes(word));
+    // Fraction words count too, so "a quarter" or "half" is a real try.
+    const hasNumberWord = words.some(
+      (word) => NUMBER_WORDS.includes(word) || FRACTION_WORDS.includes(word)
+    );
     return !hasDigit && !hasNumberWord;
   }
 

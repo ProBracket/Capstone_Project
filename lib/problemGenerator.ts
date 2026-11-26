@@ -54,9 +54,9 @@ export type Topic = {
 // checks. These question types have one clear, short answer instead.
 const SUBJECT_TIPS: Record<Problem["subject"], string> = {
   math:
-    "- Word problems and number patterns are good, as long as the answer is one whole number.\n" +
-    "- If the topic is about decimals or money, still make the answer a whole number " +
-    '(for example ask "how many cents" or "how many tenths"). Double-check your arithmetic.\n',
+    "- Word problems and number patterns are good. The question must practise the topic: " +
+    "a fractions topic needs a fraction answer, a decimals topic a decimal answer.\n" +
+    "- Double-check your arithmetic.\n",
   science:
     "- Ask about a science fact, process, part or vocabulary word that has one clear name.\n",
   // Replaced by a randomly chosen type from LITERATURE_TYPES (see literatureTip).
@@ -130,20 +130,15 @@ export function shuffledTopics(subject: Problem["subject"], grade: number): Topi
 // ─────────────────────────────────────────────────────────────
 
 /** Is this accepted answer one that isCorrect can check reliably?
- *   - at most 3 words: "56", "photosynthesis", "the protagonist"
- *     (NOT "six thousand two hundred seventy-eight")
- *   - no "/" or "." between digits: isCorrect removes punctuation, so "3/4"
- *     would become "34" and "7.5" would become "75", and a child typing
- *     "34" would be marked correct
+ * It must be at most 3 words: "56", "3/4", "photosynthesis", "the protagonist"
+ * (NOT "six thousand two hundred seventy-eight").
+ * Fractions and decimals are fine: isCorrect keeps "3/4" and "0.75" as they are.
  */
 function isCheckableAnswer(answer: unknown): boolean {
   if (typeof answer !== "string") {
     return false;
   }
-  const isShort = answer.trim().split(/\s+/).length <= 3;
-  // \d[/.]\d = a digit, then "/" or ".", then another digit (3/4, 7.5).
-  const hasFractionOrDecimal = /\d[/.]\d/.test(answer);
-  return isShort && !hasFractionOrDecimal;
+  return answer.trim().split(/\s+/).length <= 3;
 }
 
 /** Drops accepted answers that can't be checked reliably (see above), so one
@@ -160,7 +155,8 @@ function keepCheckableAnswers(problem: Problem): Problem {
 /** Returns true only if the problem is safe and usable:
  *   - it has the right shape and sizes (isValidProblem in lib/tutor.ts),
  *     including at least 1 answer left after keepCheckableAnswers
- *   - a math problem's first answer is a plain whole number, like "56" or "1,200"
+ *   - a math problem's first answer is a plain number: a whole number ("56",
+ *     "1,200"), a decimal ("2.5") or a fraction ("3/4")
  *   - no text contains a blocked word (lib/moderation.ts)
  *   - the question and the hints do NOT already give away the answer
  *   - the explanation DOES contain the answer (otherwise the AI contradicted
@@ -171,9 +167,11 @@ function isUsableProblem(problem: Problem): boolean {
     return false;
   }
 
-
-  // ^[\d,]+$ = only digits and commas from start to end ("56", "1,200").
-  if (problem.subject === "math" && !/^[\d,]+$/.test(problem.answers[0].trim())) {
+  // A plain number, from start (^) to end ($):
+  //   [\d,]+(\.\d+)?  = digits and commas, then maybe a decimal part ("1,200", "2.5")
+  //   \d+\/\d+        = a fraction ("3/4")
+  const plainNumber = /^([\d,]+(\.\d+)?|\d+\/\d+)$/;
+  if (problem.subject === "math" && !plainNumber.test(problem.answers[0].trim())) {
     return false;
   }
 
@@ -233,10 +231,12 @@ async function writeProblem(
       `passage or a sentence, include that short passage (1 to 3 sentences) inside the question.\n` +
       `- The question must have exactly ONE correct answer that is a number or 1 to 3 words. ` +
       `No multiple choice, no "explain why" questions, no opinion questions.\n` +
-      `- For math, the answer must be a whole number: no fractions, no decimals, no ` +
-      `coordinates, no units. The first item in "answers" is just the digits, e.g. "56".\n` +
-      `- "answers" lists every way a child might correctly write that one answer ` +
-      `(e.g. ["56", "fifty-six", "fifty six"] or ["evaporation"]). Each one is at most 3 words.\n` +
+      `- For math, the answer is a whole number, a decimal or a simple fraction: no ` +
+      `coordinates, no units, no mixed numbers. The first item in "answers" is just the ` +
+      `number, e.g. "56", "2.5" or "3/4".\n` +
+      `- "answers" lists every way a child might correctly write that one answer, including ` +
+      `equal forms: e.g. ["56", "fifty-six"], ["3/4", "6/8", "0.75", "three fourths", ` +
+      `"three quarters"], ["2.5", "2.50", "5/2"] or ["evaporation"]. Each one is at most 3 words.\n` +
       `- "hints" has exactly 3 hints, from smallest to biggest. ` +
       `No hint may contain the answer itself.\n` +
       `- The answer word must NOT appear anywhere in the question or its passage.\n` +
